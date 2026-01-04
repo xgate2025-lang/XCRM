@@ -33,6 +33,8 @@
 
 [Gates determined based on constitution file]
 
+*PRE-FLIGHT*: Must read `Journal.md` to prevent recurring errors.
+
 ## Project Structure
 
 ### Documentation (this feature)
@@ -58,10 +60,15 @@ specs/[###-feature]/
 ```text
 # [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── components/
+├── pages/
+├── context/
+├── lib/
+│   └── gemini.ts
+├── App.tsx
+├── index.tsx
+├── constants.tsx
+└── types.ts
 
 tests/
 ├── contract/
@@ -77,11 +84,11 @@ backend/
 └── tests/
 
 frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
+├── components/
+├── pages/
+├── themes/
+├── context/
+└── lib/
 
 # [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
 api/

@@ -20,8 +20,8 @@ description: "Task list template for feature implementation"
 
 ## Path Conventions
 
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
+- **Single project**: `components/`, `pages/`, `lib/`, `tests/` at repository root
+- **Web app**: `backend/src/`, `frontend/components/`, `frontend/pages/`
 - **Mobile**: `api/src/`, `ios/src/` or `android/src/`
 - Paths shown below assume single project - adjust based on plan.md structure
 
@@ -50,6 +50,7 @@ description: "Task list template for feature implementation"
 
 - [ ] T001 Create project structure per implementation plan
 - [ ] T002 Initialize [language] project with [framework] dependencies
+- [ ] T002a Setup themes directory and design tokens (Strict Theming)
 - [ ] T003 [P] Configure linting and formatting tools
 
 ---
@@ -67,7 +68,7 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] T006 [P] Setup API routing and middleware structure
 - [ ] T007 Create base models/entities that all stories depend on
 - [ ] T008 Configure error handling and logging infrastructure
-- [ ] T009 Setup environment configuration management
+- [ ] T009 Setup environment configuration (VITE_ prefixed keys)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -88,10 +89,11 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Implementation for User Story 1
 
-- [ ] T012 [P] [US1] Create [Entity1] model in src/models/[entity1].py
-- [ ] T013 [P] [US1] Create [Entity2] model in src/models/[entity2].py
-- [ ] T014 [US1] Implement [Service] in src/services/[service].py (depends on T012, T013)
-- [ ] T015 [US1] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T012 [P] [US1] Create [Entity1] type in src/types.ts
+- [ ] T013 [P] [US1] Create [Entity2] type in src/types.ts
+- [ ] T014 [US1] Implement [Context] in src/context/[context].tsx
+- [ ] T014a [US1] Implement AI logic in src/lib/gemini.ts (Service Isolation)
+- [ ] T015 [US1] Implement [page] in src/pages/[page].tsx
 - [ ] T016 [US1] Add validation and error handling
 - [ ] T017 [US1] Add logging for user story 1 operations
 
@@ -134,9 +136,9 @@ Examples of foundational tasks (adjust based on your project):
 
 ### Implementation for User Story 3
 
-- [ ] T026 [P] [US3] Create [Entity] model in src/models/[entity].py
-- [ ] T027 [US3] Implement [Service] in src/services/[service].py
-- [ ] T028 [US3] Implement [endpoint/feature] in src/[location]/[file].py
+- [ ] T026 [P] [US3] Create [Entity] type in src/types.ts
+- [ ] T027 [US3] Implement [Utility] in src/lib/[utility].ts
+- [ ] T028 [US3] Implement [Component] in src/components/[component].tsx
 
 **Checkpoint**: All user stories should now be independently functional
 
@@ -151,6 +153,7 @@ Examples of foundational tasks (adjust based on your project):
 **Purpose**: Improvements that affect multiple user stories
 
 - [ ] TXXX [P] Documentation updates in docs/
+- [ ] TXXX Update `Journal.md` with lessons learned (Incident/Root Cause/Correction)
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
 - [ ] TXXX [P] Additional unit tests (if requested) in tests/unit/
