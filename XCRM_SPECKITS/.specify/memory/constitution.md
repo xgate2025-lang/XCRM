@@ -1,16 +1,14 @@
 <!--
 SYNC IMPACT REPORT
-Version: 2.1.0 -> 2.2.0
+Version: 2.2.0 -> 2.3.0
 Modified Principles:
-- Added Section 8: Adaptive Learning Protocol (The "Journal")
+- None
 Added Sections:
-- Section 8: Adaptive Learning Protocol (The "Journal")
+- Section 9: Visual Integrity & Design Consistency
 Removed Sections:
 - None
 Templates requiring updates:
-- .specify/templates/plan-template.md (✅ updated)
-- .specify/templates/tasks-template.md (✅ updated)
-- Journal.md (✅ created)
+- None
 -->
 
 # 🏛️ Digital Factory Constitution (Local Vite Edition)
@@ -71,4 +69,14 @@ Templates requiring updates:
 - **Pre-flight Check**: Before generating any new code or plans, you MUST read `Journal.md` to ensure previous mistakes are not repeated.
 - **Self-Correction**: If you encounter a recurring error, update this Constitution to explicitly ban the pattern causing it.
 
-**Version**: 2.2.0 | **Ratified**: 2026-01-04 | **Last Amended**: 2026-01-04
+## 9. Visual Integrity & Design Consistency
+- **Design Source of Truth**: The existing UI in `index.html` (CDN Tailwind config) and `src/App.jsx` serves as the master style guide.
+- **Component Anatomy**: New components MUST inherit the specific padding, rounding (`rounded-lg`, etc.), and shadow patterns of existing elements.
+- **Color Palette**: Use only the hex codes or Tailwind shades defined in the "Global Styling Zone" of `index.html`. Do not introduce brand colors that clash with the current theme.
+- **Atomic Consistency**:
+    - **Buttons**: Copy the exact class string from the primary button in the current project.
+    - **Inputs**: Use the same border-focus states as existing form elements.
+    - **Typography**: Maintain the font-family and scale (e.g., `text-2xl font-bold`) used in headers.
+- **Pre-UI Check**: Before adding a new UI element, scan the existing codebase for a similar pattern and duplicate its Tailwind class structure exactly.
+
+**Version**: 2.3.0 | **Ratified**: 2026-01-04 | **Last Amended**: 2026-01-04
