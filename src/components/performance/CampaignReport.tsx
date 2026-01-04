@@ -165,7 +165,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
       {/* Global Syncing Overlay */}
       {isSyncing && (
         <div className="absolute inset-0 z-50 bg-white/40 backdrop-blur-[1px] flex items-center justify-center rounded-3xl transition-all">
-          <div className="bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3">
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 flex items-center gap-3">
             <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
             <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">Applying Confidence Mode...</span>
           </div>
@@ -174,7 +174,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
 
       {/* Export Toast */}
       {showExportToast && (
-        <div className="fixed top-24 right-8 z-[60] bg-slate-900 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-4 animate-in slide-in-from-right duration-300">
+        <div className="fixed top-24 right-8 z-[60] bg-slate-900 text-white px-6 py-4 rounded-2xl flex items-center gap-4 animate-in slide-in-from-right duration-300">
            <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
               <CheckCircle2 size={24} />
            </div>
@@ -187,14 +187,14 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
       )}
 
       {/* Zone A: Strategic Context Controls */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm relative z-30">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-slate-200 relative z-30">
         <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-slate-200 shadow-inner">
+            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-slate-200">
                 {['24h', '7d', '30d'].map((w) => (
                     <button 
                         key={w}
                         onClick={() => setAttributionWindow(w as any)}
-                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all ${attributionWindow === w ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all ${attributionWindow === w ? 'bg-white text-slate-900 border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         Window: {w}
                     </button>
@@ -203,17 +203,17 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
             <div className="h-6 w-px bg-slate-200"></div>
             
             {/* UPDATED: The Visual Truth Toggle - Fixed clipping with top-full positioning */}
-            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-slate-200 shadow-inner relative">
+            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-slate-200 relative">
                 <div className="group relative flex">
                     <button 
                         onClick={() => setViewMode('assisted')}
-                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all flex items-center gap-2 ${viewMode === 'assisted' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all flex items-center gap-2 ${viewMode === 'assisted' ? 'bg-white text-slate-900 border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         <Eye size={12} />
                         Total Assisted
                     </button>
                     {/* Tooltip - Flipped to top-full to prevent clipping by sticky header */}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-slate-900 text-white text-[9px] p-3 rounded-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-2xl border border-white/10 leading-relaxed font-medium origin-top">
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-slate-900 text-white text-[9px] p-3 rounded-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 border border-white/10 leading-relaxed font-medium origin-top">
                         <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45 border-l border-t border-white/10"></div>
                         <strong className="text-primary-400 block mb-1 uppercase tracking-wider">Aggressive Mode</strong>
                         Shows every dollar "touched" by marketing, including members who may have bought anyway.
@@ -223,13 +223,13 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
                 <div className="group relative flex">
                     <button 
                         onClick={() => setViewMode('impact')}
-                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all flex items-center gap-2 ${viewMode === 'impact' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                        className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase transition-all flex items-center gap-2 ${viewMode === 'impact' ? 'bg-white text-slate-900 border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
                     >
                         <Zap size={12} className={viewMode === 'impact' ? 'text-primary-500' : ''} />
                         Real Impact
                     </button>
                     {/* Tooltip - Flipped to top-full to prevent clipping by sticky header */}
-                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-slate-900 text-white text-[9px] p-3 rounded-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 shadow-2xl border border-white/10 leading-relaxed font-medium origin-top">
+                    <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-48 bg-slate-900 text-white text-[9px] p-3 rounded-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity z-50 border border-white/10 leading-relaxed font-medium origin-top">
                         <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45 border-l border-t border-white/10"></div>
                         <strong className="text-emerald-400 block mb-1 uppercase tracking-wider">Conservative Mode</strong>
                         Subtracts the "Organic Baseline" to show only the pure, extra profit this campaign created.
@@ -248,7 +248,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
         <button 
           onClick={handleExport}
           disabled={isExporting}
-          className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 disabled:opacity-50"
+          className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all disabled:opacity-50"
         >
             {isExporting ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />}
             Export Strategy Deck
@@ -293,7 +293,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
       </div>
 
       {/* High-Level Visual Block: Funnel of Influence */}
-      <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white relative overflow-hidden group shadow-2xl">
+      <div className="bg-slate-900 rounded-[2.5rem] p-10 text-white relative overflow-hidden group">
         <div className="absolute right-0 bottom-0 p-12 opacity-5 group-hover:scale-110 transition-transform duration-700">
           <Target size={300} />
         </div>
@@ -315,7 +315,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
                 <div className="flex gap-4">
                     <button 
                         onClick={handleCreateCampaign}
-                        className="px-8 py-3.5 bg-primary-50 text-slate-900 font-black rounded-2xl hover:bg-white transition-all flex items-center gap-2 text-sm uppercase tracking-widest shadow-lg"
+                        className="px-8 py-3.5 bg-primary-50 text-slate-900 font-black rounded-2xl hover:bg-white transition-all flex items-center gap-2 text-sm uppercase tracking-widest"
                     >
                         Optimize Portfolio <ArrowRight size={18} />
                     </button>
@@ -355,7 +355,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         
         {/* Zone B: The Financial Bridge (Waterfall Chart) */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col min-h-[500px]">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 flex flex-col min-h-[500px]">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-lg font-black text-slate-900 tracking-tight">The Profit Waterfall</h3>
@@ -380,7 +380,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
                         if (active && payload && payload.length) {
                             const data = payload[0].payload;
                             return (
-                                <div className="bg-slate-900 text-white p-3 rounded-xl shadow-2xl border border-white/10 text-xs">
+                                <div className="bg-slate-900 text-white p-3 rounded-xl border border-white/10 text-xs">
                                     <div className="font-bold mb-1">{data.name}</div>
                                     <div className={`font-black ${data.displayValue >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                                         {data.displayValue >= 0 ? '+' : ''}${data.displayValue.toLocaleString()}
@@ -403,7 +403,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
 
           <div className="mt-8 p-6 bg-slate-50 border border-slate-100 rounded-3xl flex items-center justify-between">
              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-primary-500 shadow-sm border border-slate-100">
+                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-primary-500 border border-slate-100">
                     <ShieldCheck size={24} />
                 </div>
                 <div>
@@ -419,7 +419,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
         </div>
 
         {/* Zone C: The Magic Quadrant (Cross-Campaign Strategy Matrix) */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col h-full">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 flex flex-col h-full">
            <div className="flex items-center justify-between mb-4">
               <div>
                 <h3 className="text-lg font-black text-slate-900 tracking-tight">The Strategy Matrix</h3>
@@ -467,7 +467,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
                             if (payload && payload.length) {
                                 const data = payload[0].payload;
                                 return (
-                                    <div className="bg-white p-4 rounded-2xl shadow-2xl border border-slate-100 min-w-[160px]">
+                                    <div className="bg-white p-4 rounded-2xl border border-slate-100 min-w-[160px]">
                                         <div className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{data.group}</div>
                                         <div className="text-sm font-black text-slate-900 mb-2">{data.name}</div>
                                         <div className="space-y-1">
@@ -507,7 +507,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
            </div>
 
            <div className="mt-8 p-5 bg-primary-50 border border-primary-100 rounded-[2rem] flex items-start gap-4">
-              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary-500 shadow-sm shrink-0">
+              <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary-500 shrink-0">
                   <Sparkles size={20} />
               </div>
               <div className="flex-1">
@@ -538,7 +538,7 @@ const CampaignReport: React.FC<CampaignReportProps> = ({ onNavigate }) => {
         </div>
 
         {/* Zone D: Detailed Performance Table (CAPSTONE) */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-1 shadow-sm xl:col-span-2 overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-1 xl:col-span-2 overflow-hidden">
             <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between">
                 <div>
                   <h3 className="text-lg font-black text-slate-900">Campaign Strategy Leaderboard</h3>
@@ -649,7 +649,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-4xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[160px] relative group hover:border-primary-300 transition-all cursor-default">
+    <div className="bg-white p-6 rounded-4xl border border-slate-200 flex flex-col justify-between min-h-[160px] relative group hover:border-primary-300 transition-all cursor-default">
       <div className="flex justify-between items-start mb-4">
         <div className={`p-3 rounded-2xl ${colorMap[color]} transition-transform group-hover:scale-110`}>
           <Icon size={24} />
@@ -667,7 +667,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           <div className="group/hint relative">
              <HelpCircle size={10} className="text-slate-300 cursor-help" />
              {/* Tooltip - Flipped to top-full to prevent clipping by sticky header */}
-             <div className="absolute top-full left-0 mt-2 w-48 bg-slate-900 text-white text-[9px] p-2 rounded-lg opacity-0 pointer-events-none group-hover/hint:opacity-100 transition-opacity z-50 shadow-2xl border border-white/10 leading-relaxed font-medium origin-top">
+             <div className="absolute top-full left-0 mt-2 w-48 bg-slate-900 text-white text-[9px] p-2 rounded-lg opacity-0 pointer-events-none group-hover/hint:opacity-100 transition-opacity z-50 border border-white/10 leading-relaxed font-medium origin-top">
                <div className="absolute -top-1 left-2 w-2 h-2 bg-slate-900 rotate-45 border-l border-t border-white/10"></div>
                {hint}
              </div>

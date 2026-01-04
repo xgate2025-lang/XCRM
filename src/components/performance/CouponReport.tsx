@@ -95,7 +95,7 @@ const CouponReport: React.FC<CouponReportProps> = ({ onNavigate }) => {
       {/* Global Syncing Overlay */}
       {isSyncing && (
         <div className="absolute inset-0 z-50 bg-white/40 backdrop-blur-[1px] flex items-center justify-center rounded-3xl transition-all">
-          <div className="bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3">
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 flex items-center gap-3">
             <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
             <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">Auditing Coupon Lifecycle...</span>
           </div>
@@ -103,7 +103,7 @@ const CouponReport: React.FC<CouponReportProps> = ({ onNavigate }) => {
       )}
 
       {/* Control Strip */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-slate-200">
         <div className="flex items-center gap-4">
             <div className="flex items-center gap-2 px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-[10px] font-bold border border-purple-100 uppercase tracking-widest">
                <Info size={12} /> Focus: Conversion Efficiency
@@ -111,7 +111,7 @@ const CouponReport: React.FC<CouponReportProps> = ({ onNavigate }) => {
             <div className="h-6 w-px bg-slate-200"></div>
             <span className="text-xs font-bold text-slate-400">Inventory Status: <span className="text-green-600 font-black uppercase">Stable</span></span>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
+        <button className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all">
             <Download size={16} /> Export Operational Audit
         </button>
       </div>
@@ -155,7 +155,7 @@ const CouponReport: React.FC<CouponReportProps> = ({ onNavigate }) => {
       </div>
 
       {/* Narrative Insight */}
-      <div className="bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-sm relative overflow-hidden group">
+      <div className="bg-white rounded-[2.5rem] p-8 border border-slate-200 relative overflow-hidden group">
         <div className="absolute right-0 bottom-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
           <Sparkles size={220} />
         </div>
@@ -190,7 +190,7 @@ const CouponReport: React.FC<CouponReportProps> = ({ onNavigate }) => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         
         {/* Zone A: Funnel Visualization */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 flex flex-col">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h3 className="text-lg font-black text-slate-900 tracking-tight">The Redemption Funnel</h3>
@@ -233,7 +233,7 @@ const CouponReport: React.FC<CouponReportProps> = ({ onNavigate }) => {
         </div>
 
         {/* Zone B: Channel Strategy */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 flex flex-col">
            <div className="flex items-center justify-between mb-8">
               <div>
                 <h3 className="text-lg font-black text-slate-900 tracking-tight">Conversion by Source</h3>
@@ -274,7 +274,7 @@ const CouponReport: React.FC<CouponReportProps> = ({ onNavigate }) => {
         </div>
 
         {/* Zone C: Store Execution */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 flex flex-col">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h3 className="text-lg font-black text-slate-900 tracking-tight">Frontline Scanner Health</h3>
@@ -285,7 +285,7 @@ const CouponReport: React.FC<CouponReportProps> = ({ onNavigate }) => {
 
            <div className="space-y-4">
               {STORE_HEATMAP.map((store, i) => (
-                <div key={i} className={`flex items-center justify-between p-4 rounded-3xl border transition-all ${store.health === 'alert' ? 'bg-red-50 border-red-200' : 'bg-white border-slate-100 hover:border-slate-200 shadow-sm'}`}>
+                <div key={i} className={`flex items-center justify-between p-4 rounded-3xl border transition-all ${store.health === 'alert' ? 'bg-red-50 border-red-200' : 'bg-white border-slate-100 hover:border-slate-200'}`}>
                    <div className="flex items-center gap-4">
                       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${store.health === 'alert' ? 'bg-red-100 text-red-600' : 'bg-slate-50 text-slate-400'}`}>
                          <MapPin size={24} />
@@ -299,7 +299,7 @@ const CouponReport: React.FC<CouponReportProps> = ({ onNavigate }) => {
                       {store.health === 'alert' ? (
                         <button 
                           onClick={handleFixStore}
-                          className="px-4 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-red-200 hover:bg-red-700 transition-all"
+                          className="px-4 py-1.5 bg-red-600 text-white rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all"
                         >
                            Scanner Alert
                         </button>
@@ -325,7 +325,7 @@ const CouponReport: React.FC<CouponReportProps> = ({ onNavigate }) => {
         </div>
 
         {/* Zone D: Impact Analysis */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 flex flex-col">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h3 className="text-lg font-black text-slate-900 tracking-tight">The "Upsell" Effect (ROI)</h3>
@@ -425,7 +425,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-4xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[160px] relative group hover:border-primary-300 transition-all cursor-default">
+    <div className="bg-white p-6 rounded-4xl border border-slate-200 flex flex-col justify-between min-h-[160px] relative group hover:border-primary-300 transition-all cursor-default">
       <div className="flex justify-between items-start mb-4">
         <div className={`p-3 rounded-2xl ${colorMap[color]} transition-transform group-hover:scale-110`}>
           <Icon size={24} />
@@ -442,7 +442,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{label}</span>
           <div className="group/hint relative">
              <Info size={10} className="text-slate-300 cursor-help" />
-             <div className="absolute bottom-full left-0 mb-2 w-48 bg-slate-900 text-white text-[9px] p-2 rounded-lg opacity-0 pointer-events-none group-hover/hint:opacity-100 transition-opacity z-20 shadow-2xl border border-white/10 leading-relaxed font-medium">
+             <div className="absolute bottom-full left-0 mb-2 w-48 bg-slate-900 text-white text-[9px] p-2 rounded-lg opacity-0 pointer-events-none group-hover/hint:opacity-100 transition-opacity z-20 border border-white/10 leading-relaxed font-medium">
                {hint}
              </div>
           </div>

@@ -33,8 +33,8 @@ export function PointsEngineWidget({ metrics }: PointsEngineWidgetProps) {
           <Coins size={22} />
         </div>
         <div>
-          <h3 className="text-base font-extrabold text-slate-900">Points Engine</h3>
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.08em]">Liability vs Value</p>
+          <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Points Engine</h3>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Liability vs Value</p>
         </div>
       </div>
 
@@ -42,11 +42,11 @@ export function PointsEngineWidget({ metrics }: PointsEngineWidgetProps) {
         {/* Metric 1 */}
         <div>
           <div className="flex justify-between items-baseline mb-2">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Redemption Rate</span>
-            <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100">Target: 15-30%</span>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Redemption Rate</span>
+            <span className="text-[9px] font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full border border-emerald-100 uppercase tracking-wider">Target: 15-30%</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-black text-slate-900">{redemptionRate}%</span>
+            <span className="text-3xl font-black text-slate-900">{redemptionRate}%</span>
             <span className="text-xs font-medium text-slate-400">of issued points</span>
           </div>
           <div className="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">

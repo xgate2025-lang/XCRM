@@ -133,7 +133,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
       
       {/* Success Toast */}
       {showSuccessToast && (
-          <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-4 fade-in duration-300">
+          <div className="fixed top-10 left-1/2 -translate-x-1/2 z-50 bg-slate-900 text-white px-6 py-3 rounded-full flex items-center gap-3 animate-in slide-in-from-top-4 fade-in duration-300">
               <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
                   <CheckCircle2 size={14} className="text-white" />
               </div>
@@ -147,7 +147,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
       {/* Publish Confirmation Modal */}
       {showPublishModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-[2px] animate-in fade-in duration-300">
-            <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full relative animate-in zoom-in-95 duration-300 border border-slate-100">
+            <div className="bg-white rounded-3xl p-8 max-w-sm w-full relative animate-in zoom-in-95 duration-300 border border-slate-100">
                 <button 
                     onClick={() => setShowPublishModal(false)}
                     className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-50 transition-colors"
@@ -172,7 +172,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
                         </button>
                         <button 
                             onClick={confirmPublish}
-                            className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-lg shadow-blue-200"
+                            className="flex-1 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors"
                         >
                             Confirm Publish
                         </button>
@@ -215,7 +215,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
           <button 
             onClick={handlePublishClick}
             disabled={programStatus === 'live' || tiers.length < 2 || !pointsConfig} 
-            className={`px-6 py-2.5 font-bold rounded-xl transition-all shadow-lg shadow-slate-200 ${
+            className={`px-6 py-2.5 font-bold rounded-xl transition-all ${
                 programStatus === 'live'
                 ? 'bg-green-50 text-green-600 border border-green-200 shadow-none cursor-default'
                 : tiers.length >= 2 && pointsConfig
@@ -234,7 +234,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
       </div>
 
       {/* Zone B: The Narrative Bridge (Hero) */}
-      <div className="relative bg-white rounded-3xl border border-slate-200 shadow-xl shadow-slate-100/50 overflow-hidden transition-all duration-500">
+      <div className="relative bg-white rounded-3xl border border-slate-200 overflow-hidden transition-all duration-500">
           
           {/* Collapse Toggle */}
           <button 
@@ -273,7 +273,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
 
                     <button 
                         onClick={handleLogicSetupStart}
-                        className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all shadow-lg shadow-slate-200"
+                        className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
                     >
                         <Zap size={20} className="text-yellow-400 fill-yellow-400" />
                         Setup Tier Upgrade method
@@ -302,7 +302,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
 
                     <button 
                         onClick={handleGoToPoints}
-                        className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all shadow-lg shadow-slate-200"
+                        className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
                     >
                         <Coins size={20} className="text-yellow-400 fill-yellow-400" />
                         Configure Points & Currency
@@ -332,7 +332,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
 
                     <button 
                         onClick={() => handleOpenTierWizard()}
-                        className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all shadow-lg shadow-slate-200"
+                        className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
                     >
                         <Layers size={20} className="text-primary-300" />
                         Create Your First Tier
@@ -373,7 +373,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
               <div className="absolute inset-0 z-0 flex items-center justify-center bg-white/50 backdrop-blur-[1px] rounded-3xl transition-opacity">
                   <div 
                     onClick={!programLogic ? handleLogicSetupStart : handleGoToPoints}
-                    className="bg-slate-900 text-white px-5 py-3 rounded-xl shadow-2xl text-sm font-bold flex items-center gap-2 transform translate-y-12 cursor-pointer hover:scale-105 transition-transform"
+                    className="bg-slate-900 text-white px-5 py-3 rounded-xl text-sm font-bold flex items-center gap-2 transform translate-y-12 cursor-pointer hover:scale-105 transition-transform"
                   >
                       {!programLogic ? (
                          <> <Zap size={16} className="text-yellow-400" /> Configure upgrade method to unlock builder </>

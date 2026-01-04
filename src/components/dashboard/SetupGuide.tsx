@@ -52,7 +52,7 @@ export function SetupGuide() {
 
   return (
     // Card Pattern: "bg-white rounded-3xl p-5 shadow-sm border border-slate-200"
-    <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 relative">
+    <div className="bg-white rounded-3xl p-5 border border-slate-200 relative">
       {/* Skip/Hide Button */}
       <button
         onClick={dismissOnboarding}

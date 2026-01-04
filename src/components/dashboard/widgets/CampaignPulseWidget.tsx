@@ -30,8 +30,8 @@ export function CampaignPulseWidget({ metrics }: CampaignPulseWidgetProps) {
             <Megaphone size={22} />
           </div>
           <div>
-            <h3 className="text-base font-extrabold text-slate-900">Strategy Pulse</h3>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.08em]">{activeCampaigns} Active · {campaignParticipation} Users</p>
+            <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Strategy Pulse</h3>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{activeCampaigns} Active · {campaignParticipation} Users</p>
           </div>
         </div>
         
@@ -58,9 +58,9 @@ export function CampaignPulseWidget({ metrics }: CampaignPulseWidgetProps) {
         // Active List
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {campaigns.map((camp) => (
-            <div key={camp.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-purple-200 transition-colors cursor-pointer group">
+            <div key={camp.id} className="p-4 bg-slate-50 rounded-2xl border border-slate-200 hover:border-purple-200 transition-colors cursor-pointer group">
               <div className="flex justify-between items-start mb-2">
-                <span className="px-2 py-1 bg-white text-[10px] font-bold text-slate-500 uppercase rounded-md shadow-sm">
+                <span className="px-2 py-1 bg-white text-[10px] font-bold text-slate-500 uppercase rounded-md border border-slate-200">
                   {camp.type}
                 </span>
                 <ArrowUpRight size={14} className="text-slate-300 group-hover:text-purple-500 transition-colors" />

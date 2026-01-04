@@ -122,7 +122,7 @@ const MemberList: React.FC<MemberListProps> = ({ onNavigate }) => {
              </button>
              <button 
                 onClick={() => setIsCreateModalOpen(true)}
-                className="px-5 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 flex items-center gap-2 hover:scale-[1.02]"
+                className="px-5 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all flex items-center gap-2 hover:scale-[1.02]"
              >
                 <Plus size={18} />
                 Add Member
@@ -135,7 +135,7 @@ const MemberList: React.FC<MemberListProps> = ({ onNavigate }) => {
         {/* Card 1: Total Members */}
         <div 
           onClick={() => setDashboardFilter('all')}
-          className={`p-6 rounded-3xl border shadow-sm flex items-center gap-5 group transition-all cursor-pointer ${dashboardFilter === 'all' ? 'bg-primary-50 border-primary-500' : 'bg-white border-slate-200 hover:border-primary-400'}`}
+          className={`p-6 rounded-3xl border flex items-center gap-5 group transition-all cursor-pointer ${dashboardFilter === 'all' ? 'bg-primary-50 border-primary-500' : 'bg-white border-slate-200 hover:border-primary-400'}`}
         >
             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-110 ${dashboardFilter === 'all' ? 'bg-primary-500 text-white' : 'bg-primary-50 text-primary-500'}`}>
                 <Users size={28} />
@@ -147,7 +147,7 @@ const MemberList: React.FC<MemberListProps> = ({ onNavigate }) => {
         </div>
 
         {/* Card 2: New This Week */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-5 group hover:border-green-500 transition-all cursor-default">
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 flex items-center gap-5 group hover:border-green-500 transition-all cursor-default">
             <div className="w-14 h-14 rounded-2xl bg-green-50 flex items-center justify-center text-green-500 group-hover:scale-110 transition-transform">
                 <TrendingUp size={28} />
             </div>
@@ -163,7 +163,7 @@ const MemberList: React.FC<MemberListProps> = ({ onNavigate }) => {
         {/* Card 3: Churn Risk */}
         <div 
           onClick={() => setDashboardFilter('churn')}
-          className={`p-6 rounded-3xl border shadow-sm flex items-center justify-between group transition-all cursor-pointer ${dashboardFilter === 'churn' ? 'bg-red-50 border-red-500' : 'bg-white border-slate-200 hover:red-400'}`}
+          className={`p-6 rounded-3xl border flex items-center justify-between group transition-all cursor-pointer ${dashboardFilter === 'churn' ? 'bg-red-50 border-red-500' : 'bg-white border-slate-200 hover:red-400'}`}
         >
             <div className="flex items-center gap-5">
               <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform relative group-hover:scale-110 ${dashboardFilter === 'churn' ? 'bg-red-500 text-white' : 'bg-red-50 text-red-500'}`}>
@@ -183,7 +183,7 @@ const MemberList: React.FC<MemberListProps> = ({ onNavigate }) => {
       </div>
 
       {/* 2. Advanced Toolbar */}
-      <div className="bg-white p-2 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row gap-2">
+      <div className="bg-white p-2 rounded-2xl border border-slate-200 flex flex-col md:flex-row gap-2">
           {/* Search */}
           <div className="flex-1 relative">
               <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -209,7 +209,7 @@ const MemberList: React.FC<MemberListProps> = ({ onNavigate }) => {
 
       {/* 3. Filter Panel (Conditional) */}
       {isFilterOpen && (
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm animate-in slide-in-from-top-2 z-10 space-y-6">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 animate-in slide-in-from-top-2 z-10 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div>
                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Tier Level</label>
@@ -273,7 +273,7 @@ const MemberList: React.FC<MemberListProps> = ({ onNavigate }) => {
       )}
 
       {/* 4. Data Table */}
-      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden">
           <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                   <thead>

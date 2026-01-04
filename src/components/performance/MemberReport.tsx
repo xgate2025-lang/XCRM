@@ -131,7 +131,7 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
       {/* Global Syncing Overlay */}
       {isSyncing && (
         <div className="absolute inset-0 z-50 bg-white/40 backdrop-blur-[1px] flex items-center justify-center rounded-3xl transition-all">
-          <div className="bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3">
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 flex items-center gap-3">
             <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
             <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">Updating Pipeline for {storeScope}...</span>
           </div>
@@ -187,7 +187,7 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
         </div>
 
         {/* Membership Relationship Health Bar */}
-        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div className="bg-white p-6 rounded-3xl border border-slate-200">
           <div className="flex items-center justify-between mb-4">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Membership Relationship Health Bar</span>
             <div className="flex gap-4">
@@ -196,7 +196,7 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
               <LegendItem color="bg-red-500" label="Dormant" value={`${censusData.dormantRate}%`} />
             </div>
           </div>
-          <div className="h-4 w-full bg-slate-100 rounded-full overflow-hidden flex shadow-inner border border-slate-50">
+          <div className="h-4 w-full bg-slate-100 rounded-full overflow-hidden flex border border-slate-50">
             <div className="h-full bg-green-500 transition-all duration-1000 border-r border-white/20" style={{ width: `${censusData.activeRate}%` }}></div>
             <div className="h-full bg-amber-400 transition-all duration-1000 border-r border-white/20" style={{ width: `${censusData.driftingRate}%` }}></div>
             <div className="h-full bg-red-500 transition-all duration-1000" style={{ width: `${censusData.dormantRate}%` }}></div>
@@ -205,7 +205,7 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
       </div>
 
       {/* Smart Summary Text Component */}
-      <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden group shadow-2xl">
+      <div className="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden group">
         <div className="absolute right-0 bottom-0 p-10 opacity-5 group-hover:scale-110 transition-transform duration-700">
           <Activity size={240} />
         </div>
@@ -234,7 +234,7 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         
         {/* Zone B: Tier Health */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 flex flex-col">
           <div className="flex items-center justify-between mb-8">
              <div>
                 <h3 className="text-lg font-black text-slate-900 tracking-tight">Tier Migration Flow</h3>
@@ -260,7 +260,7 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                     <XAxis dataKey="tier" axisLine={false} tickLine={false} tick={{ fontSize: 11, fontWeight: 700, fill: '#94a3b8' }} />
                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: '#cbd5e1' }} />
-                    <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                    <Tooltip cursor={{ fill: '#f8fafc' }} contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: 'none' }} />
                     <Bar dataKey="arpu" radius={[8, 8, 0, 0]} barSize={40}>
                       {TIER_VALUE_DATA.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={index === 3 ? '#3b82f6' : '#cbd5e1'} />
@@ -274,7 +274,7 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
 
         {/* Zone C: The Leaky Pipeline */}
         <div className="space-y-8 flex flex-col">
-           <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex-1 flex flex-col">
+           <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 flex-1 flex flex-col">
               <div className="flex items-center justify-between mb-10">
                  <div>
                     <h3 className="text-lg font-black text-slate-900 tracking-tight">The Retention Pipeline</h3>
@@ -304,7 +304,7 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
                      return (
                        <React.Fragment key={stage.id}>
                          <div 
-                           className={`relative h-20 flex flex-col items-center justify-center transition-all duration-700 shadow-lg ${stage.color} ${idx === 0 ? 'rounded-l-2xl' : ''} ${isLast ? 'rounded-r-2xl' : ''} group`}
+                           className={`relative h-20 flex flex-col items-center justify-center transition-all duration-700 ${stage.color} ${idx === 0 ? 'rounded-l-2xl' : ''} ${isLast ? 'rounded-r-2xl' : ''} group`}
                            style={{ width: `${Math.max(widthPercent, 12)}%` }}
                          >
                             <div className="text-center text-white p-2">
@@ -335,7 +335,7 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
                               <div className="mt-1 flex flex-col items-center">
                                 <div className="text-[9px] font-black text-red-500">-{stage.dropRate}%</div>
                                 <div className="w-px h-3 bg-red-200"></div>
-                                <button className="mt-1 p-1 bg-white border border-slate-100 rounded-full shadow-sm text-slate-300 hover:text-primary-500 hover:border-primary-200 transition-all" title="Fix Drop-off">
+                                <button className="mt-1 p-1 bg-white border border-slate-100 rounded-full text-slate-300 hover:text-primary-500 hover:border-primary-200 transition-all" title="Fix Drop-off">
                                   <Plus size={10} />
                                 </button>
                               </div>
@@ -368,7 +368,7 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
 
               <div className="mt-8 p-6 bg-orange-50 border border-orange-100 rounded-3xl flex items-center justify-between gap-6">
                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-orange-500 shadow-sm border border-orange-100 relative">
+                    <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-orange-500 border border-orange-100 relative">
                         <Target size={24} />
                         <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-white animate-pulse"></div>
                     </div>
@@ -388,14 +388,14 @@ const MemberReport: React.FC<MemberReportProps> = ({ onNavigate }) => {
                  </div>
                  <button 
                   onClick={handleRecoverSegments}
-                  className="px-6 py-3 bg-slate-900 text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 group"
+                  className="px-6 py-3 bg-slate-900 text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-slate-800 transition-all group"
                  >
                     Recover Segments <ArrowRight size={14} className="inline ml-1 group-hover:translate-x-1 transition-transform" />
                  </button>
               </div>
            </div>
 
-           <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm h-[400px] flex flex-col">
+           <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 h-[400px] flex flex-col">
               <div className="flex items-center justify-between mb-8">
                 <div>
                    <h3 className="text-lg font-black text-slate-900 tracking-tight">Persona Spend Correlation</h3>
@@ -455,7 +455,7 @@ const CensusCard: React.FC<CensusCardProps> = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-4xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[180px] relative group hover:border-primary-300 transition-all">
+    <div className="bg-white p-6 rounded-4xl border border-slate-200 flex flex-col justify-between min-h-[180px] relative group hover:border-primary-300 transition-all">
       <div className="flex justify-between items-start mb-4">
         <div className={`p-3 rounded-2xl bg-${color}-50 text-${color}-600 transition-transform group-hover:scale-110`}>
           <Icon size={24} />
@@ -516,7 +516,7 @@ const MigrationNode = ({ label, start, end, color, up, down }: any) => {
   return (
     <div className="flex items-center justify-between px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl group hover:border-slate-300 hover:bg-white transition-all">
       <div className="flex items-center gap-4 w-1/3">
-         <div className={`w-3 h-3 rounded-full ${color} shadow-sm`}></div>
+         <div className={`w-3 h-3 rounded-full ${color}`}></div>
          <span className="text-sm font-black text-slate-900">{label}</span>
       </div>
       

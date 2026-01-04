@@ -18,20 +18,20 @@ body {
 .card-premium {
   background-color: #ffffff;
   border-radius: 2rem; /* 32px - Hyper rounded */
-  border: 1px solid #f1f5f9; /* Slate-100 */
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); /* Soft resting shadow */
+  border: 1px solid #e2e8f0; /* Slate-200 */
+  box-shadow: none; /* No shadow */
   transition: all 400ms cubic-bezier(0.2, 0.8, 0.2, 1); /* "Springy" ease */
 }
 
 .card-premium:hover {
-  transform: translateY(-4px); /* Levitate */
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06); /* Diffused lift shadow */
-  border-color: #e2e8f0; /* Slate-200 */
+  border-color: #92AECF; /* primary-300 */
+  /* No lift, only color shift */
 }
 
 /* Utility for text gradients if needed */
 .text-gradient-brand {
   background: linear-gradient(226deg, #0952d6 0%, #6d2596 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }

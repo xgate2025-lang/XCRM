@@ -150,7 +150,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
           onClick={() => onNavigate('member-list')} 
           className="flex items-center gap-2 text-slate-500 hover:text-slate-900 font-bold transition-colors group"
         >
-          <div className="p-2 bg-white border border-slate-200 rounded-lg group-hover:border-slate-300 shadow-sm transition-all">
+          <div className="p-2 bg-white border border-slate-200 rounded-lg group-hover:border-slate-300 transition-all">
             <ArrowLeft size={16} />
           </div>
           <span className="text-sm">Back to Members</span>
@@ -158,7 +158,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
       </div>
 
       {/* ### Zone A: The "Vibe" Header ### */}
-      <div className="relative rounded-4xl overflow-hidden border border-slate-200 shadow-xl shadow-slate-100">
+      <div className="relative rounded-4xl overflow-hidden border border-slate-200">
         <div className={`h-40 bg-gradient-to-r ${tierCfg.gradient} absolute inset-0 z-0 opacity-10`}></div>
         <div className={`h-40 bg-gradient-to-b from-transparent to-white absolute inset-0 z-0`}></div>
 
@@ -166,8 +166,8 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
           <div className="flex items-center gap-6">
             <div className="relative group">
               <div className={`absolute inset-0 bg-gradient-to-tr ${tierCfg.gradient} rounded-3xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity`}></div>
-              <img src={member.avatar} alt={member.firstName} className="w-24 h-24 rounded-3xl border-4 border-white shadow-xl relative object-cover" />
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-xl shadow-lg border border-slate-100 flex items-center justify-center text-primary-500 cursor-pointer" onClick={() => setIsEditModalOpen(true)}>
+              <img src={member.avatar} alt={member.firstName} className="w-24 h-24 rounded-3xl border-4 border-white relative object-cover" />
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-xl border border-slate-100 flex items-center justify-center text-primary-500 cursor-pointer" onClick={() => setIsEditModalOpen(true)}>
                 <Edit2 size={14} />
               </div>
             </div>
@@ -197,14 +197,14 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
             <div className="flex items-center gap-2 p-1.5 bg-slate-50 border border-slate-100 rounded-2xl">
               <button 
                 onClick={() => setActionModal({ isOpen: true, type: 'adjust_points' })}
-                className="px-4 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all flex items-center gap-2 shadow-lg shadow-slate-200 text-sm"
+                className="px-4 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all flex items-center gap-2 text-sm"
               >
                 <Coins size={16} className="text-yellow-400" />
                 Adjust Points
               </button>
               <button 
                 onClick={() => setActionModal({ isOpen: true, type: 'issue_coupon' })}
-                className="px-4 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 text-sm shadow-sm"
+                className="px-4 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 text-sm"
               >
                 <Ticket size={16} className="text-purple-500" />
                 Issue Coupon
@@ -283,7 +283,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
                       Suggesting <strong>Skin Care Bundle</strong> could trigger the upgrade today.
                     </p>
                   </div>
-                  <button className="px-6 py-3 bg-white text-primary-600 font-black rounded-xl text-sm hover:shadow-xl transition-all whitespace-nowrap flex items-center gap-2">
+                  <button className="px-6 py-3 bg-white text-primary-600 font-black rounded-xl text-sm transition-all whitespace-nowrap flex items-center gap-2">
                     Generate Offer <ChevronRight size={16} />
                   </button>
                 </div>
@@ -291,7 +291,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
 
               {/* Widget 2: Dashboard Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200">
                   <div className="flex items-center gap-3 mb-3 text-slate-400">
                     <Coins size={18} />
                     <span className="text-[10px] font-bold uppercase tracking-widest">Points Balance</span>
@@ -300,7 +300,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
                   <div className="text-[10px] font-bold text-red-500 mt-1">500 pts expire in 12d</div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200">
                   <div className="flex items-center gap-3 mb-3 text-slate-400">
                     <Ticket size={18} />
                     <span className="text-[10px] font-bold uppercase tracking-widest">Valid Coupons</span>
@@ -309,7 +309,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
                   <div className="text-[10px] font-bold text-slate-400 mt-1">2 expiring soon</div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200">
                   <div className="flex items-center gap-3 mb-3 text-slate-400">
                     <DollarSign size={18} />
                     <span className="text-[10px] font-bold uppercase tracking-widest">Total Spend</span>
@@ -318,7 +318,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
                   <div className="text-[10px] font-bold text-green-500 mt-1">+12% vs last avg</div>
                 </div>
 
-                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                <div className="bg-white p-5 rounded-2xl border border-slate-200">
                   <div className="flex items-center gap-3 mb-3 text-slate-400">
                     <Clock size={18} />
                     <span className="text-[10px] font-bold uppercase tracking-widest">Days Since Buy</span>
@@ -333,7 +333,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
               </div>
 
               {/* Widget 4: Purchase Behavior */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+              <div className="bg-white rounded-3xl border border-slate-200 p-6">
                 <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider mb-6 flex items-center gap-2">
                   <ShoppingBag size={16} className="text-slate-400" />
                   Purchase Behavior
@@ -363,7 +363,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
             <div className="space-y-8">
               
               {/* Widget 3: Membership Status */}
-              <div className="bg-slate-900 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+              <div className="bg-slate-900 rounded-3xl p-6 text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-10">
                    <ShieldCheck size={100} />
                 </div>
@@ -393,7 +393,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
               </div>
 
               {/* Widget 5: Personal Info */}
-              <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+              <div className="bg-white rounded-3xl border border-slate-200 p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
                     <User size={16} className="text-slate-400" />
@@ -444,7 +444,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
         {activeTab === 'transactions' && (
           <div className="space-y-6 animate-in slide-in-from-bottom-2 duration-400">
             {/* Filters */}
-            <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+            <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-3xl border border-slate-200">
                <div className="relative flex-1">
                   <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input 
@@ -477,14 +477,14 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
                     <p className="text-sm text-slate-500 max-w-xs mb-8">This member hasn't made any transactions yet, or they were recorded outside the system.</p>
                     <button 
                       onClick={() => setActionModal({ isOpen: true, type: 'adjust_points' })}
-                      className="px-8 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 flex items-center gap-2"
+                      className="px-8 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all flex items-center gap-2"
                     >
                       <Plus size={18} />
                       Record Manual Purchase
                     </button>
                 </div>
             ) : (
-                <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-sm">
+                <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
@@ -544,7 +544,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
             {/* Modal: Strategic Order Audit Grid (REWRITTEN FROM THERMAL RECEIPT) */}
             {selectedTransaction && (
               <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-300">
-                <div className="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-5xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+                <div className="bg-white rounded-[2.5rem] w-full max-w-5xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
                   
                   {/* Global Header Metadata */}
                   <div className="px-10 py-8 border-b border-slate-100 bg-slate-50/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 shrink-0">
@@ -583,7 +583,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
                         )}
                     </div>
 
-                    <button onClick={() => setSelectedTransaction(null)} className="p-2 -mr-2 rounded-full hover:bg-white text-slate-300 hover:text-slate-600 transition-all shadow-none hover:shadow-sm">
+                    <button onClick={() => setSelectedTransaction(null)} className="p-2 -mr-2 rounded-full hover:bg-white text-slate-300 hover:text-slate-600 transition-all shadow-none">
                         <X size={24} />
                     </button>
                   </div>
@@ -596,7 +596,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
                                 <Package size={18} className="text-primary-500" />
                                 <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em]">Product Detail Ledger</h3>
                             </div>
-                            <div className="border border-slate-100 rounded-3xl overflow-hidden shadow-sm bg-white">
+                            <div className="border border-slate-100 rounded-3xl overflow-hidden bg-white">
                                 <table className="w-full text-left">
                                     <thead className="bg-slate-50 border-b border-slate-100">
                                         <tr className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
@@ -643,7 +643,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
                                     <div className="grid grid-cols-1 gap-4">
                                         <div className="p-4 bg-yellow-50 border border-yellow-100 rounded-2xl flex items-center justify-between">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-yellow-600 shadow-sm border border-yellow-100">
+                                                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-yellow-600 border border-yellow-100">
                                                     <Coins size={20} />
                                                 </div>
                                                 <div>

@@ -23,7 +23,7 @@ const PerformanceHeader: React.FC = () => {
       <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         
         {/* Zone A: Navigation Pills */}
-        <div className="flex items-center gap-1 bg-slate-200/50 p-1 rounded-2xl border border-slate-200 shadow-inner">
+        <div className="flex items-center gap-1 bg-slate-200/50 p-1 rounded-2xl border border-slate-200">
           {TABS.map((tab) => (
             <button
               key={tab.id}
@@ -31,7 +31,7 @@ const PerformanceHeader: React.FC = () => {
               className={`
                 px-5 py-2 rounded-xl text-sm font-bold transition-all duration-300
                 ${activeTab === tab.id 
-                  ? 'bg-white text-slate-900 shadow-sm' 
+                  ? 'bg-white text-slate-900 border border-slate-200' 
                   : 'text-slate-500 hover:text-slate-700 hover:bg-white/40'}
               `}
             >
@@ -48,7 +48,7 @@ const PerformanceHeader: React.FC = () => {
             <select 
               value={dateRange}
               onChange={(e) => setDateRange(e.target.value)}
-              className="appearance-none pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:border-primary-300 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
+              className="appearance-none pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:border-primary-300 transition-all focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
             >
               {DATE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
             </select>
@@ -63,7 +63,7 @@ const PerformanceHeader: React.FC = () => {
             <select 
               value={storeScope}
               onChange={(e) => setStoreScope(e.target.value)}
-              className="appearance-none pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:border-primary-300 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
+              className="appearance-none pl-10 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:border-primary-300 transition-all focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
             >
               {STORE_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
             </select>

@@ -31,7 +31,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ id, title, label, value, trend,
   return (
     <div 
       onClick={() => setActiveTab(id)}
-      className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:border-primary-300 hover:-translate-y-1 transition-all cursor-pointer group"
+      className="bg-white p-6 rounded-3xl border border-slate-200 hover:border-primary-300 hover:-translate-y-1 transition-all cursor-pointer group"
     >
       <div className="flex justify-between items-start mb-6">
         <div className={`p-3 rounded-2xl ${color} transition-transform group-hover:scale-110`}>
@@ -99,7 +99,7 @@ const OverviewDashboard: React.FC = () => {
       {/* Global Syncing Overlay */}
       {isSyncing && (
         <div className="absolute inset-0 z-50 bg-white/40 backdrop-blur-[1px] flex items-center justify-center rounded-3xl transition-all">
-          <div className="bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3 animate-in zoom-in-95">
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 flex items-center gap-3 animate-in zoom-in-95">
             <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
             <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">Syncing Data...</span>
           </div>
@@ -135,7 +135,7 @@ const OverviewDashboard: React.FC = () => {
 
       {/* Narrative Section */}
       <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-slate-900 rounded-4xl p-8 text-white relative overflow-hidden group shadow-2xl">
+        <div className="lg:col-span-2 bg-slate-900 rounded-4xl p-8 text-white relative overflow-hidden group">
           <div className="absolute right-0 bottom-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700">
             <Megaphone size={200} />
           </div>
@@ -157,7 +157,7 @@ const OverviewDashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-4xl border border-slate-200 p-8 shadow-sm flex flex-col justify-between">
+        <div className="bg-white rounded-4xl border border-slate-200 p-8 flex flex-col justify-between">
           <div>
             <h4 className="text-sm font-black text-slate-400 uppercase tracking-widest mb-6">Redemption Velocity</h4>
             <div className="space-y-6">

@@ -43,8 +43,8 @@ export function TierDistributionWidget({ data }: TierDistributionWidgetProps) {
              <Crown size={22} />
            </div>
            <div>
-             <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.08em]">Tier Impact</div>
-             <div className="text-base font-bold text-slate-900">Distribution vs Value</div>
+             <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tier Impact</div>
+             <div className="text-sm font-bold text-slate-900">Distribution vs Value</div>
            </div>
         </div>
       </div>
@@ -77,7 +77,7 @@ export function TierDistributionWidget({ data }: TierDistributionWidgetProps) {
               tick={{ fill: '#3b82f6', fontSize: 10 }}
             />
             <Tooltip 
-              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
+              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: 'none' }}
             />
             
             <Bar yAxisId="left" dataKey="count" barSize={32} radius={[6, 6, 0, 0]}>
@@ -98,7 +98,7 @@ export function TierDistributionWidget({ data }: TierDistributionWidgetProps) {
       </div>
 
       {/* Insight Footer */}
-      <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-100">
+      <div className="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200">
         <p className="text-xs text-slate-600 font-medium leading-relaxed">
           <span className="font-bold text-slate-900">Insight:</span> {insight}
         </p>

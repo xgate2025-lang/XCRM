@@ -1,9 +1,11 @@
 # Information Architecture: Loyalty Command Center (Dashboard)
 
 ## 1. Global Wrapper (Persistent Context)
+
 *Always visible, regardless of State A or B.*
 
 ### **Zone A: Global Context Navigator (The Sticky Header)**
+
 *   **Date Range Picker:**
     *   *Default:* `Last 30 Days`.
     *   *Options:* Today, Last 7 Days, Last 30 Days, This Month, Last Month, Custom Range.
@@ -16,9 +18,11 @@
 ---
 
 ## 2. State A: The "Day Zero" Onboarding (The Setup Hero)
+
 *Condition: Visible only if `Setup_Progress < 100%` AND `Is_Dismissed = False`.*
 
 ### **Component: The Setup Guide Widget**
+
 *   **Visual Priority:** High (Top of page, full width).
 *   **Header:** "Welcome to [Store Name]. Let’s get your program live."
 *   **Progress Indicator:** Linear Progress Bar (e.g., "33% Complete").
@@ -27,6 +31,7 @@
     *   `[ Dismiss Guide ]` (Permanently hide).
 
 ### **The Workflow Steps (Horizontal Cards)**
+
 1.  **Step 1: Foundation (Basic Settings)**
     *   *Status:* `Pending` / `Completed` (Green Check).
     *   *Tasks:* Store Profile, Currency, Timezone.
@@ -43,9 +48,11 @@
 ---
 
 ## 3. State B: The "Daily Operation" Dashboard (The Health Check)
+
 *Condition: Visible always (sits below Setup Guide in State A, moves to top in State B).*
 
 ### **Zone 1: Revenue Health (Core Business Metrics)**
+
 *   **Visual Layout:** 5 Hero Cards (High Contrast).
 *   **Common Elements per Card:**
     *   *Metric Value* (Big Number).
@@ -62,9 +69,11 @@
 ---
 
 ### **Zone 2: Relationship Intelligence (Member Insights)**
+
 *   **Visual Layout:** Split Panel (Scale vs. Distribution).
 
 #### **Widget A: Scale & Activity**
+
 *   **Total Scale:** Total Cumulative Members.
 *   **Active Count:**
     *   *Definition:* Based on Config (e.g., "Purchase in last 90 days").
@@ -72,6 +81,7 @@
 *   **Drill-down:** Click $\rightarrow$ Go to **Member Report**.
 
 #### **Widget B: Tier & Sales Distribution**
+
 *   **Visual:** **Combo Chart**.
     *   *Bar:* Member Count by Tier (Basic, Gold, Diamond).
     *   *Line:* % of Total Sales contributed by that Tier.
@@ -80,9 +90,11 @@
 ---
 
 ### **Zone 3: Currency Health (Asset Overview)**
+
 *   **Visual Layout:** Two Side-by-Side Cards (Liability vs. Incentive).
 
 #### **Widget A: The Point Economy**
+
 *   **Header:** "Points Engine"
 *   **Metric 1: Redemption Rate (Burn):** `%`. (Target: 15-30%).
 *   **Metric 2: Sales from Redemption:** Currency Value (`$`).
@@ -91,6 +103,7 @@
 *   **Action:** `[ View Point Report ]`.
 
 #### **Widget B: The Coupon Machine**
+
 *   **Header:** "Coupon Efficiency"
 *   **Metric 1: Usage Rate:** `%` (Redeemed / Issued).
 *   **Metric 2: Sales from Coupons:** Currency Value (`$`).
@@ -100,13 +113,16 @@
 ---
 
 ### **Zone 4: Strategy Pulse (Campaigns)**
+
 *   **Visual Layout:** Full-width List or Grid.
 
 #### **The Status Bar**
+
 *   **Active Campaigns:** Count (e.g., "3 Live").
 *   **Total Participation:** Sum of clicks/claims in current period.
 
 #### **Actionable State (Logic)**
+
 *   **If Active Count > 0:** Show mini-list of top 3 campaigns by ROI.
 *   **If Active Count = 0 (Empty State):**
     *   *Visual:* "No marketing running."
@@ -115,15 +131,18 @@
 ---
 
 ## 4. Global Feature: Quick Actions (The Speed Dial)
+
 *   **Visual Layout:** Sticky Right Sidebar or Floating Action Button (FAB) menu.
 
 ### **The Shortcut Grid**
+
 1.  **View Members:** Link to Member List.
 2.  **Add Coupon:** Link to Coupon Wizard.
 3.  **Create Campaign:** Link to Campaign Studio.
 4.  **View Reports:** Link to Report Overview.
 
 ### **The "Custom Add" Logic**
+
 *   **Action:** `[ + Edit Shortcuts ]` button.
 *   **Interaction (Modal):**
     *   List of all available pages (e.g., "Tier Config," "Point Settings").
@@ -138,7 +157,7 @@
 1.  **Drill-Down Context:**
     *   Clicking "Member GMV" in **Zone 1** navigates to the **Transaction Report**, *auto-filtered* to the Date Range selected in the Dashboard.
 2.  **Loading States:**
-    *   Use **Skeleton Screens** (Grey boxes) while data calculates. Do not show "0" while loading.
+    *   *Use Skeleton Screens* (Grey boxes) while data calculates. Do not show "0" while loading.
 3.  **Trend Colors:**
     *   **Good is Green:** Revenue Up, Churn Down.
     *   **Bad is Red:** Revenue Down, Churn Up.

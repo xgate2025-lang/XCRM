@@ -24,8 +24,8 @@ export function CouponMachineWidget({ metrics }: CouponMachineWidgetProps) {
           <Ticket size={22} />
         </div>
         <div>
-          <h3 className="text-base font-extrabold text-slate-900">Coupon Efficiency</h3>
-          <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.08em]">Incentive Stats</p>
+          <h3 className="text-sm font-black text-slate-900 uppercase tracking-tight">Coupon Efficiency</h3>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Incentive Stats</p>
         </div>
       </div>
 
@@ -33,10 +33,10 @@ export function CouponMachineWidget({ metrics }: CouponMachineWidgetProps) {
         {/* Metric 1 */}
         <div>
           <div className="flex justify-between items-baseline mb-2">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Usage Rate</span>
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Usage Rate</span>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-black text-slate-900">{usageRate}%</span>
+            <span className="text-3xl font-black text-slate-900">{usageRate}%</span>
             <span className="text-xs font-medium text-slate-400">redemption</span>
           </div>
           <div className="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">

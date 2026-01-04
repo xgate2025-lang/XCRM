@@ -114,7 +114,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
       {/* Global Syncing Overlay */}
       {isSyncing && (
         <div className="absolute inset-0 z-50 bg-white/40 backdrop-blur-[1px] flex items-center justify-center rounded-3xl transition-all">
-          <div className="bg-white p-4 rounded-2xl shadow-xl border border-slate-100 flex items-center gap-3">
+          <div className="bg-white p-4 rounded-2xl border border-slate-100 flex items-center gap-3">
             <Loader2 className="w-5 h-5 text-primary-500 animate-spin" />
             <span className="text-sm font-bold text-slate-600 uppercase tracking-widest">Processing Transaction Ledger...</span>
           </div>
@@ -122,18 +122,18 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
       )}
 
       {/* Control Strip */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-slate-200 shadow-sm">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded-3xl border border-slate-200">
         <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-slate-200 shadow-inner">
+            <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl border border-slate-200">
                 <button 
                     onClick={() => setIsNetSales(true)}
-                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${isNetSales ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${isNetSales ? 'bg-white text-slate-900 border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                     Net Sales
                 </button>
                 <button 
                     onClick={() => setIsNetSales(false)}
-                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${!isNetSales ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
+                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase transition-all ${!isNetSales ? 'bg-white text-slate-900 border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
                 >
                     Gross Sales
                 </button>
@@ -144,12 +144,12 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
                     onClick={() => setExcludeOutliers(!excludeOutliers)}
                     className={`w-10 h-5 rounded-full p-0.5 flex transition-colors ${excludeOutliers ? 'bg-primary-500 justify-end' : 'bg-slate-200 justify-start'}`}
                 >
-                    <div className="w-4 h-4 bg-white rounded-full shadow-sm"></div>
+                    <div className="w-4 h-4 bg-white rounded-full border border-slate-100"></div>
                 </div>
                 <span className="text-xs font-bold text-slate-500 uppercase tracking-tight">Exclude Outliers (Top 1%)</span>
             </label>
         </div>
-        <button className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
+        <button className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-slate-800 transition-all">
             <Download size={16} /> Export Truth Serum
         </button>
       </div>
@@ -192,7 +192,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
       </div>
 
       {/* Smart Summary Narrative */}
-      <div className="bg-white rounded-[2.5rem] p-8 border border-slate-200 shadow-sm relative overflow-hidden group">
+      <div className="bg-white rounded-[2.5rem] p-8 border border-slate-200 relative overflow-hidden group">
         <div className="absolute right-0 bottom-0 p-8 opacity-[0.03] group-hover:scale-110 transition-transform duration-700">
           <Sparkles size={220} />
         </div>
@@ -228,7 +228,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
         
         {/* Zone B: Acquisition Analysis */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm space-y-8 flex flex-col">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 space-y-8 flex flex-col">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-black text-slate-900 tracking-tight">The "Second Purchase" Wall</h3>
@@ -289,7 +289,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
         </div>
 
         {/* Zone C: Basket DNA */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm flex flex-col h-full">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 flex flex-col h-full">
            <div className="flex items-center justify-between mb-10">
               <div>
                 <h3 className="text-lg font-black text-slate-900 tracking-tight">Basket DNA (AOV vs Volume)</h3>
@@ -347,7 +347,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
                  {HERO_PRODUCTS.map((prod, i) => (
                    <div key={i} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-2xl group hover:border-primary-200 transition-all">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-primary-500 shadow-sm transition-colors">
+                        <div className="w-10 h-10 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 group-hover:text-primary-500 transition-colors">
                             {prod.category === 'Coffee' ? <Coffee size={20} /> : <Layers size={20} />}
                         </div>
                         <div>
@@ -372,7 +372,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
         </div>
 
         {/* Zone D: Tier Economic Power */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 shadow-sm xl:col-span-2 space-y-10">
+        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-8 xl:col-span-2 space-y-10">
            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div>
                 <h3 className="text-lg font-black text-slate-900 tracking-tight">Tier Economic Contribution</h3>
@@ -380,19 +380,19 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
               </div>
               <div className="flex gap-4">
                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-blue-500 shadow-sm shadow-blue-200"></div>
+                    <div className="w-3 h-3 rounded bg-blue-500"></div>
                     <span className="text-[10px] font-black uppercase text-slate-400">Basic</span>
                  </div>
                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-primary-300 shadow-sm shadow-primary-100"></div>
+                    <div className="w-3 h-3 rounded bg-primary-300"></div>
                     <span className="text-[10px] font-black uppercase text-slate-400">Silver</span>
                  </div>
                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-yellow-400 shadow-sm shadow-yellow-100"></div>
+                    <div className="w-3 h-3 rounded bg-yellow-400"></div>
                     <span className="text-[10px] font-black uppercase text-slate-400">Gold</span>
                  </div>
                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded bg-cyan-400 shadow-sm shadow-cyan-100"></div>
+                    <div className="w-3 h-3 rounded bg-cyan-400"></div>
                     <span className="text-[10px] font-black uppercase text-slate-400">Platinum</span>
                  </div>
               </div>
@@ -430,7 +430,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
                  </h4>
                  <div className="space-y-4">
                     {TIER_RPV_DATA.map((row, idx) => (
-                      <div key={idx} className="bg-slate-50 border border-slate-100 rounded-2xl p-4 transition-all hover:bg-white hover:border-slate-300 hover:shadow-md group">
+                      <div key={idx} className="bg-slate-50 border border-slate-100 rounded-2xl p-4 transition-all hover:bg-white hover:border-slate-300 group">
                          <div className="flex justify-between items-start mb-3">
                             <span className="text-sm font-black text-slate-900">{row.tier}</span>
                             <span className="text-xl font-black text-slate-900 tracking-tighter">${row.rpv}</span>
@@ -450,7 +450,7 @@ const TransactionReport: React.FC<TransactionReportProps> = ({ onNavigate }) => 
                       </div>
                     ))}
                  </div>
-                 <div className="mt-8 p-5 bg-slate-900 rounded-3xl text-white shadow-xl relative overflow-hidden group">
+                 <div className="mt-8 p-5 bg-slate-900 rounded-3xl text-white relative overflow-hidden group">
                     <div className="absolute right-0 top-0 p-4 opacity-10 group-hover:rotate-12 transition-transform duration-700">
                         <TrendingUp size={60} />
                     </div>
@@ -494,7 +494,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-4xl border border-slate-200 shadow-sm flex flex-col justify-between min-h-[160px] relative group hover:border-primary-300 transition-all cursor-default">
+    <div className="bg-white p-6 rounded-4xl border border-slate-200 flex flex-col justify-between min-h-[160px] relative group hover:border-primary-300 transition-all cursor-default">
       <div className="flex justify-between items-start mb-4">
         <div className={`p-3 rounded-2xl ${colorMap[color]} transition-transform group-hover:scale-110`}>
           <Icon size={24} />
@@ -511,7 +511,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
           <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{label}</span>
           <div className="group/hint relative">
              <Info size={10} className="text-slate-300 cursor-help" />
-             <div className="absolute bottom-full left-0 mb-2 w-48 bg-slate-900 text-white text-[9px] p-2 rounded-lg opacity-0 pointer-events-none group-hover/hint:opacity-100 transition-opacity z-20 shadow-2xl border border-white/10 leading-relaxed font-medium">
+             <div className="absolute bottom-full left-0 mb-2 w-48 bg-slate-900 text-white text-[9px] p-2 rounded-lg opacity-0 pointer-events-none group-hover/hint:opacity-100 transition-opacity z-20 border border-white/10 leading-relaxed font-medium">
                {hint}
              </div>
           </div>

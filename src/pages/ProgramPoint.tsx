@@ -96,7 +96,7 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
       {/* Success Modal Overlay (Points Configured Modal) */}
       {showSuccessModal && pointsConfig && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-300">
-           <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-md w-full relative animate-in zoom-in-95 duration-300 border border-slate-100">
+           <div className="bg-white rounded-3xl p-8 max-w-md w-full relative animate-in zoom-in-95 duration-300 border border-slate-100">
               <button 
                 onClick={() => setShowSuccessModal(false)}
                 className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-50 transition-colors"
@@ -157,7 +157,7 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
                       </button>
                       <button 
                         onClick={handleContinueToTiers}
-                        className="flex-[2] py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200 flex items-center justify-center gap-2"
+                        className="flex-[2] py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
                       >
                         Confirm & Continue <ArrowRight size={18} />
                       </button>
@@ -205,7 +205,7 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
 
       {/* Zone B: The Onboarding Hero */}
       {!pointsConfig ? (
-        <div className="relative bg-white rounded-3xl p-8 border border-slate-200 shadow-xl shadow-slate-100/50 overflow-hidden">
+        <div className="relative bg-white rounded-3xl p-8 border border-slate-200 overflow-hidden">
             <div className="absolute top-0 right-0 w-64 h-64 bg-green-50 rounded-full -mr-20 -mt-20 opacity-50 blur-3xl pointer-events-none"></div>
             
             <div className="relative z-10 max-w-2xl">
@@ -229,7 +229,7 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
 
             <button 
                 onClick={handleSetupStart}
-                className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all shadow-lg shadow-slate-200"
+                className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
             >
                 <Coins size={20} className="text-green-400 fill-green-400" />
                 Configure Points Economy
@@ -243,7 +243,7 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
         </div>
       ) : (
          /* Completed State Summary */
-         <div className={`relative bg-white rounded-3xl p-8 border shadow-sm flex items-center justify-between ${isLive ? 'border-green-200 shadow-green-500/5' : 'border-slate-200'}`}>
+         <div className={`relative bg-white rounded-3xl p-8 border flex items-center justify-between ${isLive ? 'border-green-200' : 'border-slate-200'}`}>
               <div>
                   <div className="flex items-center gap-2 mb-1">
                       <CheckCircle2 size={20} className={isLive ? "text-green-500" : "text-blue-500"} />
@@ -259,8 +259,8 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
 
       {/* Zone C: Status Card (Summary) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className={`bg-slate-50 rounded-2xl p-6 border border-slate-100 flex flex-col justify-between h-48 ${pointsConfig ? 'opacity-100 bg-white shadow-sm' : 'opacity-60'}`}>
-              <div className="p-3 bg-white rounded-xl w-fit shadow-sm text-slate-400 border border-slate-100">
+          <div className={`bg-slate-50 rounded-2xl p-6 border border-slate-100 flex flex-col justify-between h-48 ${pointsConfig ? 'opacity-100 bg-white' : 'opacity-60'}`}>
+              <div className="p-3 bg-white rounded-xl w-fit text-slate-400 border border-slate-100">
                   <Coins size={24} />
               </div>
               <div>
@@ -272,8 +272,8 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
                   )}
               </div>
           </div>
-          <div className={`bg-slate-50 rounded-2xl p-6 border border-slate-100 flex flex-col justify-between h-48 ${pointsConfig ? 'opacity-100 bg-white shadow-sm' : 'opacity-60'}`}>
-              <div className="p-3 bg-white rounded-xl w-fit shadow-sm text-slate-400 border border-slate-100">
+          <div className={`bg-slate-50 rounded-2xl p-6 border border-slate-100 flex flex-col justify-between h-48 ${pointsConfig ? 'opacity-100 bg-white' : 'opacity-60'}`}>
+              <div className="p-3 bg-white rounded-xl w-fit text-slate-400 border border-slate-100">
                   <ArrowRight size={24} />
               </div>
               <div>
@@ -285,8 +285,8 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
                   )}
               </div>
           </div>
-          <div className={`bg-slate-50 rounded-2xl p-6 border border-slate-100 flex flex-col justify-between h-48 ${pointsConfig ? 'opacity-100 bg-white shadow-sm' : 'opacity-60'}`}>
-              <div className="p-3 bg-white rounded-xl w-fit shadow-sm text-slate-400 border border-slate-100">
+          <div className={`bg-slate-50 rounded-2xl p-6 border border-slate-100 flex flex-col justify-between h-48 ${pointsConfig ? 'opacity-100 bg-white' : 'opacity-60'}`}>
+              <div className="p-3 bg-white rounded-xl w-fit text-slate-400 border border-slate-100">
                   <Zap size={24} />
               </div>
               <div>

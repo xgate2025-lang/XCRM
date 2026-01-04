@@ -14,9 +14,11 @@ import { LineChart, Line, ResponsiveContainer } from 'recharts';
 interface TrendMetricProps {
   data: MetricData;
   variant?: 'default' | 'compact';
+  icon?: React.ElementType;
+  iconColor?: string; // e.g., 'blue', 'emerald'
 }
 
-export function TrendMetric({ data, variant = 'default' }: TrendMetricProps) {
+export function TrendMetric({ data, variant = 'default', icon: Icon, iconColor = 'slate' }: TrendMetricProps) {
   const { value, trend, label, unit, history = [] } = data;
 
   // Format value with unit
@@ -27,28 +29,49 @@ export function TrendMetric({ data, variant = 'default' }: TrendMetricProps) {
   
   // Prepare chart data (history array to object array)
   const chartData = history.map((val, i) => ({ i, value: val }));
-  const strokeColor = trend >= 0 ? '#10b981' : '#ef4444'; // green-500 : red-500
+  const strokeColor = trend >= 0 ? '#10b981' : '#ef4444'; 
+
+  // Dynamic color classes for Icon Box
+  const bgClass = `bg-${iconColor}-50`;
+  const textClass = `text-${iconColor}-600`;
 
   return (
     <div className={`
       card-premium
       ${variant === 'compact' ? 'p-4' : 'p-6'} flex flex-col justify-between h-full group
     `}>
-      {/* Top Row: Label + Badge */}
-      <div className="flex justify-between items-start mb-2">
-        <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.08em]">
-          {label}
-        </div>
+      {/* Header: Icon Box (Left) + Trend Badge (Right) - "CensusCard Style" */}
+      <div className="flex justify-between items-start mb-4">
+        {Icon ? (
+           <div className={`p-3 rounded-2xl ${bgClass} ${textClass} transition-colors`}>
+             <Icon size={22} />
+           </div>
+        ) : (
+           /* Fallback if no icon provided */
+           <div className="h-11 w-11" />
+        )}
         <TrendBadge direction={trendDirection} value={trend} />
       </div>
 
-      {/* Middle: Sparkline (Only if history exists) */}
+      {/* Main Content: Label + Value */}
+      <div className="mb-4">
+         <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+           {label}
+         </div>
+         <div className={`font-black tracking-tight text-slate-900 ${
+           variant === 'compact' ? 'text-2xl' : 'text-3xl'
+         }`}>
+           {formattedValue}
+         </div>
+      </div>
+
+      {/* Footer / Middle: Sparkline */}
       {history.length > 0 && variant === 'default' && (
-        <div className="h-12 w-full my-2 opacity-100 mix-blend-multiply filter contrast-125">
+        <div className="h-10 w-full opacity-80 mix-blend-multiply filter contrast-125 mt-auto">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData}>
               <defs>
-                <linearGradient id={`gradient-${label}`} x1="0" y1="0" x2="1" y2="0">
+                 <linearGradient id={`gradient-${label}`} x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor={strokeColor} stopOpacity={0.2}/>
                   <stop offset="100%" stopColor={strokeColor} stopOpacity={1}/>
                 </linearGradient>
@@ -65,13 +88,6 @@ export function TrendMetric({ data, variant = 'default' }: TrendMetricProps) {
           </ResponsiveContainer>
         </div>
       )}
-
-      {/* Bottom: Big Number */}
-      <div className={`font-black tracking-tight text-slate-900 ${
-        variant === 'compact' ? 'text-2xl' : 'text-4xl'
-      }`}>
-        {formattedValue}
-      </div>
     </div>
   );
 }

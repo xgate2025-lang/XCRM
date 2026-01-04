@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Bell, Search, ChevronDown, 
-  FileText, MessageCircle, Settings
+  FileText, MessageCircle, Settings,
+  UserPlus, Zap, Repeat, DollarSign, ShoppingBag
 } from 'lucide-react';
 import { DashboardProvider, useDashboard } from '../context/DashboardContext';
 import { SetupGuide } from '../components/dashboard/SetupGuide';
@@ -99,22 +100,40 @@ const DashboardContent = () => {
       <SetupGuide />
 
       {/* Main Layout Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
+      <div className="grid grid-cols-1 gap-6 items-start pb-24">
         
-        {/* Main Command Center (Zones 1-4) */}
-        <div className="xl:col-span-3 space-y-8">
+        {/* Main Command Center (Full Width) */}
+        <div className="space-y-8">
           
           {/* Zone 1: Revenue Health (5 Cards) */}
           <section>
             <h2 className="text-lg font-bold text-slate-900 mb-4">Revenue Health</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-               {/* Top 3 Priority */}
-               <TrendMetric data={metrics.newMembers} />
-               <TrendMetric data={metrics.firstPurchaseConversion} />
-               <TrendMetric data={metrics.repurchaseRate} />
-               {/* Bottom 2 Priority */}
-               <TrendMetric data={metrics.memberSalesGMV} />
-               <TrendMetric data={metrics.memberAOV} />
+            <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4">
+               <TrendMetric 
+                 data={metrics.newMembers} 
+                 icon={UserPlus} 
+                 iconColor="slate" 
+               />
+               <TrendMetric 
+                 data={metrics.firstPurchaseConversion} 
+                 icon={Zap} 
+                 iconColor="emerald" 
+               />
+               <TrendMetric 
+                 data={metrics.repurchaseRate} 
+                 icon={Repeat} 
+                 iconColor="violet" 
+               />
+               <TrendMetric 
+                 data={metrics.memberSalesGMV} 
+                 icon={DollarSign} 
+                 iconColor="blue" 
+               />
+               <TrendMetric 
+                 data={metrics.memberAOV} 
+                 icon={ShoppingBag} 
+                 iconColor="rose" 
+               />
             </div>
           </section>
 
@@ -147,12 +166,10 @@ const DashboardContent = () => {
 
         </div>
 
-        {/* Sidebar (Quick Actions) */}
-        <div className="xl:col-span-1 space-y-6 sticky top-6">
-           <QuickActions />
-        </div>
-
       </div>
+
+      {/* Floating Dock */}
+      <QuickActions />
     </div>
   );
 };

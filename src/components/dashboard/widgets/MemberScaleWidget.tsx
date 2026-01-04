@@ -29,7 +29,7 @@ export function MemberScaleWidget({ totalMembers, activeMembers }: MemberScaleWi
             <Users size={22} />
           </div>
           <div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.08em]">Total Scale</div>
+            <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Scale</div>
             <div className="text-3xl font-black text-slate-900 tracking-tight">
               {totalMembers.toLocaleString()}
             </div>
@@ -43,16 +43,16 @@ export function MemberScaleWidget({ totalMembers, activeMembers }: MemberScaleWi
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 mb-1">
           <Activity size={16} className="text-slate-400" />
-          <div className="text-[11px] font-bold text-slate-400 uppercase tracking-[0.08em]">Active Members</div>
+          <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Members</div>
         </div>
         
         <div className="flex items-center gap-4">
-          <div className="text-4xl font-black text-slate-900 tracking-tight">
+          <div className="text-3xl font-black text-slate-900 tracking-tight">
             {activeMembers.toLocaleString()}
           </div>
           
           {/* Pulse Dot */}
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-100">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-50 rounded-full border border-slate-200">
             <span className="relative flex h-3 w-3">
               <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
                 isHealthy ? 'bg-green-400' : 'bg-amber-400'
