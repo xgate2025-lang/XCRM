@@ -1,0 +1,37 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap");
+
+/* Global Styles */
+body {
+  margin: 0;
+  font-family: "Satoshi", "Outfit", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8fafc; /* Slate-50 */
+}
+
+/* 
+  Premium Card Utility 
+  "The Creative Director Cut"
+  
+  Note: Using raw CSS to ensure compatibility if Tailwind @apply isn't configured in the build pipeline.
+*/
+.card-premium {
+  background-color: #ffffff;
+  border-radius: 2rem; /* 32px - Hyper rounded */
+  border: 1px solid #f1f5f9; /* Slate-100 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03); /* Soft resting shadow */
+  transition: all 400ms cubic-bezier(0.2, 0.8, 0.2, 1); /* "Springy" ease */
+}
+
+.card-premium:hover {
+  transform: translateY(-4px); /* Levitate */
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.06); /* Diffused lift shadow */
+  border-color: #e2e8f0; /* Slate-200 */
+}
+
+/* Utility for text gradients if needed */
+.text-gradient-brand {
+  background: linear-gradient(226deg, #0952d6 0%, #6d2596 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

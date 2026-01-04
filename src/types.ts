@@ -248,3 +248,66 @@ export interface CouponData {
   status: CouponStatus;
   revenue: number;
 }
+
+// --- Dashboard V2 Types ---
+
+export interface DateRange {
+  start: Date;
+  end: Date;
+  label: string; // "Last 7 Days", "Last 30 Days", etc.
+}
+
+export interface OnboardingProgress {
+  isCompleted: boolean;
+  isDismissed: boolean;
+  steps: {
+    basicSettings: boolean;
+    masterData: boolean;
+    loyaltySetup: boolean;
+  };
+}
+
+export interface DashboardConfiguration {
+  userId: string;
+  quickActions: string[]; // IDs of quick action items
+  onboarding: OnboardingProgress;
+  widgets: {
+    setupGuide: boolean; // visible or hidden
+  };
+}
+
+export interface GlobalState {
+  dateRange: DateRange;
+  storeScope: string[]; // Store IDs, empty = All
+}
+
+export interface MetricData {
+  value: number;
+  trend: number; // Percentage change vs previous period
+  label: string;
+  unit?: string; // e.g., '%', '$'
+  history?: number[]; // Array of values for sparkline
+}
+
+export interface ComboChartData {
+  name: string; // X-Axis Label (e.g. Tier Name)
+  count: number; // Bar Value (Member Count)
+  salesPercent: number; // Line Value (% of Sales)
+}
+
+export interface DashboardMetrics {
+  newMembers: MetricData;
+  firstPurchaseConversion: MetricData;
+  repurchaseRate: MetricData;
+  memberSalesGMV: MetricData;
+  memberAOV: MetricData;
+  totalMembers: number;
+  activeMembers: number;
+  activeCampaigns: number;
+  campaignParticipation: number;
+  pointsRedemptionRate: number;
+  couponsUsageRate: number;
+  tierDistribution: ComboChartData[]; // Add this for Zone 2B
+}
+
+

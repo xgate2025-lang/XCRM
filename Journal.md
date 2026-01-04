@@ -36,3 +36,10 @@ INPUTS:
 - **Incident**: [What broke?]
 - **Root Cause**: [Why did the AI think it would work?]
 - **Correction**: [The fix]
+
+## 2026-01-04: Dashboard V2 Implementation
+- **Pattern**: Successfully implemented modular dashboard with DashboardContext provider.
+- **Lesson**: Wrapping page components with a provider requires separating the content into a child component (e.g., `DashboardContent`) to use hooks.
+- **Visual Anchor**: Following the Journal Style Cheat Sheet ensured consistent styling across all new components.
+- **Persistence**: localStorage works well for user preferences when no backend is available.
+

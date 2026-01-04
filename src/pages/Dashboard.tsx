@@ -1,38 +1,27 @@
 import React, { useState } from 'react';
 import { 
-  BarChart, Bar, XAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  Cell
-} from 'recharts';
-import { 
-  Users, Award, 
-  Calendar, Bell, Plus, Search, ChevronDown, ChevronRight, ArrowRight,
+  Bell, Search, ChevronDown, 
   FileText, MessageCircle, Settings
 } from 'lucide-react';
+import { DashboardProvider, useDashboard } from '../context/DashboardContext';
+import { SetupGuide } from '../components/dashboard/SetupGuide';
+import { GlobalNavigator } from '../components/dashboard/GlobalNavigator';
+import { TrendMetric } from '../components/dashboard/TrendMetric';
+import { QuickActions } from '../components/dashboard/QuickActions';
 
-// --- Mock Data ---
-const activityData = [
-  { name: 'Mon', value: 4000 },
-  { name: 'Tue', value: 3000 },
-  { name: 'Wed', value: 5000 }, // Higher middle
-  { name: 'Thu', value: 2780 },
-  { name: 'Fri', value: 1890 },
-  { name: 'Sat', value: 2390 },
-  { name: 'Sun', value: 3490 },
-];
+// Widgets
+import { MemberScaleWidget } from '../components/dashboard/widgets/MemberScaleWidget';
+import { TierDistributionWidget } from '../components/dashboard/widgets/TierDistributionWidget';
+import { PointsEngineWidget } from '../components/dashboard/widgets/PointsEngineWidget';
+import { CouponMachineWidget } from '../components/dashboard/widgets/CouponMachineWidget';
+import { CampaignPulseWidget } from '../components/dashboard/widgets/CampaignPulseWidget';
 
-const transactions = [
-  { id: 'WWX123XZ', name: 'Amazon Support', type: 'Send', date: '12 Jan 2024', time: '08.00 AM', amount: '$10.00', balance: '=$56', status: 'Success', icon: 'A', color: 'bg-orange-100 text-orange-600' },
-  { id: 'WWX123XZ', name: 'Upwork', type: 'Receive', date: '12 Jan 2024', time: '08.00 AM', amount: '$150.00', balance: '+$150', status: 'Pending', icon: 'U', color: 'bg-green-100 text-green-600' },
-  { id: 'WWX123XZ', name: 'EA Games', type: 'Send', date: '12 Jan 2024', time: '08.00 AM', amount: '$59.00', balance: '=$56', status: 'Pending', icon: 'E', color: 'bg-red-100 text-red-600' },
-  { id: 'WWX123XZ', name: 'Apple Inc', type: 'Send', date: '12 Jan 2024', time: '08.00 AM', amount: '$999.00', balance: '=$56', status: 'Cancelled', icon: 'A', color: 'bg-slate-100 text-slate-600' },
-];
-
-const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState<'history' | 'upcoming'>('history');
+const DashboardContent = () => {
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+  const { metrics, isOnboardingVisible } = useDashboard();
 
   return (
-    <div className="space-y-5 animate-in fade-in duration-500 pb-10">
+    <div className="space-y-6 animate-in fade-in duration-500 pb-10">
       
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
@@ -103,289 +92,76 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+      {/* Global Navigator */}
+      <GlobalNavigator />
+
+      {/* State A: Setup Guide (Full Width) */}
+      <SetupGuide />
+
+      {/* Main Layout Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 items-start">
         
-        {/* Left Column: Activity Graph & Invite Friend */}
-        <div className="xl:col-span-1 space-y-5 min-w-0">
-            {/* Activity Graph Card */}
-            <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-col min-w-0">
-                <div className="flex justify-between items-start mb-6">
-                    <div>
-                        <h3 className="text-sm font-bold text-slate-500 uppercase tracking-wider mb-1">Activity Graph</h3>
-                        <div className="text-4xl font-extrabold text-slate-900">$ 256K</div>
-                    </div>
-                    <button className="text-xs font-bold text-primary-500 hover:text-primary-700 flex items-center uppercase tracking-wide">
-                        See More <ChevronRight size={14} className="ml-1" />
-                    </button>
-                </div>
-                
-                {/* Chart Area - Using strict inline styles to fix Recharts 'width(-1)' warning */}
-                <div style={{ width: '100%', height: 250, minWidth: 0 }}>
-                        <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={activityData} barSize={24}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                                <XAxis 
-                                    dataKey="name" 
-                                    axisLine={false} 
-                                    tickLine={false} 
-                                    tick={{fill: '#94a3b8', fontSize: 11, fontWeight: 500}} 
-                                    dy={10} 
-                                />
-                                <Tooltip 
-                                    cursor={{fill: 'transparent'}}
-                                    contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                                />
-                                <Bar dataKey="value" radius={[10, 10, 10, 10]}>
-                                    {activityData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={index === 2 ? '#055DDB' : '#38bdf8'} />
-                                    ))}
-                                </Bar>
-                            </BarChart>
-                        </ResponsiveContainer>
-                </div>
-
-                {/* In-card Navigation List */}
-                <div className="mt-8 space-y-3">
-                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors group">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-500">
-                                    <Award size={20} />
-                                </div>
-                                <span className="font-bold text-slate-700">Goals</span>
-                            </div>
-                            <ChevronRight size={20} className="text-slate-400 group-hover:text-slate-600" />
-                    </div>
-                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors group">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center text-primary-500">
-                                    <Calendar size={20} />
-                                </div>
-                                <span className="font-bold text-slate-700">Monthly Plan</span>
-                            </div>
-                            <ChevronRight size={20} className="text-slate-400 group-hover:text-slate-600" />
-                    </div>
-                    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl cursor-pointer hover:bg-slate-100 transition-colors group">
-                            <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-500">
-                                    <Users size={20} />
-                                </div>
-                                <span className="font-bold text-slate-700">Settings</span>
-                            </div>
-                            <ChevronRight size={20} className="text-slate-400 group-hover:text-slate-600" />
-                    </div>
-                </div>
+        {/* Main Command Center (Zones 1-4) */}
+        <div className="xl:col-span-3 space-y-8">
+          
+          {/* Zone 1: Revenue Health (5 Cards) */}
+          <section>
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Revenue Health</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+               {/* Top 3 Priority */}
+               <TrendMetric data={metrics.newMembers} />
+               <TrendMetric data={metrics.firstPurchaseConversion} />
+               <TrendMetric data={metrics.repurchaseRate} />
+               {/* Bottom 2 Priority */}
+               <TrendMetric data={metrics.memberSalesGMV} />
+               <TrendMetric data={metrics.memberAOV} />
             </div>
+          </section>
 
-            {/* Invite Friend (Moved from Sidebar) */}
-            <div className="relative overflow-hidden rounded-3xl bg-brand-gradient p-5 text-white text-center shadow-xl shadow-slate-200">
-                {/* Abstract bg shapes */}
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full -mr-16 -mt-16 blur-2xl"></div>
-                <div className="absolute bottom-0 left-0 w-32 h-32 bg-black opacity-10 rounded-full -ml-16 -mb-16 blur-2xl"></div>
-                
-                <h4 className="relative z-10 text-xl font-bold mb-3">Invite your friend by referral code</h4>
-                <p className="relative z-10 text-sm text-white/80 mb-8 leading-relaxed max-w-xs mx-auto">
-                    Maximize rewards - Share your unique referral code for exclusive benefits!
-                </p>
-                <button className="relative z-10 w-40 mx-auto py-3 bg-white text-primary-500 rounded-2xl text-sm font-bold hover:bg-slate-50 transition-colors flex items-center justify-center gap-2 shadow-sm">
-                    Invite Now <ArrowRight size={16} />
-                </button>
+          {/* Zone 2: Relationship Intelligence */}
+          <section>
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Relationship Intelligence</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+               <MemberScaleWidget 
+                 totalMembers={metrics.totalMembers} 
+                 activeMembers={metrics.activeMembers} 
+               />
+               <TierDistributionWidget data={metrics.tierDistribution} />
             </div>
+          </section>
+
+          {/* Zone 3: Asset Overview */}
+          <section>
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Asset Overview</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
+              <PointsEngineWidget metrics={metrics} />
+              <CouponMachineWidget metrics={metrics} />
+            </div>
+          </section>
+
+          {/* Zone 4: Strategy Pulse */}
+          <section>
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Strategy Pulse</h2>
+             <CampaignPulseWidget metrics={metrics} />
+          </section>
+
         </div>
 
-        {/* Right Column: Payment Overview & Quick Send & Recent Activity */}
-        <div className="xl:col-span-2 space-y-5 min-w-0">
-            
-            {/* Top Row: Payment Overview + Quick Send */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                
-                {/* Payment Overview */}
-                <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200">
-                    <h3 className="text-lg font-bold text-slate-900 mb-1">Payment Overview</h3>
-                    <p className="text-slate-500 text-sm mb-6">View your income in a certain period of time</p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                        <PastelCard 
-                            title="Murabahah" 
-                            amount="$1.00" 
-                            color="bg-pastel-peach" 
-                            textColor="text-slate-800"
-                        />
-                        <PastelCard 
-                            title="Ijarah" 
-                            amount="$20.198" 
-                            color="bg-pastel-blue" 
-                            textColor="text-slate-800"
-                        />
-                        <PastelCard 
-                            title="Mushakarah" 
-                            amount="$43.092" 
-                            color="bg-pastel-green" 
-                            textColor="text-slate-800"
-                        />
-                        <PastelCard 
-                            title="Istisna" 
-                            amount="$12.662" 
-                            color="bg-pastel-purple" 
-                            textColor="text-slate-800"
-                        />
-                    </div>
-                </div>
-
-                {/* Quick Send */}
-                <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200">
-                    <h3 className="text-lg font-bold text-slate-900 mb-6">Quick send</h3>
-                    <p className="text-slate-500 text-sm mb-6">View your income in a certain period of time</p>
-                    
-                    {/* Avatars */}
-                    <div className="flex items-center gap-2 mb-8 overflow-x-auto no-scrollbar pb-2">
-                        {[1,2,3,4,5].map(i => (
-                                <div key={i} className="w-12 h-12 rounded-full border-2 border-white shadow-sm flex-shrink-0 relative cursor-pointer hover:scale-110 transition-transform">
-                                <img src={`https://picsum.photos/100?random=${i}`} className="w-full h-full rounded-full object-cover" alt="User" />
-                                </div>
-                        ))}
-                        <button className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:bg-slate-50 flex-shrink-0">
-                            <ChevronRight size={20} />
-                        </button>
-                    </div>
-
-                    {/* Amount Input */}
-                    <div className="bg-slate-50 rounded-2xl p-4 mb-6 flex items-center justify-between">
-                            <div>
-                            <span className="text-xs text-slate-400 font-semibold uppercase">Enter Amount</span>
-                            <div className="text-2xl font-bold text-slate-900 flex items-baseline">
-                                100,000 <span className="text-slate-300 ml-1 text-xl">0</span>
-                            </div>
-                            <div className="text-xs text-primary-500 font-medium mt-1">Balance: $185.389</div>
-                            </div>
-                            <div className="h-8 w-12 bg-white rounded border border-slate-200 flex items-center justify-center">
-                                <span className="font-bold text-xs italic text-slate-800">VISA</span>
-                            </div>
-                    </div>
-
-                    <button className="w-full py-4 bg-slate-900 text-white rounded-2xl font-semibold text-lg hover:bg-slate-800 transition-all shadow-lg shadow-slate-200">
-                        Send
-                    </button>
-                </div>
-            </div>
-
-            {/* Recent Activity Card */}
-            <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200">
-                {/* Header */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
-                    <div>
-                        <h3 className="text-lg font-bold text-slate-900">Recent activity</h3>
-                        <p className="text-slate-500 text-sm">View your recent transaction</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                            {/* Date Picker (Mock) */}
-                            <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-full border border-slate-200 text-sm font-medium text-slate-600 shadow-sm cursor-pointer hover:bg-slate-50">
-                                <Calendar size={16} />
-                                <span>12 Jan - 12 Feb</span>
-                                <ChevronDown size={14} className="ml-1 text-slate-400" />
-                            </div>
-                            <button className="p-2 rounded-full bg-primary-500 text-white shadow-lg shadow-primary-200 hover:bg-primary-600 transition-all">
-                                <Plus size={20} />
-                            </button>
-                    </div>
-                </div>
-
-                {/* Toggle Pills */}
-                <div className="flex gap-2 mb-3">
-                    <button 
-                        onClick={() => setActiveTab('history')}
-                        className={`px-6 py-2 rounded-full text-sm font-semibold transition-all ${activeTab === 'history' ? 'bg-slate-900 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
-                    >
-                        History
-                    </button>
-                    <button 
-                        onClick={() => setActiveTab('upcoming')}
-                        className={`px-6 py-2 rounded-full text-sm font-semibold transition-all ${activeTab === 'upcoming' ? 'bg-slate-900 text-white shadow-md' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
-                    >
-                        Upcoming
-                    </button>
-                </div>
-
-                {/* Table */}
-                <div className="overflow-x-auto">
-                    <table className="w-full">
-                        <thead className="bg-slate-50/50">
-                            <tr>
-                                <th className="px-6 py-4 text-left">
-                                    <div className="w-5 h-5 rounded border border-slate-300 bg-white"></div>
-                                </th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Name/Business</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Date</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider hidden sm:table-cell">Invoice ID</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Fee</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Balance</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-wider">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-slate-50">
-                            {transactions.map((trx, idx) => (
-                                <tr key={idx} className="group hover:bg-slate-50/80 transition-colors">
-                                    <td className="px-6 py-3">
-                                        <div className="w-5 h-5 rounded border border-slate-300 bg-white cursor-pointer hover:border-primary-500"></div>
-                                    </td>
-                                    <td className="px-6 py-3">
-                                        <div className="flex items-center gap-4">
-                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${trx.color}`}>
-                                                {trx.icon}
-                                            </div>
-                                            <div>
-                                                <div className="font-bold text-slate-800">{trx.name}</div>
-                                                <div className="text-xs text-slate-400 font-medium">{trx.type}</div>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-3">
-                                        <div className="text-sm font-semibold text-slate-700">{trx.date}</div>
-                                        <div className="text-xs text-slate-400">at {trx.time}</div>
-                                    </td>
-                                    <td className="px-6 py-3 hidden sm:table-cell text-sm text-slate-500 font-medium">
-                                        {trx.id}
-                                    </td>
-                                    <td className="px-6 py-3 text-sm font-bold text-slate-800">
-                                        {trx.amount}
-                                    </td>
-                                    <td className="px-6 py-3 text-sm font-bold text-slate-800">
-                                        {trx.balance}
-                                    </td>
-                                    <td className="px-6 py-3">
-                                        <StatusBadge status={trx.status} />
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        {/* Sidebar (Quick Actions) */}
+        <div className="xl:col-span-1 space-y-6 sticky top-6">
+           <QuickActions />
         </div>
+
       </div>
     </div>
   );
 };
 
-// --- Helper Components ---
-
-const PastelCard = ({ title, amount, color, textColor }: { title: string, amount: string, color: string, textColor: string }) => (
-    <div className={`${color} p-6 rounded-3xl flex flex-col justify-between h-40 transition-transform hover:scale-[1.02] cursor-pointer`}>
-        <div className={`text-sm font-medium ${textColor} opacity-80`}>{title}</div>
-        <div className={`text-4xl font-extrabold ${textColor} tracking-tight`}>{amount}</div>
-    </div>
+// Wrap with DashboardProvider
+const Dashboard = () => (
+  <DashboardProvider>
+    <DashboardContent />
+  </DashboardProvider>
 );
-
-const StatusBadge = ({ status }: { status: string }) => {
-    let styles = "";
-    if (status === 'Success') styles = "bg-green-100 text-green-700 border-green-200";
-    else if (status === 'Pending') styles = "bg-amber-100 text-amber-700 border-amber-200";
-    else styles = "bg-red-100 text-red-700 border-red-200";
-
-    return (
-        <span className={`px-4 py-1.5 rounded-full text-xs font-bold border ${styles}`}>
-            {status}
-        </span>
-    );
-};
 
 export default Dashboard;
