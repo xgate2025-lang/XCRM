@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loyalty Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@300,400,500,700,900&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Satoshi', 'sans-serif'],
+            },
+            borderRadius: {
+              '4xl': '2rem',
+              '5xl': '2.5rem',
+            },
+            colors: {
+              primary: {
+                50: '#F2F6FA',
+                100: '#E6EBF1', // User provided: Subtle Backgrounds/Hover States
+                200: '#BCCDE0',
+                300: '#92AECF',
+                400: '#6890BE',
+                500: '#055DDB', // User provided: Main Buttons/Active States
+                600: '#044BB3', // Darker shade for hover
+                700: '#03398C',
+                800: '#022765',
+                900: '#01153E',
+              },
+              slate: {
+                850: '#1e293b', 
+                900: '#0F172A', // Deep navy for primary buttons
+              },
+              // Inspiration Palette
+              pastel: {
+                peach: '#FFF4DE',
+                cyan: '#DCFCE7', // Actually greenish in screenshot for 'Mushakarah', let's map loosely
+                blue: '#E0F2FE', // Ijarah
+                purple: '#F3E8FF', // Istisna
+                green: '#DCFCE7', // Mushakarah
+              }
+            },
+            backgroundImage: {
+              'brand-gradient': 'linear-gradient(226deg, #0952D6 0%, #6D2596 100%)',
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      /* Custom scrollbar for sidebar */
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+      .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      body {
+        background-color: #FDFDFD; /* Updated background color */
+      }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "recharts": "https://aistudiocdn.com/recharts@^3.5.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.559.0"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
