@@ -45,3 +45,10 @@ INPUTS:
 - **Lesson**: Wrapping page components with a provider requires separating the content into a child component (e.g., `DashboardContent`) to use hooks.
 - **Visual Anchor**: Following the Journal Style Cheat Sheet ensured consistent styling across all new components.
 - **Persistence**: localStorage works well for user preferences when no backend is available.
+
+## 2026-01-05: Coupon Page Card Radius Inconsistency
+
+- **Incident**: Applied `border-radius: 2rem` (card-premium) to Coupon Page cards, which was inconsistent with the desired `1rem`.
+- **Root Cause**: Over-generalized the "Premium Card" design token (`rounded-[2rem]`) to a page that required tighter spacing (`rounded-2xl` / `1rem`).
+- **Correction**: Reverted to `rounded-2xl` (1rem).
+- **Lesson**: While consistency is good, specific interfaces (like dense data tables or lists) may require tighter border radii (`1rem`) than the "marketing-style" dashboard widgets (`2rem`). Always verify if a specific page deviates from the global "premium" standard.
