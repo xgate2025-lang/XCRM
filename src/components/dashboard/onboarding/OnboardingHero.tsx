@@ -14,7 +14,7 @@ import { SuccessAnimation } from './SuccessAnimation';
 import { Loader2 } from 'lucide-react';
 import type { MissionId } from '../../../types';
 
-const MISSION_ORDER: MissionId[] = ['identity', 'currency', 'tiers', 'launch'];
+const MISSION_ORDER: MissionId[] = ['identity', 'tier_method', 'currency', 'tiers', 'launch'];
 
 export function OnboardingHero() {
     const {
@@ -34,7 +34,7 @@ export function OnboardingHero() {
 
     // Count completed missions
     const completedMissions = state
-        ? MISSION_ORDER.filter((id) => state.missions[id].isComplete).length
+        ? MISSION_ORDER.filter((id) => state.missions[id] && state.missions[id].isComplete).length
         : 0;
 
     const isFullyComplete = state?.completionPercentage === 100;

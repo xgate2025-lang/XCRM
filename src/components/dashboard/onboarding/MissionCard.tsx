@@ -26,10 +26,11 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
     // Dynamic styles based on state
     const cardClasses = `
     relative rounded-2xl bg-white p-6 shadow-sm border transition-all duration-300
-    ${isActive ? 'border-primary-200 shadow-lg scale-100 hover:border-primary-300 hover:bg-primary-100/30' : 'border-gray-100 opacity-60 scale-95'}
+    ${isActive ? 'border-primary-200 shadow-lg' : 'border-gray-100'}
     ${isComplete ? 'border-green-300 bg-green-50/30' : ''}
     ${isSkipped ? 'border-yellow-300 bg-yellow-50/30' : ''}
-    min-w-[320px] max-w-[360px] flex-shrink-0
+    ${!isActive ? 'hover:border-primary-200 cursor-pointer' : ''}
+    min-w-[320px] max-w-[360px] flex-shrink-0 h-full
   `;
 
     return (
@@ -94,7 +95,11 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
                 {!isComplete && (
                     <>
                         <button
-                            onClick={onAction}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onAction();
+                                console.log(`[MissionCard] Action button clicked for mission: ${mission.title}`);
+                            }}
                             disabled={!isActive}
                             className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isActive
                                 ? 'bg-primary-500 text-white hover:bg-primary-600'
@@ -106,7 +111,11 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
                         </button>
                         {!isSkipped && (
                             <button
-                                onClick={onSkip}
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Prevent card selection click
+                                    onSkip();
+                                    console.log(`[MissionCard] Skip button clicked for mission: ${mission.title}`);
+                                }}
                                 disabled={!isActive}
                                 className={`text-sm text-gray-500 hover:text-gray-700 ${!isActive ? 'opacity-50 cursor-not-allowed' : ''
                                     }`}

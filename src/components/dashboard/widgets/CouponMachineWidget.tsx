@@ -6,13 +6,14 @@
 
 import React from 'react';
 import { Ticket, ArrowRight } from 'lucide-react';
-import { DashboardMetrics } from '../../../types';
+import { NavItemId, DashboardMetrics } from '../../../types';
 
 interface CouponMachineWidgetProps {
   metrics: DashboardMetrics;
+  onNavigate: (id: NavItemId) => void;
 }
 
-export function CouponMachineWidget({ metrics }: CouponMachineWidgetProps) {
+export function CouponMachineWidget({ metrics, onNavigate }: CouponMachineWidgetProps) {
   const usageRate = metrics.couponsUsageRate;
   const salesFromCoupons = 45200; // Mock derived
   const aovCoupon = 62.10; // Mock derived
@@ -58,7 +59,10 @@ export function CouponMachineWidget({ metrics }: CouponMachineWidgetProps) {
       </div>
 
       <div className="mt-6 pt-4 border-t border-slate-50">
-        <button className="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors">
+        <button
+          onClick={() => onNavigate('assets-coupon')}
+          className="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors"
+        >
           View Coupon Report <ArrowRight size={14} />
         </button>
       </div>

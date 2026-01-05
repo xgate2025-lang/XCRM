@@ -7,21 +7,22 @@
 
 import React from 'react';
 import { Coins, ArrowRight, TrendingUp } from 'lucide-react';
-import { DashboardMetrics } from '../../../types';
+import { NavItemId, DashboardMetrics } from '../../../types';
 
 interface PointsEngineWidgetProps {
   metrics: DashboardMetrics;
+  onNavigate: (id: NavItemId) => void;
 }
 
-export function PointsEngineWidget({ metrics }: PointsEngineWidgetProps) {
+export function PointsEngineWidget({ metrics, onNavigate }: PointsEngineWidgetProps) {
   // Extract specific metrics (Hardcoded placeholders if not in main metrics object yet, 
   // but we added pointsRedemptionRate in Phase 1)
-  
+
   // NOTE: In Phase 1 we only added the top-level metrics. 
   // For "Sales from Redemption" and "AOV of Redemption", we might need to mock them locally 
   // or use placeholders since they weren't explicitly in the MockSchema in Step 493/498.
   // We'll use local derived values for now to match the UI.
-  
+
   const redemptionRate = metrics.pointsRedemptionRate;
   const salesFromRedemption = 12500; // Mock derived
   const aovRedemption = 85.50; // Mock derived
@@ -68,7 +69,10 @@ export function PointsEngineWidget({ metrics }: PointsEngineWidgetProps) {
       </div>
 
       <div className="mt-6 pt-4 border-t border-slate-50">
-        <button className="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors">
+        <button
+          onClick={() => onNavigate('program-point')}
+          className="w-full py-2 flex items-center justify-center gap-2 text-xs font-bold text-indigo-600 hover:text-indigo-700 hover:bg-indigo-50 rounded-lg transition-colors"
+        >
           View Point Report <ArrowRight size={14} />
         </button>
       </div>

@@ -22,7 +22,11 @@ import { NavItemId } from './types';
 
 // Inner component that has access to OnboardingContext
 function AppContent() {
-  const [currentPage, setCurrentPage] = useState<NavItemId>('dashboard');
+  const [currentPage, setCurrentPageInternal] = useState<NavItemId>('dashboard');
+  const setCurrentPage = React.useCallback((id: NavItemId) => {
+    console.log('[App] 🧭 Navigation requested to:', id);
+    setCurrentPageInternal(id);
+  }, []);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { setNavigateFunction } = useOnboarding();
 
@@ -42,7 +46,7 @@ function AppContent() {
   const renderContent = () => {
     switch (currentPage) {
       case 'dashboard':
-        return <Dashboard />;
+        return <Dashboard onNavigate={setCurrentPage} />;
       case 'member-list':
         return <MemberList onNavigate={setCurrentPage} />;
       case 'member-detail':
@@ -54,12 +58,15 @@ function AppContent() {
       case 'assets-coupon':
         return <CouponList onNavigate={setCurrentPage} />;
       case 'coupon-create':
+        console.log('[App] 🎯 Rendering CreateCoupon page');
         return <CreateCoupon onNavigate={setCurrentPage} />;
       case 'performance-analytics':
         return <PerformanceAnalytics onNavigate={setCurrentPage} />;
       case 'program-tier':
+        console.log('[App] 🎯 Rendering ProgramTier page');
         return <ProgramTier onNavigate={setCurrentPage} />;
       case 'program-point':
+        console.log('[App] 🎯 Rendering ProgramPoint page');
         return <ProgramPoint onNavigate={setCurrentPage} />;
       default:
         return <PlaceholderPage title={getPageLabel(currentPage)} id={currentPage} onNavigate={setCurrentPage} />;

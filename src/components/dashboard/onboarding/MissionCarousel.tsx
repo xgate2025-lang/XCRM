@@ -4,7 +4,7 @@
  * Uses CSS scroll-snap for smooth navigation with "peeking" adjacent cards.
  */
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { MissionCard } from './MissionCard';
 import type { MissionData, MissionId } from '../../../types';
@@ -17,7 +17,7 @@ interface MissionCarouselProps {
     onSkip: (missionId: MissionId) => void;
 }
 
-const MISSION_ORDER: MissionId[] = ['identity', 'currency', 'tiers', 'launch'];
+const MISSION_ORDER: MissionId[] = ['identity', 'tier_method', 'currency', 'tiers', 'launch'];
 
 export function MissionCarousel({
     missions,
@@ -27,17 +27,89 @@ export function MissionCarousel({
     onSkip,
 }: MissionCarouselProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
+    const [startX, setStartX] = useState(0);
+    const [scrollLeft, setScrollLeft] = useState(0);
+    const [hasDragged, setHasDragged] = useState(false);
 
     // Scroll to current card when index changes
     useEffect(() => {
-        if (scrollRef.current) {
-            const cardWidth = 360 + 16; // card width + gap
-            scrollRef.current.scrollTo({
-                left: currentIndex * cardWidth,
-                behavior: 'smooth',
-            });
+        const centerCard = () => {
+            if (scrollRef.current && !isDragging) {
+                const container = scrollRef.current;
+                const cards = container.children;
+                if (cards[currentIndex]) {
+                    const card = cards[currentIndex] as HTMLElement;
+                    const containerWidth = container.offsetWidth;
+                    const cardWidth = card.offsetWidth;
+                    const scrollPos = card.offsetLeft - (containerWidth / 2) + (cardWidth / 2);
+
+                    container.scrollTo({
+                        left: scrollPos,
+                        behavior: 'smooth',
+                    });
+                }
+            }
+        };
+
+        centerCard();
+        window.addEventListener('resize', centerCard);
+        return () => window.removeEventListener('resize', centerCard);
+    }, [currentIndex, isDragging]);
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        if (!scrollRef.current) return;
+        setIsDragging(true);
+        setHasDragged(false);
+        setStartX(e.pageX - scrollRef.current.offsetLeft);
+        setScrollLeft(scrollRef.current.scrollLeft);
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!isDragging || !scrollRef.current) return;
+        e.preventDefault();
+        const x = e.pageX - scrollRef.current.offsetLeft;
+        const walk = (x - startX) * 1.5;
+        if (Math.abs(walk) > 5) setHasDragged(true);
+
+        const newScrollLeft = scrollLeft - walk;
+
+        // Boundaries: 0 to (scrollWidth - clientWidth)
+        const maxScroll = scrollRef.current.scrollWidth - scrollRef.current.clientWidth;
+        scrollRef.current.scrollLeft = Math.max(0, Math.min(newScrollLeft, maxScroll));
+    };
+
+    const handleMouseUp = () => {
+        if (!isDragging || !scrollRef.current) return;
+        setIsDragging(false);
+
+        // After drag ends, snap to the most visible card
+        const container = scrollRef.current;
+        const containerCenter = container.scrollLeft + container.offsetWidth / 2;
+
+        let closestIndex = 0;
+        let minDistance = Infinity;
+
+        Array.from(container.children).forEach((child, index) => {
+            const card = child as HTMLElement;
+            const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+            const distance = Math.abs(containerCenter - cardCenter);
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestIndex = index;
+            }
+        });
+
+        if (closestIndex !== currentIndex) {
+            onNavigate(closestIndex);
         }
-    }, [currentIndex]);
+    };
+
+    const handleCardClick = (index: number) => {
+        if (!hasDragged) {
+            onNavigate(index);
+        }
+    };
 
     const handlePrev = () => {
         if (currentIndex > 0) {
@@ -52,12 +124,12 @@ export function MissionCarousel({
     };
 
     return (
-        <div className="relative">
+        <div className="relative group/carousel">
             {/* Navigation Arrows */}
             <button
                 onClick={handlePrev}
                 disabled={currentIndex === 0}
-                className={`absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-lg transition-opacity ${currentIndex === 0 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50'
+                className={`absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-lg transition-all opacity-0 group-hover/carousel:opacity-100 ${currentIndex === 0 ? 'hidden' : 'hover:bg-gray-50'
                     }`}
             >
                 <ChevronLeft className="h-5 w-5 text-gray-600" />
@@ -66,7 +138,7 @@ export function MissionCarousel({
             <button
                 onClick={handleNext}
                 disabled={currentIndex === MISSION_ORDER.length - 1}
-                className={`absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-lg transition-opacity ${currentIndex === MISSION_ORDER.length - 1 ? 'opacity-30 cursor-not-allowed' : 'hover:bg-gray-50'
+                className={`absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-lg transition-all opacity-0 group-hover/carousel:opacity-100 ${currentIndex === MISSION_ORDER.length - 1 ? 'hidden' : 'hover:bg-gray-50'
                     }`}
             >
                 <ChevronRight className="h-5 w-5 text-gray-600" />
@@ -75,18 +147,31 @@ export function MissionCarousel({
             {/* Scrollable Container */}
             <div
                 ref={scrollRef}
-                className="flex gap-4 overflow-x-auto scroll-smooth px-10 py-2 scrollbar-hide"
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+                onMouseLeave={handleMouseUp}
+                onMouseUp={handleMouseUp}
+                className={`flex gap-4 overflow-x-auto py-4 select-none scrollbar-hide ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                 style={{
-                    scrollSnapType: 'x mandatory',
-                    scrollPaddingLeft: '40px',
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none',
+                    paddingLeft: 'calc(50% - 180px)',
+                    paddingRight: 'calc(50% - 180px)'
                 }}
             >
                 {MISSION_ORDER.map((missionId, index) => {
                     const mission = missions[missionId];
+                    if (!mission) return null;
+
                     return (
                         <div
                             key={missionId}
-                            style={{ scrollSnapAlign: 'start' }}
+                            onClick={() => handleCardClick(index)}
+                            className="transition-transform duration-300 transform"
+                            style={{
+                                scale: index === currentIndex ? '1' : '0.9',
+                                opacity: index === currentIndex ? '1' : '0.5'
+                            }}
                         >
                             <MissionCard
                                 mission={mission}
@@ -103,6 +188,8 @@ export function MissionCarousel({
             <div className="mt-4 flex justify-center gap-2">
                 {MISSION_ORDER.map((missionId, index) => {
                     const mission = missions[missionId];
+                    if (!mission) return null;
+
                     return (
                         <button
                             key={missionId}

@@ -16,6 +16,8 @@ const USER_ID = 'demo_user';
 // Simulate network latency (ms)
 const MOCK_DELAY = 500;
 
+const MISSION_ORDER: MissionId[] = ['identity', 'tier_method', 'currency', 'tiers', 'launch'];
+
 // Default mission definitions (the 4 cards from IA.md)
 const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
     identity: {
@@ -33,11 +35,25 @@ const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
             { id: 'set_timezone', label: 'Set Timezone & Currency', isDone: false },
         ],
     },
+    tier_method: {
+        id: 'tier_method',
+        title: 'Decide Physics',
+        description: 'Setup how members progress (Revenue vs Engagement).',
+        tag: 'Step 2',
+        timeEstimate: '⏱️ 3 mins',
+        actionLabel: 'Setup Method',
+        actionRoute: 'program-tier', // NavItemId
+        isSkipped: false,
+        isComplete: false,
+        subtasks: [
+            { id: 'define_base_tier', label: 'Setup Tier Upgrade method', isDone: false },
+        ],
+    },
     currency: {
         id: 'currency',
         title: 'Define Point Logic',
         description: 'Set your base earn rate and redemption value.',
-        tag: 'Step 2',
+        tag: 'Step 3',
         timeEstimate: '⏱️ 5 mins',
         actionLabel: 'Configure Points',
         actionRoute: 'program-point', // NavItemId
@@ -52,14 +68,13 @@ const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
         id: 'tiers',
         title: 'Build the Ladder',
         description: 'Define your tier structure and benefits.',
-        tag: 'Step 3',
+        tag: 'Step 4',
         timeEstimate: '⏱️ 10 mins',
         actionLabel: 'Open Tier Matrix',
         actionRoute: 'program-tier', // NavItemId
         isSkipped: false,
         isComplete: false,
         subtasks: [
-            { id: 'define_base_tier', label: 'Define Basic Tier Entry', isDone: false },
             { id: 'create_premium_tier', label: 'Create Premium Tier (Gold)', isDone: false },
             { id: 'add_benefit', label: 'Add One Benefit to Gold', isDone: false },
         ],
@@ -68,7 +83,7 @@ const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
         id: 'launch',
         title: 'Create Welcome Offer',
         description: 'Create your first coupon and launch your program.',
-        tag: 'Step 4',
+        tag: 'Step 5',
         timeEstimate: '⏱️ 3 mins',
         actionLabel: 'Create Coupon',
         actionRoute: 'coupon-create', // NavItemId
@@ -84,14 +99,47 @@ const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
 // In-memory state (simulates database)
 let mockState: OnboardingState = ((): OnboardingState => {
     const saved = LocalStorageClient.get<OnboardingState>(TENANT_ID, USER_ID, STORAGE_KEY);
-    if (saved) return saved;
 
-    return {
-        completionPercentage: 10, // Start at 10% for psychological momentum
+    // Default system state
+    const defaultState: OnboardingState = {
+        completionPercentage: 10,
         currentStepIndex: 0,
         isDismissed: false,
         missions: JSON.parse(JSON.stringify(DEFAULT_MISSIONS)),
     };
+
+    if (saved) {
+        // Merge saved progress into current definitions
+        // This ensures new missions added to code are available but progress for old ones is kept
+        const mergedMissions = JSON.parse(JSON.stringify(DEFAULT_MISSIONS));
+        Object.keys(saved.missions).forEach((id) => {
+            const missionId = id as MissionId;
+            if (mergedMissions[missionId]) {
+                const savedMission = saved.missions[missionId];
+                mergedMissions[missionId].isSkipped = savedMission.isSkipped;
+                mergedMissions[missionId].isComplete = savedMission.isComplete;
+
+                // Merge subtasks progress
+                mergedMissions[missionId].subtasks.forEach((subtask: { id: string; isDone: boolean }) => {
+                    const savedSubtask = savedMission.subtasks.find((s: { id: string; isDone: boolean }) => s.id === subtask.id);
+                    if (savedSubtask) {
+                        subtask.isDone = savedSubtask.isDone;
+                    }
+                });
+            }
+        });
+
+        const mergedState = {
+            ...saved,
+            missions: mergedMissions,
+            // Recalculate completion based on merged subtasks
+            completionPercentage: calculateCompletion(mergedMissions)
+        };
+
+        return mergedState;
+    }
+
+    return defaultState;
 })();
 
 /**
@@ -131,6 +179,11 @@ function delay(ms: number): Promise<void> {
 export const MockOnboardingService: IOnboardingService = {
     async getOnboardingState(): Promise<OnboardingState> {
         await delay(MOCK_DELAY);
+        console.log('[MockOnboardingService] 📦 Returning state:', {
+            completion: mockState.completionPercentage,
+            stepIndex: mockState.currentStepIndex,
+            missionCount: Object.keys(mockState.missions).length
+        });
         return { ...mockState };
     },
 
@@ -141,9 +194,8 @@ export const MockOnboardingService: IOnboardingService = {
         if (mission) {
             mission.isSkipped = true;
             // Move to next step if currently on this one
-            const missionOrder: MissionId[] = ['identity', 'currency', 'tiers', 'launch'];
-            const currentIndex = missionOrder.indexOf(missionId);
-            if (mockState.currentStepIndex === currentIndex && currentIndex < 3) {
+            const currentIndex = MISSION_ORDER.indexOf(missionId);
+            if (mockState.currentStepIndex === currentIndex && currentIndex < MISSION_ORDER.length - 1) {
                 mockState.currentStepIndex = currentIndex + 1;
             }
         }
@@ -187,15 +239,20 @@ export const MockOnboardingService: IOnboardingService = {
                 mockState.completionPercentage = calculateCompletion(mockState.missions);
 
                 // Auto-advance if current mission completes
-                const missionOrder: MissionId[] = ['identity', 'currency', 'tiers', 'launch'];
-                const currentIndex = missionOrder.indexOf(missionId);
-                if (mission.isComplete && mockState.currentStepIndex === currentIndex && currentIndex < 3) {
+                const currentIndex = MISSION_ORDER.indexOf(missionId);
+                if (mission.isComplete && mockState.currentStepIndex === currentIndex && currentIndex < MISSION_ORDER.length - 1) {
                     mockState.currentStepIndex = currentIndex + 1;
                 }
             }
         }
 
         persistState();
+        return { ...mockState };
+    },
+
+    async resetOnboarding(): Promise<OnboardingState> {
+        await delay(MOCK_DELAY);
+        MockDebug.resetState();
         return { ...mockState };
     },
 };
@@ -218,7 +275,7 @@ export const MockDebug = {
             mission.isComplete = true;
         });
         mockState.completionPercentage = 100;
-        mockState.currentStepIndex = 3;
+        mockState.currentStepIndex = MISSION_ORDER.length - 1;
         persistState();
     },
 };

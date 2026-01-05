@@ -59,7 +59,7 @@ export function Launchpad({ onRevealDashboard }: LaunchpadProps) {
 
                 {/* Confetti hint */}
                 <p className="mt-4 text-sm text-primary-200/70">
-                    All 4 missions complete • 100% Ready
+                    All 5 missions complete • 100% Ready
                 </p>
             </div>
         </div>

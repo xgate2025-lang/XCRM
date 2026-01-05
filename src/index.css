@@ -6,7 +6,8 @@ body {
   font-family: "Satoshi", "Outfit", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f8fafc; /* Slate-50 */
+  background-color: #f8fafc;
+  /* Slate-50 */
 }
 
 /* 
@@ -17,14 +18,19 @@ body {
 */
 .card-premium {
   background-color: #ffffff;
-  border-radius: 2rem; /* 32px - Hyper rounded */
-  border: 1px solid #e2e8f0; /* Slate-200 */
-  box-shadow: none; /* No shadow */
-  transition: all 400ms cubic-bezier(0.2, 0.8, 0.2, 1); /* "Springy" ease */
+  border-radius: 2rem;
+  /* 32px - Hyper rounded */
+  border: 1px solid #e2e8f0;
+  /* Slate-200 */
+  box-shadow: none;
+  /* No shadow */
+  transition: all 400ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* "Springy" ease */
 }
 
 .card-premium:hover {
-  border-color: #92AECF; /* primary-300 */
+  border-color: #92AECF;
+  /* primary-300 */
   /* No lift, only color shift */
 }
 

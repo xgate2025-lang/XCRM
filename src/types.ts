@@ -301,7 +301,7 @@ export interface DashboardMetrics {
 
 // --- Day Zero Onboarding Types ---
 
-export type MissionId = 'identity' | 'currency' | 'tiers' | 'launch';
+export type MissionId = 'identity' | 'tier_method' | 'currency' | 'tiers' | 'launch';
 
 export interface MissionSubtask {
   id: string;
@@ -335,6 +335,7 @@ export interface IOnboardingService {
   resumeMission(missionId: MissionId): Promise<OnboardingState>;
   dismissOnboarding(): Promise<OnboardingState>;
   debugToggleSubtask(missionId: MissionId, subtaskId: string, isDone: boolean): Promise<OnboardingState>;
+  resetOnboarding(): Promise<OnboardingState>;
 }
 
 

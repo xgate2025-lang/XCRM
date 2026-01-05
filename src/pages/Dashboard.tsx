@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   Bell, Search, ChevronDown,
   FileText, MessageCircle, Settings,
-  UserPlus, Zap, Repeat, DollarSign, ShoppingBag
+  UserPlus, Zap, Repeat, DollarSign, ShoppingBag, RotateCcw
 } from 'lucide-react';
 import { DashboardProvider, useDashboard } from '../context/DashboardContext';
 import { OnboardingHero } from '../components/dashboard/onboarding/OnboardingHero';
@@ -10,6 +10,7 @@ import { useOnboarding } from '../context/OnboardingContext';
 import { GlobalNavigator } from '../components/dashboard/GlobalNavigator';
 import { TrendMetric } from '../components/dashboard/TrendMetric';
 import { QuickActions } from '../components/dashboard/QuickActions';
+import { NavItemId } from '../types';
 
 // Widgets
 import { MemberScaleWidget } from '../components/dashboard/widgets/MemberScaleWidget';
@@ -17,11 +18,10 @@ import { TierDistributionWidget } from '../components/dashboard/widgets/TierDist
 import { PointsEngineWidget } from '../components/dashboard/widgets/PointsEngineWidget';
 import { CouponMachineWidget } from '../components/dashboard/widgets/CouponMachineWidget';
 import { CampaignPulseWidget } from '../components/dashboard/widgets/CampaignPulseWidget';
-
-const DashboardContent = () => {
+const DashboardContent = ({ onNavigate }: { onNavigate: (id: NavItemId) => void }) => {
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
   const { metrics } = useDashboard();
-  const { state: onboardingState, isLoading: isOnboardingLoading } = useOnboarding();
+  const { state: onboardingState, isLoading: isOnboardingLoading, resetOnboarding } = useOnboarding();
 
   // Prevent flicker by not rendering dashboard content until onboarding state is known
   if (isOnboardingLoading) {
@@ -94,6 +94,17 @@ const DashboardContent = () => {
             <Search size={18} className="text-slate-400 mr-2" />
             <input type="text" placeholder="Search" className="bg-transparent border-none outline-none text-sm w-full placeholder:text-slate-400" />
           </div>
+          <button
+            onClick={() => {
+              if (confirm('Reset onboarding state for testing?')) {
+                resetOnboarding();
+              }
+            }}
+            className="p-3 text-slate-400 hover:text-primary-600 bg-white rounded-full border border-slate-200 shadow-sm transition-colors"
+            title="Reset Onboarding (Debug)"
+          >
+            <RotateCcw size={20} />
+          </button>
           <button className="p-3 text-slate-400 hover:text-slate-600 bg-white rounded-full border border-slate-200 shadow-sm transition-colors relative">
             <Bell size={20} />
             <span className="absolute top-0 right-0 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
@@ -165,8 +176,8 @@ const DashboardContent = () => {
           <section>
             <h2 className="text-lg font-bold text-slate-900 mb-4">Asset Overview</h2>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-              <PointsEngineWidget metrics={metrics} />
-              <CouponMachineWidget metrics={metrics} />
+              <PointsEngineWidget metrics={metrics} onNavigate={onNavigate} />
+              <CouponMachineWidget metrics={metrics} onNavigate={onNavigate} />
             </div>
           </section>
 
@@ -181,15 +192,15 @@ const DashboardContent = () => {
       </div>
 
       {/* Floating Dock */}
-      <QuickActions />
+      <QuickActions onNavigate={onNavigate} />
     </div>
   );
 };
 
 // Wrap with DashboardProvider
-const Dashboard = () => (
+const Dashboard = ({ onNavigate }: { onNavigate: (id: NavItemId) => void }) => (
   <DashboardProvider>
-    <DashboardContent />
+    <DashboardContent onNavigate={onNavigate} />
   </DashboardProvider>
 );
 

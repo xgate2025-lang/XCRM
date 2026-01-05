@@ -77,7 +77,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
     setView('landing');
 
     // Mark onboarding subtask as complete
-    toggleSubtask('tiers', 'define_base_tier', true);
+    toggleSubtask('tier_method', 'define_base_tier', true);
 
     onNavigate('program-point');
   };

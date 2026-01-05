@@ -26,6 +26,7 @@ interface OnboardingContextValue {
     resumeMission: (missionId: MissionId) => Promise<void>;
     toggleSubtask: (missionId: MissionId, subtaskId: string, isDone: boolean) => Promise<void>;
     dismissOnboarding: () => Promise<void>;
+    resetOnboarding: () => Promise<void>;
     navigateToMission: (missionId: MissionId) => void;
     setNavigateFunction: (fn: (id: NavItemId) => void) => void;
 
@@ -62,7 +63,7 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
 
             // Restore last card index from LocalStorage (UI state)
             const savedIndex = LocalStorageClient.get<number>(TENANT_ID, USER_ID, LAST_CARD_KEY);
-            if (savedIndex !== null && savedIndex >= 0 && savedIndex <= 3) {
+            if (savedIndex !== null && savedIndex >= 0 && savedIndex <= 4) {
                 setCurrentMissionIndexInternal(savedIndex);
             } else {
                 setCurrentMissionIndexInternal(newState.currentStepIndex);
@@ -81,7 +82,7 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
             const newState = await MockOnboardingService.skipMission(missionId);
             setState(newState);
             // Auto-advance to next card
-            if (currentMissionIndex < 3) {
+            if (currentMissionIndex < 4) {
                 setCurrentMissionIndex(currentMissionIndex + 1);
             }
         } catch (err) {
@@ -112,11 +113,11 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
             setState(newState);
 
             // Auto-advance if mission becomes complete
-            const missionOrder: MissionId[] = ['identity', 'currency', 'tiers', 'launch'];
+            const missionOrder: MissionId[] = ['identity', 'tier_method', 'currency', 'tiers', 'launch'];
             const missionIndex = missionOrder.indexOf(missionId);
             const mission = newState.missions[missionId];
 
-            if (mission.isComplete && currentMissionIndex === missionIndex && missionIndex < 3) {
+            if (mission.isComplete && currentMissionIndex === missionIndex && missionIndex < 4) {
                 setCurrentMissionIndex(missionIndex + 1);
             }
         } catch (err) {
@@ -136,6 +137,18 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
         }
     }, []);
 
+    // Reset onboarding for testing
+    const resetOnboarding = useCallback(async () => {
+        try {
+            const newState = await MockOnboardingService.resetOnboarding();
+            setState(newState);
+            setCurrentMissionIndex(0);
+        } catch (err) {
+            setError('Failed to reset onboarding');
+            console.error('[OnboardingContext] Reset error:', err);
+        }
+    }, [setCurrentMissionIndex]);
+
     // Navigation function holder (set by App/Dashboard)
     const [navigateFn, setNavigateFn] = useState<((id: NavItemId) => void) | null>(null);
 
@@ -152,8 +165,15 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
         const mission = state.missions[missionId];
         if (mission) {
             const targetPage = mission.actionRoute as NavItemId;
-            console.log('[OnboardingContext] Navigating to:', targetPage);
+            console.log('[OnboardingContext] 🚀 Navigation Triggered:', {
+                missionId,
+                title: mission.title,
+                route: targetPage,
+                hasNavigateFn: !!navigateFn
+            });
             navigateFn(targetPage);
+        } else {
+            console.warn('[OnboardingContext] ❌ Mission not found for navigation:', missionId);
         }
     }, [state, navigateFn]);
 
@@ -171,6 +191,7 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
         resumeMission,
         toggleSubtask,
         dismissOnboarding,
+        resetOnboarding,
         navigateToMission,
         setNavigateFunction,
         currentMissionIndex,
