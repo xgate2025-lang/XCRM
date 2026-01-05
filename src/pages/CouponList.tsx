@@ -4,7 +4,8 @@ import {
   Plus, Search, Filter, ChevronDown, MoreHorizontal,
   Ticket, Percent, Package, Truck, Users, Calendar,
   ArrowUpRight, AlertCircle, CheckCircle2, Clock,
-  Pause, Play, Copy, Trash2, Edit3, BarChart2, X, RotateCcw
+  Pause, Play, Copy, Trash2, Edit3, BarChart2, X, RotateCcw,
+  Eye, DollarSign, Gift, Info, Tag
 } from 'lucide-react';
 import { NavItemId, CouponType, CouponStatus } from '../types';
 import { useCoupon } from '../context/CouponContext';
@@ -22,6 +23,10 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
   const [activeTypeFilter, setActiveTypeFilter] = useState<'All' | CouponType>('All');
   const [isTypeFilterOpen, setIsTypeFilterOpen] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+
+  // --- Coupon Detail Modal State ---
+  const [selectedCouponId, setSelectedCouponId] = useState<string | null>(null);
+  const selectedCoupon = selectedCouponId ? coupons.find(c => c.id === selectedCouponId) : null;
 
   // --- Logic Fix: Comprehensive Filtering Engine ---
   const filteredCoupons = useMemo(() => {
@@ -222,7 +227,11 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
                 const isCritical = usagePercent > 90 && coupon.status === 'Live';
 
                 return (
-                  <tr key={coupon.id} className="group hover:bg-slate-50/50 transition-colors cursor-default relative">
+                  <tr
+                    key={coupon.id}
+                    className="group hover:bg-slate-50/50 transition-colors cursor-pointer relative"
+                    onClick={() => setSelectedCouponId(coupon.id)}
+                  >
                     <td className="px-8 py-6">
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-slate-900 group-hover:text-primary-600 transition-colors leading-tight">{coupon.name}</span>
@@ -293,6 +302,13 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
 
                     <td className="px-8 py-6 text-right pr-10 relative">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          className="p-2 text-slate-400 hover:text-primary-600 hover:bg-white rounded-xl transition-all shadow-none hover:shadow-sm"
+                          title="View Details"
+                          onClick={(e) => { e.stopPropagation(); setSelectedCouponId(coupon.id); }}
+                        >
+                          <Eye size={18} />
+                        </button>
                         <button className="p-2 text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl transition-all shadow-none hover:shadow-sm" title="Edit Properties">
                           <Edit3 size={18} />
                         </button>
@@ -358,6 +374,58 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
           </div>
         )}
       </div>
+
+      {/* Coupon Detail Modal */}
+      {selectedCoupon && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-[2px] animate-in fade-in duration-200">
+          <div className="bg-white rounded-4xl shadow-2xl w-full max-w-lg animate-in zoom-in-95 duration-200 overflow-hidden">
+            <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center">
+                  <Ticket size={20} />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-slate-900">Coupon Details</h3>
+                  <p className="text-[10px] font-mono font-black text-slate-400 uppercase tracking-widest">{selectedCoupon.code}</p>
+                </div>
+              </div>
+              <button onClick={() => setSelectedCouponId(null)} className="p-2 rounded-full text-slate-300 hover:text-slate-600 hover:bg-white transition-all">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="p-6 space-y-6">
+              <div className="flex items-center justify-between p-5 bg-gradient-to-r from-primary-50 to-primary-100/50 rounded-2xl">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-primary-600 shadow-sm">
+                    {selectedCoupon.type === 'percentage' ? <Percent size={24} /> : selectedCoupon.type === 'cash' ? <DollarSign size={24} /> : selectedCoupon.type === 'sku' ? <Package size={24} /> : <Truck size={24} />}
+                  </div>
+                  <div>
+                    <p className="text-2xl font-black text-primary-900">{selectedCoupon.value}</p>
+                    <p className="text-sm font-bold text-primary-600">{selectedCoupon.name}</p>
+                  </div>
+                </div>
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-full border ${selectedCoupon.status === 'Live' ? 'bg-green-50 text-green-600 border-green-200' : selectedCoupon.status === 'Scheduled' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-slate-100 text-slate-500 border-slate-200'}`}>
+                  <span className={`w-2 h-2 rounded-full ${selectedCoupon.status === 'Live' ? 'bg-green-500 animate-pulse' : 'bg-current'}`} />
+                  <span className="text-sm font-bold">{selectedCoupon.status}</span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="p-4 bg-slate-50 rounded-xl"><div className="flex items-center gap-2 text-slate-400 mb-1"><Tag size={14} /><span className="text-[10px] font-black uppercase">Type</span></div><p className="text-sm font-bold text-slate-900 capitalize">{selectedCoupon.type}</p></div>
+                <div className="p-4 bg-slate-50 rounded-xl"><div className="flex items-center gap-2 text-slate-400 mb-1"><Users size={14} /><span className="text-[10px] font-black uppercase">Audience</span></div><p className="text-sm font-bold text-slate-900">{selectedCoupon.audience.join(', ')}</p></div>
+                <div className="p-4 bg-slate-50 rounded-xl"><div className="flex items-center gap-2 text-slate-400 mb-1"><Calendar size={14} /><span className="text-[10px] font-black uppercase">Start</span></div><p className="text-sm font-bold text-slate-900">{selectedCoupon.validity.start}</p></div>
+                <div className="p-4 bg-slate-50 rounded-xl"><div className="flex items-center gap-2 text-slate-400 mb-1"><Clock size={14} /><span className="text-[10px] font-black uppercase">End</span></div><p className="text-sm font-bold text-slate-900">{selectedCoupon.validity.end || 'No End'}</p></div>
+              </div>
+              <div className="p-4 bg-slate-50 rounded-xl">
+                <div className="flex justify-between items-center mb-2"><span className="text-[10px] font-black text-slate-400 uppercase">Inventory</span><span className="text-sm font-bold text-slate-700">{selectedCoupon.inventory.used} / {selectedCoupon.inventory.total}</span></div>
+                <div className="h-2 w-full bg-slate-200 rounded-full overflow-hidden"><div className="h-full bg-primary-500 rounded-full" style={{ width: `${(selectedCoupon.inventory.used / selectedCoupon.inventory.total) * 100}%` }} /></div>
+              </div>
+            </div>
+            <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+              <button onClick={() => setSelectedCouponId(null)} className="px-6 py-2.5 bg-slate-900 text-white text-sm font-bold rounded-xl hover:bg-slate-800 transition-colors">Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

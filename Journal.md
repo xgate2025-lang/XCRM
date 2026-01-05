@@ -64,3 +64,19 @@ INPUTS:
     2. Added a centralized loading indicator in `Dashboard.tsx` to handle the asynchronous initialization of onboarding state.
     3. Performed a "Deep Fix" by completely removing legacy components and state from `DashboardContext`.
 - **Lesson**: When introducing a new async state provider, ensure the UI handles the "Loading" state gracefully to prevent flickering. Always decommission legacy state paths to prevent "ghost" components from rendering during edge case transitions (like a fast refresh).
+
+## 2026-01-05: Member Page UI Refinement - Monolith Decomposition
+
+- **Pattern**: Successfully decomposed 680+ line `EditProfileModal.tsx` into modular components.
+- **Architecture Decisions**:
+    1. **Component Extraction**: Created `MemberForm.tsx` (main form), `MemberCodeToggle.tsx` (strategy pattern), `MarketingPreferences.tsx` (dynamic opt-ins).
+    2. **Tab Modularization**: Extracted from `MemberDetail.tsx` into dedicated components (`ProfileTab`, `TransactionTab`, `TierHistoryTab`, `PointDetailTab`, `CouponWalletTab`).
+    3. **Shared Infrastructure**: Created `OperationRemarks.tsx` for unified audit trail across point adjustments, tier changes, and coupon actions.
+    4. **Service Layer**: Created `MockAssetService.ts` with LocalStorage persistence for asset logs and point packets.
+- **Key Lessons**:
+    1. **Zone-Based Form Design**: Grouping form fields into logical zones (Core Identity, Address, Marketing, Membership) improves UX and maintainability.
+    2. **Auto-Calculation Logic**: Age-group calculation from birthday should live in the form component, not the parent modal.
+    3. **Export Barrel Files**: Using `index.ts` exports simplifies imports and makes refactoring easier.
+    4. **Types First**: Defining types (`AssetLog`, `PointPacket`, etc.) before implementation ensures type safety throughout.
+- **Rule**: For any component exceeding ~300 lines, consider breaking into smaller, focused components with clear props interfaces.
+

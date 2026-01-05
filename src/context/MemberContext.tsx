@@ -1,20 +1,20 @@
-
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { Member } from '../types';
+import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import { Member, AssetLog, PointPacket } from '../types';
+import { MockAssetService } from '../lib/services/mock/MockAssetService';
 
 // Enhanced Mock Data with valid phones and card numbers
 const MOCK_MEMBERS: Member[] = [
-  { 
-    id: 'MEM-001', 
-    firstName: 'Alina', 
-    lastName: 'Sawayn', 
-    email: 'alina@example.com', 
-    phone: '+1 (555) 123-4567', 
-    cardNo: '8839 2930 1234', 
-    tier: 'Gold', 
-    points: 12500, 
-    joinDate: 'Jan 12, 2024', 
-    status: 'Active', 
+  {
+    id: 'MEM-001',
+    firstName: 'Alina',
+    lastName: 'Sawayn',
+    email: 'alina@example.com',
+    phone: '+1 (555) 123-4567',
+    cardNo: '8839 2930 1234',
+    tier: 'Gold',
+    points: 12500,
+    joinDate: 'Jan 12, 2024',
+    status: 'Active',
     avatar: 'https://i.pravatar.cc/150?u=1',
     lifetimeSpend: '$4,250.00',
     preferredLanguage: 'English',
@@ -23,59 +23,59 @@ const MOCK_MEMBERS: Member[] = [
     memberCodeMode: 'manual',
     cardNoMode: 'manual'
   },
-  { 
-    id: 'MEM-002', 
-    firstName: 'John', 
-    lastName: 'Doe', 
-    email: 'john.doe@example.com', 
-    phone: '+1 (555) 987-6543', 
-    cardNo: '8839 2930 5678', 
-    tier: 'Silver', 
-    points: 3400, 
-    joinDate: 'Feb 28, 2024', 
-    status: 'Active', 
+  {
+    id: 'MEM-002',
+    firstName: 'John',
+    lastName: 'Doe',
+    email: 'john.doe@example.com',
+    phone: '+1 (555) 987-6543',
+    cardNo: '8839 2930 5678',
+    tier: 'Silver',
+    points: 3400,
+    joinDate: 'Feb 28, 2024',
+    status: 'Active',
     avatar: 'https://i.pravatar.cc/150?u=2',
     lifetimeSpend: '$1,120.00'
   },
-  { 
-    id: 'MEM-003', 
-    firstName: 'Sarah', 
-    lastName: 'Smith', 
-    email: 'sarah@example.com', 
-    phone: '+1 (555) 456-7890', 
-    cardNo: '8839 2930 9012', 
-    tier: 'Platinum', 
-    points: 45000, 
-    joinDate: 'Mar 15, 2023', 
-    status: 'Active', 
+  {
+    id: 'MEM-003',
+    firstName: 'Sarah',
+    lastName: 'Smith',
+    email: 'sarah@example.com',
+    phone: '+1 (555) 456-7890',
+    cardNo: '8839 2930 9012',
+    tier: 'Platinum',
+    points: 45000,
+    joinDate: 'Mar 15, 2023',
+    status: 'Active',
     avatar: 'https://i.pravatar.cc/150?u=3',
     lifetimeSpend: '$12,450.00'
   },
-  { 
-    id: 'MEM-004', 
-    firstName: 'Michael', 
-    lastName: 'Brown', 
-    email: 'mike.b@example.com', 
-    phone: '+1 (555) 234-5678', 
-    cardNo: '8839 2930 3456', 
-    tier: 'Bronze', 
-    points: 120, 
-    joinDate: 'Dec 01, 2023', 
-    status: 'Inactive', 
+  {
+    id: 'MEM-004',
+    firstName: 'Michael',
+    lastName: 'Brown',
+    email: 'mike.b@example.com',
+    phone: '+1 (555) 234-5678',
+    cardNo: '8839 2930 3456',
+    tier: 'Bronze',
+    points: 120,
+    joinDate: 'Dec 01, 2023',
+    status: 'Inactive',
     avatar: 'https://i.pravatar.cc/150?u=4',
     lifetimeSpend: '$150.00'
   },
-  { 
-    id: 'MEM-005', 
-    firstName: 'Emily', 
-    lastName: 'Davis', 
-    email: 'emily.d@example.com', 
-    phone: '+1 (555) 876-5432', 
-    cardNo: '8839 2930 7890', 
-    tier: 'Gold', 
-    points: 11200, 
-    joinDate: 'Nov 10, 2023', 
-    status: 'Active', 
+  {
+    id: 'MEM-005',
+    firstName: 'Emily',
+    lastName: 'Davis',
+    email: 'emily.d@example.com',
+    phone: '+1 (555) 876-5432',
+    cardNo: '8839 2930 7890',
+    tier: 'Gold',
+    points: 11200,
+    joinDate: 'Nov 10, 2023',
+    status: 'Active',
     avatar: 'https://i.pravatar.cc/150?u=5',
     lifetimeSpend: '$3,890.00'
   }
@@ -90,6 +90,11 @@ interface MemberContextType {
   updateMember: (id: string, updates: Partial<Member>) => void;
   filterOverride: string | null;
   setFilterOverride: (filter: string | null) => void;
+  // Asset adjustment actions (Phase 2 Foundational)
+  adjustPoints: (memberId: string, amount: number, reasonType: string, remark: string) => void;
+  changeTier: (memberId: string, newTier: string, reasonType: string, remark: string) => void;
+  getAssetLogs: (memberId: string, type?: 'point' | 'tier') => AssetLog[];
+  getPointPackets: (memberId: string) => PointPacket[];
 }
 
 const MemberContext = createContext<MemberContextType | undefined>(undefined);
@@ -126,16 +131,77 @@ export const MemberProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     setMembers(prev => prev.map(m => m.id === id ? { ...m, ...updates } : m));
   };
 
+  // --- Asset Adjustment Actions ---
+
+  const adjustPoints = useCallback((memberId: string, amount: number, reasonType: string, remark: string) => {
+    const member = members.find(m => m.id === memberId);
+    if (!member) return;
+
+    const balanceBefore = member.points;
+    const balanceAfter = balanceBefore + amount;
+
+    // Update member points
+    setMembers(prev => prev.map(m => m.id === memberId ? { ...m, points: balanceAfter } : m));
+
+    // Log the adjustment
+    MockAssetService.addAssetLog({
+      memberId,
+      type: 'point',
+      changeType: amount >= 0 ? 'Adjust (Add)' : 'Adjust (Deduct)',
+      changeValue: amount,
+      balanceBefore,
+      balanceAfter,
+      source: 'Admin Manual',
+      reasonType,
+      remark,
+    });
+  }, [members]);
+
+  const changeTier = useCallback((memberId: string, newTier: string, reasonType: string, remark: string) => {
+    const member = members.find(m => m.id === memberId);
+    if (!member) return;
+
+    const oldTier = member.tier;
+
+    // Update member tier
+    setMembers(prev => prev.map(m => m.id === memberId ? { ...m, tier: newTier } : m));
+
+    // Log the change
+    MockAssetService.addAssetLog({
+      memberId,
+      type: 'tier',
+      changeType: 'Manual Override',
+      changeValue: `${oldTier} → ${newTier}`,
+      balanceBefore: oldTier,
+      balanceAfter: newTier,
+      source: 'Admin Manual',
+      reasonType,
+      remark,
+    });
+  }, [members]);
+
+  const getAssetLogs = useCallback((memberId: string, type?: 'point' | 'tier'): AssetLog[] => {
+    return MockAssetService.getAssetLogs(memberId, type);
+  }, []);
+
+  const getPointPackets = useCallback((memberId: string): PointPacket[] => {
+    return MockAssetService.getPointPackets(memberId);
+  }, []);
+
   return (
-    <MemberContext.Provider value={{ 
-        members, 
-        selectedMemberId, 
-        setSelectedMemberId,
-        getMember,
-        addMember,
-        updateMember,
-        filterOverride,
-        setFilterOverride
+    <MemberContext.Provider value={{
+      members,
+      selectedMemberId,
+      setSelectedMemberId,
+      getMember,
+      addMember,
+      updateMember,
+      filterOverride,
+      setFilterOverride,
+      adjustPoints,
+      changeTier,
+      getAssetLogs,
+      getPointPackets,
     }}>
       {children}
     </MemberContext.Provider>

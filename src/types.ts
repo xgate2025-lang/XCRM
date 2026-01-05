@@ -73,6 +73,59 @@ export interface Member {
   initialTier?: string;
 }
 
+// --- Asset History Types (Member Page UI Refinement) ---
+
+export interface AssetLog {
+  id: string;
+  memberId: string;
+  type: 'point' | 'tier';
+  changeType: string; // e.g., 'Earn', 'Redeem', 'Adjust', 'Upgrade', 'Downgrade'
+  changeValue: number | string;
+  balanceBefore: number | string;
+  balanceAfter: number | string;
+  source: string; // e.g., Order ID, Admin, System
+  reasonType: string; // ID from preset reason list
+  remark: string;
+  timestamp: string; // ISO DateTime
+}
+
+export interface PointPacket {
+  id: string;
+  memberId: string;
+  totalPoints: number;
+  remainingPoints: number;
+  receivedDate: string; // ISO Date
+  expiryDate: string; // ISO Date
+  source: string; // e.g., Order #123
+  remark: string;
+}
+
+export interface TransactionItem {
+  sku: string;
+  name: string;
+  spec: string;
+  msrp: number;
+  unitPrice: number;
+  qty: number;
+  discount: number;
+  total: number;
+}
+
+export interface SettlementRecord {
+  subtotal: number;
+  discounts: number;
+  tax: number;
+  fees: number;
+  paidAmount: number;
+}
+
+export interface BenefitUsage {
+  code: string;
+  name: string;
+  value: string;
+  qty: number;
+}
+
 // --- Loyalty Program Domain Types ---
 
 // The Lifecycle State of the Program

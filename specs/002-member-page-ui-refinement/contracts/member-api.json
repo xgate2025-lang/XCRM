@@ -1,0 +1,160 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Member Management API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/members": {
+            "post": {
+                "summary": "Register a new member",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MemberCreate"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Member created"
+                    }
+                }
+            }
+        },
+        "/members/{id}/adjust-points": {
+            "post": {
+                "summary": "Manually adjust member points",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AssetAdjustment"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/members/{id}/coupons/{code}/verify": {
+            "post": {
+                "summary": "Manual coupon verification (write-off)",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CouponVerification"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "MemberCreate": {
+                "type": "object",
+                "required": [
+                    "firstName",
+                    "lastName",
+                    "memberCode"
+                ],
+                "properties": {
+                    "memberCode": {
+                        "type": "string"
+                    },
+                    "memberCodeMode": {
+                        "type": "string",
+                        "enum": [
+                            "auto",
+                            "manual"
+                        ]
+                    },
+                    "optInChannels": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "channel": {
+                                    "type": "string"
+                                },
+                                "optInTime": {
+                                    "type": "string",
+                                    "format": "date"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "AssetAdjustment": {
+                "type": "object",
+                "required": [
+                    "amount",
+                    "reasonType"
+                ],
+                "properties": {
+                    "amount": {
+                        "type": "number"
+                    },
+                    "reasonType": {
+                        "type": "string"
+                    },
+                    "remark": {
+                        "type": "string"
+                    }
+                }
+            },
+            "CouponVerification": {
+                "type": "object",
+                "required": [
+                    "storeId",
+                    "verifyTime"
+                ],
+                "properties": {
+                    "storeId": {
+                        "type": "string"
+                    },
+                    "verifyTime": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "remark": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

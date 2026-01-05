@@ -41,3 +41,80 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+/* ============================================
+   Phase 6: Member Page UI Refinement - Polish
+   ============================================ */
+
+/* Tab switching animation */
+.tab-content-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.tab-content-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
+}
+
+/* Form section expansion animation */
+.form-section {
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-section-collapsed {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.form-section-expanded {
+  max-height: 2000px;
+  opacity: 1;
+}
+
+/* Smooth modal backdrop */
+.modal-backdrop {
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  transition: opacity 200ms ease-out;
+}
+
+/* List item stagger animation helper */
+.stagger-item {
+  animation: staggerFadeIn 300ms ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes staggerFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Progress bar smooth fill */
+.progress-bar-fill {
+  transition: width 500ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Button press effect */
+.btn-press:active {
+  transform: scale(0.98);
+}
+
+/* Hide scrollbar but keep functionality */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
