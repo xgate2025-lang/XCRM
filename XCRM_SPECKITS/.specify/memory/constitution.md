@@ -1,10 +1,11 @@
 <!--
 SYNC IMPACT REPORT
-Version: 2.2.0 -> 2.3.0
+Version: 2.4.0 -> 2.5.0
 Modified Principles:
 - None
 Added Sections:
-- Section 9: Visual Integrity & Design Consistency
+- Section 12: The IA + UX "Handshake" Rule
+- Section 13: UI Persistence Rule
 Removed Sections:
 - None
 Templates requiring updates:
@@ -79,4 +80,28 @@ Templates requiring updates:
     - **Typography**: Maintain the font-family and scale (e.g., `text-2xl font-bold`) used in headers.
 - **Pre-UI Check**: Before adding a new UI element, scan the existing codebase for a similar pattern and duplicate its Tailwind class structure exactly.
 
-**Version**: 2.3.0 | **Ratified**: 2026-01-04 | **Last Amended**: 2026-01-04
+## 10. IA Integrity & Coverage Rule
+- **Mapping Requirement**: Every node/endpoint/page in `IA.md` MUST map to at least one file in `.specify/tasks/`.
+- **Zero-Loss Policy**: During the `saas-gen` workflow, you are FORBIDDEN from omitting IA details for the sake of brevity. If a task list is too long, split it into sub-tasks (e.g., `auth-001-ui.md`, `auth-001-logic.md`) rather than deleting items.
+- **Visual Check**: If the IA defines a UI hierarchy, the generated tasks MUST specify the Tailwind classes needed to maintain the "Visual Integrity" established in Rule 9.
+
+## 11. Clarification & Edge-Case Policy
+- **Blocking Step**: The `/clarify` command is NOT optional. It must be performed after every `/specify` run.
+- **Deep Analysis**: During clarification, the agent MUST look specifically for:
+  - **Negative Paths**: What happens when an API fails or data is missing?
+  - **Permissions**: Which SaaS user roles can access this specific feature?
+  - **Data Lifecycle**: How is the data created, updated, and deleted (CRUD)?
+- **Ambiguity Marking**: Any detail from the IA that is not 100% clear must be tagged with `[TODO: CLARIFY]` in the spec until answered.
+
+## 12. The IA + UX "Handshake" Rule
+- **No Orphan Pages**: Every page listed in the `IA.md` MUST have a corresponding entry in `UserFlows.md` describing how a user gets there and where they go next.
+- **State Completeness**: A task is considered "incomplete" if it only builds the UI but ignores the states. Every functional component must handle:
+    - `isLoading`: Shimmer/Spinner.
+    - `isError`: User-friendly alert/toast.
+    - `isEmpty`: "No data found" illustration/call-to-action.
+- **Navigation Safety**: Use `react-router-dom` for all transitions. Logic for protected routes (e.g., "Must be logged in to see /settings") must be explicitly defined in the task.
+
+## 13. UI Persistence Rule
+- **Visual Continuity**: When moving between pages (User Flow), the Navigation Sidebar and Header must persist. Do not re-render global layouts within feature tasks.
+
+**Version**: 2.5.0 | **Ratified**: 2026-01-05 | **Last Amended**: 2026-01-05
