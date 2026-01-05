@@ -1,7 +1,7 @@
 
 import { LucideIcon } from 'lucide-react';
 
-export type NavItemId = 
+export type NavItemId =
   | 'dashboard'
   | 'member'
   | 'member-list'
@@ -173,8 +173,8 @@ export interface TierDefinition {
   id: string;
   name: string;
   code: string; // e.g. "GD"
-  type: 'base' | 'standard'; 
-  
+  type: 'base' | 'standard';
+
   // Design
   design: {
     mode: 'color' | 'image';
@@ -184,12 +184,12 @@ export interface TierDefinition {
   };
 
   // Entry
-  entryThreshold: number; 
+  entryThreshold: number;
   qualificationWindow?: {
     type: 'rolling_period' | 'membership_year';
     months?: number; // Only used if type is 'rolling_period'
   };
-  
+
   // Retention / Validity
   validity: {
     type: 'lifetime' | 'rolling';
@@ -200,7 +200,7 @@ export interface TierDefinition {
   downgradeLogic?: 'soft_landing' | 'hard_reset' | 'dynamic_matching';
 
   // Rewards
-  multiplier: number; 
+  multiplier: number;
   benefits: TierBenefit[];
 }
 
@@ -308,6 +308,43 @@ export interface DashboardMetrics {
   pointsRedemptionRate: number;
   couponsUsageRate: number;
   tierDistribution: ComboChartData[]; // Add this for Zone 2B
+}
+
+// --- Day Zero Onboarding Types ---
+
+export type MissionId = 'identity' | 'currency' | 'tiers' | 'launch';
+
+export interface MissionSubtask {
+  id: string;
+  label: string;
+  isDone: boolean;
+}
+
+export interface MissionData {
+  id: MissionId;
+  title: string;
+  description: string;
+  tag: string; // e.g., "Step 1"
+  timeEstimate: string; // e.g., "⏱️ 2 mins"
+  actionLabel: string; // e.g., "Go to Settings"
+  actionRoute: string; // e.g., "/settings"
+  isSkipped: boolean;
+  isComplete: boolean;
+  subtasks: MissionSubtask[];
+}
+
+export interface OnboardingState {
+  completionPercentage: number;
+  currentStepIndex: number; // 0-based (0-3)
+  isDismissed: boolean;
+  missions: Record<MissionId, MissionData>;
+}
+
+export interface IOnboardingService {
+  getOnboardingState(): Promise<OnboardingState>;
+  skipMission(missionId: MissionId): Promise<OnboardingState>;
+  resumeMission(missionId: MissionId): Promise<OnboardingState>;
+  debugToggleSubtask(missionId: MissionId, subtaskId: string, isDone: boolean): Promise<OnboardingState>;
 }
 
 

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import PlaceholderPage from './pages/Placeholder';
@@ -16,12 +16,15 @@ import { ProgramProvider } from './context/ProgramContext';
 import { MemberProvider } from './context/MemberContext';
 import { CampaignProvider } from './context/CampaignContext';
 import { CouponProvider } from './context/CouponContext';
+import { OnboardingProvider, useOnboarding } from './context/OnboardingContext';
 import { OPERATIONAL_NAV, CONFIG_NAV } from './constants';
 import { NavItemId } from './types';
 
-function App() {
+// Inner component that has access to OnboardingContext
+function AppContent() {
   const [currentPage, setCurrentPage] = useState<NavItemId>('dashboard');
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const { setNavigateFunction } = useOnboarding();
 
   // Helper to find label for placeholder
   const getPageLabel = (id: NavItemId) => {
@@ -63,6 +66,11 @@ function App() {
     }
   };
 
+  // Register the navigation function with OnboardingContext
+  useEffect(() => {
+    setNavigateFunction(setCurrentPage);
+  }, [setNavigateFunction, setCurrentPage]);
+
   return (
     <ProgramProvider>
       <MemberProvider>
@@ -82,6 +90,15 @@ function App() {
         </CampaignProvider>
       </MemberProvider>
     </ProgramProvider>
+  );
+}
+
+// Wrap with OnboardingProvider at the top level
+function App() {
+  return (
+    <OnboardingProvider>
+      <AppContent />
+    </OnboardingProvider>
   );
 }
 
