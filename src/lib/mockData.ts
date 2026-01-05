@@ -5,29 +5,15 @@
  * Per Constitution Section 5: AI Service Isolation - all service logic lives in src/lib/.
  */
 
-import type { DashboardMetrics, DateRange, DashboardConfiguration, OnboardingProgress } from '../types';
+import type { DashboardMetrics, DateRange, DashboardConfiguration } from '../types';
 
 // --- Storage Key ---
 const STORAGE_KEY = 'xcrm_dashboard_config';
 
-// --- Default Configuration ---
-const DEFAULT_ONBOARDING: OnboardingProgress = {
-  isCompleted: false,
-  isDismissed: false,
-  steps: {
-    basicSettings: false,
-    masterData: false,
-    loyaltySetup: false,
-  },
-};
-
 const DEFAULT_CONFIG: DashboardConfiguration = {
   userId: 'default-user',
   quickActions: ['view-members', 'add-coupon', 'create-campaign', 'view-reports'],
-  onboarding: DEFAULT_ONBOARDING,
-  widgets: {
-    setupGuide: true,
-  },
+  widgets: {},
 };
 
 // --- Mock Data Generation ---
@@ -38,7 +24,7 @@ const DEFAULT_CONFIG: DashboardConfiguration = {
 function generateSparkline(baseValue: number, trend: number, dataPoints: number = 20): number[] {
   const history: number[] = [];
   let currentValue = baseValue;
-  
+
   // Work backwards from current value
   for (let i = 0; i < dataPoints; i++) {
     history.unshift(currentValue);
@@ -47,7 +33,7 @@ function generateSparkline(baseValue: number, trend: number, dataPoints: number 
     const trendFactor = 1 + (trend / 100 / dataPoints) + noise;
     currentValue = currentValue / trendFactor;
   }
-  
+
   return history;
 }
 
@@ -84,7 +70,7 @@ export function getMetrics(range: DateRange, _stores: string[] = []): DashboardM
     repurchaseRate: withHistory(45.8, 3.1, 'Repurchase Rate', '%'),
     memberSalesGMV: withHistory(Math.round(85000 * daysMultiplier), 8.7, 'Member Sales GMV', '$'),
     memberAOV: withHistory(156.25, 2.1, 'Member AOV', '$'),
-    
+
     totalMembers: Math.round(12500 + 50 * daysMultiplier),
     activeMembers: Math.round(8200 + 30 * daysMultiplier),
     activeCampaigns: 3,

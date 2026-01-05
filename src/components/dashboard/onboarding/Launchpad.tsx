@@ -13,7 +13,7 @@ interface LaunchpadProps {
 
 export function Launchpad({ onRevealDashboard }: LaunchpadProps) {
     return (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800 p-8 text-white">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 via-primary-700 to-purple-800 p-8 text-white">
             {/* Background decoration */}
             <div className="absolute inset-0 overflow-hidden">
                 <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
@@ -44,21 +44,21 @@ export function Launchpad({ onRevealDashboard }: LaunchpadProps) {
                 </h2>
 
                 {/* Body */}
-                <p className="mb-8 max-w-md text-lg text-indigo-100">
+                <p className="mb-8 max-w-md text-lg text-primary-100">
                     Your loyalty program is fully configured. The operational dashboard is now active and ready to track your success.
                 </p>
 
                 {/* CTA */}
                 <button
                     onClick={onRevealDashboard}
-                    className="group flex items-center gap-2 rounded-xl bg-white px-8 py-4 font-bold text-indigo-700 shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+                    className="group flex items-center gap-2 rounded-xl bg-white px-8 py-4 font-bold text-primary-600 shadow-lg transition-all hover:scale-105 hover:shadow-xl"
                 >
                     Reveal Dashboard
                     <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
 
                 {/* Confetti hint */}
-                <p className="mt-4 text-sm text-indigo-200/70">
+                <p className="mt-4 text-sm text-primary-200/70">
                     All 4 missions complete • 100% Ready
                 </p>
             </div>

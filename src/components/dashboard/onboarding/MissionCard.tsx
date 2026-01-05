@@ -26,7 +26,7 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
     // Dynamic styles based on state
     const cardClasses = `
     relative rounded-2xl bg-white p-6 shadow-sm border transition-all duration-300
-    ${isActive ? 'border-indigo-300 shadow-lg scale-100' : 'border-gray-100 opacity-60 scale-95'}
+    ${isActive ? 'border-primary-200 shadow-lg scale-100 hover:border-primary-300 hover:bg-primary-100/30' : 'border-gray-100 opacity-60 scale-95'}
     ${isComplete ? 'border-green-300 bg-green-50/30' : ''}
     ${isSkipped ? 'border-yellow-300 bg-yellow-50/30' : ''}
     min-w-[320px] max-w-[360px] flex-shrink-0
@@ -50,7 +50,7 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
 
             {/* Meta Data */}
             <div className="mb-3 flex items-center gap-3">
-                <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-700">
+                <span className="rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-semibold text-primary-700">
                     {mission.tag}
                 </span>
                 <span className="flex items-center gap-1 text-xs text-gray-500">
@@ -73,8 +73,8 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
                     >
                         <div
                             className={`h-4 w-4 rounded border flex items-center justify-center ${subtask.isDone
-                                    ? 'border-green-500 bg-green-500 text-white'
-                                    : 'border-gray-300'
+                                ? 'border-green-500 bg-green-500 text-white'
+                                : 'border-gray-300'
                                 }`}
                         >
                             {subtask.isDone && <Check className="h-3 w-3" />}
@@ -97,8 +97,8 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
                             onClick={onAction}
                             disabled={!isActive}
                             className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isActive
-                                    ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                ? 'bg-primary-500 text-white hover:bg-primary-600'
+                                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                                 }`}
                         >
                             {mission.actionLabel}

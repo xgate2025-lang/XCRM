@@ -6,6 +6,12 @@
  */
 
 import type { MissionId, MissionData, OnboardingState, IOnboardingService } from '../../../types';
+import { LocalStorageClient } from '../../storage/LocalStorageClient';
+
+// Storage keys
+const STORAGE_KEY = 'mock_onboarding_state';
+const TENANT_ID = 'demo_tenant';
+const USER_ID = 'demo_user';
 
 // Simulate network latency (ms)
 const MOCK_DELAY = 500;
@@ -76,12 +82,24 @@ const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
 };
 
 // In-memory state (simulates database)
-let mockState: OnboardingState = {
-    completionPercentage: 10, // Start at 10% for psychological momentum
-    currentStepIndex: 0,
-    isDismissed: false,
-    missions: JSON.parse(JSON.stringify(DEFAULT_MISSIONS)),
-};
+let mockState: OnboardingState = ((): OnboardingState => {
+    const saved = LocalStorageClient.get<OnboardingState>(TENANT_ID, USER_ID, STORAGE_KEY);
+    if (saved) return saved;
+
+    return {
+        completionPercentage: 10, // Start at 10% for psychological momentum
+        currentStepIndex: 0,
+        isDismissed: false,
+        missions: JSON.parse(JSON.stringify(DEFAULT_MISSIONS)),
+    };
+})();
+
+/**
+ * Persists the current state to local storage.
+ */
+function persistState(): void {
+    LocalStorageClient.set(TENANT_ID, USER_ID, STORAGE_KEY, mockState);
+}
 
 /**
  * Calculates completion percentage based on subtask completion.
@@ -130,6 +148,7 @@ export const MockOnboardingService: IOnboardingService = {
             }
         }
 
+        persistState();
         return { ...mockState };
     },
 
@@ -141,6 +160,14 @@ export const MockOnboardingService: IOnboardingService = {
             mission.isSkipped = false;
         }
 
+        persistState();
+        return { ...mockState };
+    },
+
+    async dismissOnboarding(): Promise<OnboardingState> {
+        await delay(MOCK_DELAY);
+        mockState.isDismissed = true;
+        persistState();
         return { ...mockState };
     },
 
@@ -168,6 +195,7 @@ export const MockOnboardingService: IOnboardingService = {
             }
         }
 
+        persistState();
         return { ...mockState };
     },
 };
@@ -181,6 +209,7 @@ export const MockDebug = {
             isDismissed: false,
             missions: JSON.parse(JSON.stringify(DEFAULT_MISSIONS)),
         };
+        persistState();
     },
 
     completeAll(): void {
@@ -190,6 +219,7 @@ export const MockDebug = {
         });
         mockState.completionPercentage = 100;
         mockState.currentStepIndex = 3;
+        persistState();
     },
 };
 

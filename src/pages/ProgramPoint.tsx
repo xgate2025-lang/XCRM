@@ -4,6 +4,7 @@ import { Coins, ArrowRight, Zap, Gift, CheckCircle2, X, Info, Calendar } from 'l
 import PointsWizard from '../components/program/PointsWizard';
 import { useProgram } from '../context/ProgramContext';
 import { useOnboardingReturn } from '../lib/hooks/useOnboardingReturn';
+import { useOnboarding } from '../context/OnboardingContext';
 import { ReturnModal } from '../components/dashboard/onboarding/ReturnModal';
 
 interface ProgramPointProps {
@@ -25,6 +26,8 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
     setAutoOpenWizard,
     setReturnToLogicWizard
   } = useProgram();
+
+  const { toggleSubtask } = useOnboarding();
 
   // Onboarding Return Modal Hook
   const {
@@ -56,6 +59,11 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
     updatePointsConfig(data);
     setView('landing');
     setShowSuccessModal(true);
+
+    // Mark onboarding subtasks as complete
+    toggleSubtask('currency', 'set_earn_rate', true);
+    toggleSubtask('currency', 'set_redemption', true);
+
     // Trigger return modal if from onboarding
     triggerReturnPrompt('Points Setup');
   };

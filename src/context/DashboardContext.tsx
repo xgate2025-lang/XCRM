@@ -6,11 +6,10 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import type { 
-  DashboardConfiguration, 
-  OnboardingProgress, 
-  DateRange, 
-  DashboardMetrics 
+import type {
+  DashboardConfiguration,
+  DateRange,
+  DashboardMetrics
 } from '../types';
 import { loadConfig, saveConfig, getMetrics } from '../lib/mockData';
 
@@ -27,23 +26,18 @@ const DEFAULT_DATE_RANGE: DateRange = {
 interface DashboardContextValue {
   // Configuration
   config: DashboardConfiguration;
-  
+
   // Global State
   dateRange: DateRange;
   storeScope: string[];
-  
+
   // Metrics (derived from dateRange + storeScope)
   metrics: DashboardMetrics;
-  
-  // Onboarding Actions
-  completeStep: (step: keyof OnboardingProgress['steps']) => void;
-  dismissOnboarding: () => void;
-  isOnboardingVisible: () => boolean;
-  
+
   // Global State Actions
   setDateRange: (range: DateRange) => void;
   setStoreScope: (stores: string[]) => void;
-  
+
   // Quick Actions
   addQuickAction: (actionId: string) => void;
   removeQuickAction: (actionId: string) => void;
@@ -74,44 +68,6 @@ export function DashboardProvider({ children }: DashboardProviderProps) {
     const newMetrics = getMetrics(dateRange, storeScope);
     setMetrics(newMetrics);
   }, [dateRange, storeScope]);
-
-  // --- Onboarding Actions ---
-
-  const completeStep = useCallback((step: keyof OnboardingProgress['steps']) => {
-    setConfig(prev => {
-      const newSteps = { ...prev.onboarding.steps, [step]: true };
-      const allComplete = newSteps.basicSettings && newSteps.masterData && newSteps.loyaltySetup;
-      
-      return {
-        ...prev,
-        onboarding: {
-          ...prev.onboarding,
-          steps: newSteps,
-          isCompleted: allComplete,
-        },
-      };
-    });
-  }, []);
-
-  const dismissOnboarding = useCallback(() => {
-    setConfig(prev => ({
-      ...prev,
-      onboarding: {
-        ...prev.onboarding,
-        isDismissed: true,
-      },
-      widgets: {
-        ...prev.widgets,
-        setupGuide: false,
-      },
-    }));
-  }, []);
-
-  const isOnboardingVisible = useCallback(() => {
-    return config.widgets.setupGuide && 
-           !config.onboarding.isCompleted && 
-           !config.onboarding.isDismissed;
-  }, [config]);
 
   // --- Global State Actions ---
 
@@ -149,9 +105,6 @@ export function DashboardProvider({ children }: DashboardProviderProps) {
     dateRange,
     storeScope,
     metrics,
-    completeStep,
-    dismissOnboarding,
-    isOnboardingVisible,
     setDateRange,
     setStoreScope,
     addQuickAction,

@@ -5,7 +5,6 @@ import {
   UserPlus, Zap, Repeat, DollarSign, ShoppingBag
 } from 'lucide-react';
 import { DashboardProvider, useDashboard } from '../context/DashboardContext';
-import { SetupGuide } from '../components/dashboard/SetupGuide';
 import { OnboardingHero } from '../components/dashboard/onboarding/OnboardingHero';
 import { useOnboarding } from '../context/OnboardingContext';
 import { GlobalNavigator } from '../components/dashboard/GlobalNavigator';
@@ -21,8 +20,17 @@ import { CampaignPulseWidget } from '../components/dashboard/widgets/CampaignPul
 
 const DashboardContent = () => {
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
-  const { metrics, isOnboardingVisible } = useDashboard();
-  const { state: onboardingState } = useOnboarding();
+  const { metrics } = useDashboard();
+  const { state: onboardingState, isLoading: isOnboardingLoading } = useOnboarding();
+
+  // Prevent flicker by not rendering dashboard content until onboarding state is known
+  if (isOnboardingLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500 pb-10">
@@ -99,14 +107,8 @@ const DashboardContent = () => {
       {/* Global Navigator */}
       <GlobalNavigator />
 
-      {/* State A: New Onboarding Hero (Day Zero Redesign) */}
       {onboardingState && !onboardingState.isDismissed && onboardingState.completionPercentage < 100 && (
         <OnboardingHero />
-      )}
-
-      {/* Legacy Setup Guide (hidden when new hero is shown) */}
-      {(!onboardingState || onboardingState.isDismissed || onboardingState.completionPercentage >= 100) && (
-        <SetupGuide />
       )}
 
       {/* Main Layout Grid */}

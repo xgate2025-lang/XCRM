@@ -7,6 +7,7 @@ import LogicWizard from '../components/program/LogicWizard';
 import TierWizard from '../components/program/TierWizard';
 import { useProgram } from '../context/ProgramContext';
 import { useOnboardingReturn } from '../lib/hooks/useOnboardingReturn';
+import { useOnboarding } from '../context/OnboardingContext';
 import { ReturnModal } from '../components/dashboard/onboarding/ReturnModal';
 
 interface ProgramTierProps {
@@ -41,6 +42,8 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
     updateProgramStatus
   } = useProgram();
 
+  const { toggleSubtask } = useOnboarding();
+
   // Onboarding Return Modal Hook
   const {
     showReturnModal,
@@ -72,6 +75,10 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
     updateProgramLogic(data);
     setAutoOpenWizard(true);
     setView('landing');
+
+    // Mark onboarding subtask as complete
+    toggleSubtask('tiers', 'define_base_tier', true);
+
     onNavigate('program-point');
   };
 
@@ -100,6 +107,10 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
     setView('landing');
     setEditingTier(null);
     setTimeout(() => setShowSuccessToast(null), 4000);
+
+    // Mark onboarding subtasks as complete
+    toggleSubtask('tiers', 'create_premium_tier', true);
+    toggleSubtask('tiers', 'add_benefit', true);
 
     // Trigger return modal if from onboarding
     triggerReturnPrompt('Tier Setup');

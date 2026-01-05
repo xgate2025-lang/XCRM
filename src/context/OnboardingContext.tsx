@@ -25,7 +25,7 @@ interface OnboardingContextValue {
     skipMission: (missionId: MissionId) => Promise<void>;
     resumeMission: (missionId: MissionId) => Promise<void>;
     toggleSubtask: (missionId: MissionId, subtaskId: string, isDone: boolean) => Promise<void>;
-    dismissOnboarding: () => void;
+    dismissOnboarding: () => Promise<void>;
     navigateToMission: (missionId: MissionId) => void;
     setNavigateFunction: (fn: (id: NavItemId) => void) => void;
 
@@ -60,7 +60,7 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
             const newState = await MockOnboardingService.getOnboardingState();
             setState(newState);
 
-            // Restore last card index from LocalStorage
+            // Restore last card index from LocalStorage (UI state)
             const savedIndex = LocalStorageClient.get<number>(TENANT_ID, USER_ID, LAST_CARD_KEY);
             if (savedIndex !== null && savedIndex >= 0 && savedIndex <= 3) {
                 setCurrentMissionIndexInternal(savedIndex);
@@ -126,9 +126,14 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
     }, [currentMissionIndex, setCurrentMissionIndex]);
 
     // Dismiss onboarding permanently
-    const dismissOnboarding = useCallback(() => {
-        setState((prev) => prev ? { ...prev, isDismissed: true } : null);
-        LocalStorageClient.set(TENANT_ID, USER_ID, 'dismissed', true);
+    const dismissOnboarding = useCallback(async () => {
+        try {
+            const newState = await MockOnboardingService.dismissOnboarding();
+            setState(newState);
+        } catch (err) {
+            setError('Failed to dismiss onboarding');
+            console.error('[OnboardingContext] Dismiss error:', err);
+        }
     }, []);
 
     // Navigation function holder (set by App/Dashboard)

@@ -257,23 +257,12 @@ export interface DateRange {
   label: string; // "Last 7 Days", "Last 30 Days", etc.
 }
 
-export interface OnboardingProgress {
-  isCompleted: boolean;
-  isDismissed: boolean;
-  steps: {
-    basicSettings: boolean;
-    masterData: boolean;
-    loyaltySetup: boolean;
-  };
-}
+
 
 export interface DashboardConfiguration {
   userId: string;
   quickActions: string[]; // IDs of quick action items
-  onboarding: OnboardingProgress;
-  widgets: {
-    setupGuide: boolean; // visible or hidden
-  };
+  widgets: Record<string, boolean>;
 }
 
 export interface GlobalState {
@@ -344,6 +333,7 @@ export interface IOnboardingService {
   getOnboardingState(): Promise<OnboardingState>;
   skipMission(missionId: MissionId): Promise<OnboardingState>;
   resumeMission(missionId: MissionId): Promise<OnboardingState>;
+  dismissOnboarding(): Promise<OnboardingState>;
   debugToggleSubtask(missionId: MissionId, subtaskId: string, isDone: boolean): Promise<OnboardingState>;
 }
 

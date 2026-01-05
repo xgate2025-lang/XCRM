@@ -56,7 +56,7 @@ export function ReturnModal({ isOpen, onReturn, onStay, stepName = 'Step' }: Ret
                 <div className="flex flex-col gap-3">
                     <button
                         onClick={onReturn}
-                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-3 font-semibold text-white transition-colors hover:bg-indigo-700"
+                        className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary-500 px-4 py-3 font-semibold text-white transition-colors hover:bg-primary-600"
                     >
                         <ArrowLeft className="h-4 w-4" />
                         Return to Dashboard

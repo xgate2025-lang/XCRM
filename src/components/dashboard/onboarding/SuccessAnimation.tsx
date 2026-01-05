@@ -14,7 +14,7 @@ interface ConfettiPiece {
     size: number;
 }
 
-const COLORS = ['#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'];
+const COLORS = ['#055DDB', '#6366f1', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'];
 
 function generateConfetti(count: number): ConfettiPiece[] {
     return Array.from({ length: count }, (_, i) => ({

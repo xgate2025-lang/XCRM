@@ -18,7 +18,7 @@ export function ProgressHeader({ completionPercentage, currentStep, totalSteps }
         <div className="mb-6">
             {/* Title */}
             <div className="mb-2 flex items-center gap-2">
-                <Rocket className="h-5 w-5 text-indigo-600" />
+                <Rocket className="h-5 w-5 text-primary-500" />
                 <h2 className="text-xl font-bold text-gray-900">Get started with your Loyalty Program</h2>
             </div>
 
@@ -32,13 +32,13 @@ export function ProgressHeader({ completionPercentage, currentStep, totalSteps }
                 <div className="flex-1">
                     <div className="h-3 overflow-hidden rounded-full bg-gray-200">
                         <div
-                            className="h-full rounded-full bg-indigo-600 transition-all duration-500 ease-out"
+                            className="h-full rounded-full bg-primary-500 transition-all duration-500 ease-out"
                             style={{ width: `${completionPercentage}%` }}
                         />
                     </div>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                    <span className="font-semibold text-indigo-600">{completionPercentage}%</span>
+                    <span className="font-semibold text-primary-500">{completionPercentage}%</span>
                     <span className="text-gray-500">•</span>
                     <span className="text-gray-600">
                         <strong>{currentStep}</strong> of <strong>{totalSteps}</strong> missions completed

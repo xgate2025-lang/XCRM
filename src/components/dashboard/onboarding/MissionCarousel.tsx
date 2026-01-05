@@ -108,12 +108,12 @@ export function MissionCarousel({
                             key={missionId}
                             onClick={() => onNavigate(index)}
                             className={`h-2 w-2 rounded-full transition-all ${index === currentIndex
-                                    ? 'w-6 bg-indigo-600'
-                                    : mission.isComplete
-                                        ? 'bg-green-400'
-                                        : mission.isSkipped
-                                            ? 'bg-yellow-400'
-                                            : 'bg-gray-300'
+                                ? 'w-6 bg-primary-500'
+                                : mission.isComplete
+                                    ? 'bg-green-400'
+                                    : mission.isSkipped
+                                        ? 'bg-yellow-400'
+                                        : 'bg-gray-300'
                                 }`}
                         />
                     );
