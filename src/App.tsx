@@ -12,6 +12,8 @@ import CampaignEditor from './pages/CampaignEditor';
 import CouponList from './pages/CouponList';
 import CreateCoupon from './pages/CreateCoupon';
 import PerformanceAnalytics from './pages/PerformanceAnalytics';
+import CampaignDetail from './pages/CampaignDetail';
+import CampaignAnalytics from './pages/CampaignAnalytics';
 import { ProgramProvider } from './context/ProgramContext';
 import { MemberProvider } from './context/MemberContext';
 import { CampaignProvider } from './context/CampaignContext';
@@ -74,6 +76,10 @@ function AppContent() {
         return <CreateCoupon onNavigate={setCurrentPage} couponId={navigationPayload?.id} />;
       case 'performance-analytics':
         return <PerformanceAnalytics onNavigate={setCurrentPage} />;
+      case 'campaign-detail':
+        return <CampaignDetail onNavigate={setCurrentPage} campaignId={navigationPayload?.id} />;
+      case 'campaign-analytics':
+        return <CampaignAnalytics onNavigate={setCurrentPage} campaignId={navigationPayload?.id} />;
       case 'program-tier':
         console.log('[App] 🎯 Rendering ProgramTier page');
         return <ProgramTier onNavigate={setCurrentPage} />;
@@ -84,6 +90,14 @@ function AppContent() {
         return <PlaceholderPage title={getPageLabel(currentPage)} id={currentPage} onNavigate={setCurrentPage} />;
     }
   };
+
+  // T019: Scroll to top on page change
+  useEffect(() => {
+    const mainContent = document.querySelector('main');
+    if (mainContent) {
+      mainContent.scrollTo(0, 0);
+    }
+  }, [currentPage]);
 
   // Register the navigation function with OnboardingContext
   useEffect(() => {

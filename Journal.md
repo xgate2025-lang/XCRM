@@ -113,3 +113,58 @@ INPUTS:
 
 - **Rule**: For multi-step wizards, define a clear `SECTION_ORDER` array and derive all navigation logic from it. This makes adding/removing/reordering steps trivial.
 
+## 2026-01-06: Coupon List Refinement - State Sync & Navigation
+
+- **Incident**: "Coupon not found" error when navigating from the coupon list to the edit page, despite the coupon existing in the list.
+- **Root Cause**: 
+    1. `CouponContext` (used by the list) was initialized with hardcoded data and didn't sync with `MockCouponService` (used by the edit page).
+    2. Mutations in the list (Toggle Status, Duplicate) were only updating in-memory context state, not the persistent storage.
+- **Correction**: 
+    1. Updated `CouponProvider` to load its initial state from `MockCouponService` on mount.
+    2. Synchronized all `CouponContext` mutation methods (`add`, `replace`, `delete`, `toggle`, `duplicate`) to also update `MockCouponService`.
+    3. Added a `storage` event listener to `CouponContext` to handle cross-navigation state updates.
+- **Decision**: Removed the redundant "View Details" modal in favor of direct row-click navigation to the full Edit Page. This simplifies the UI and aligns with modern CRUD patterns.
+
+## 2026-01-06: Campaign Refinement - Service Parity & Polymorphic Analytics
+
+- **Pattern**: Successfully implemented persistent campaign management and polymorphic analytics views.
+- **Architecture Decisions**:
+    1. **Service Integration**: Created `MockCampaignService.ts` with LocalStorage persistence to replace flaky in-memory state.
+    2. **Multi-select Targeting**: Replaced single-select dropdowns with a tag-based multi-select UI for Stores and Member Tiers in `CampaignEditor.tsx`.
+    3. **Polymorphic Analytics**: Implemented `CampaignDetail.tsx` which dynamically switches between ROI-focused cards (for Spending) and Acquisition-focused cards (for Referral) based on campaign type.
+    4. **Stacking Rule Logic**: Added `stackable` boolean and overlap detection that cross-references active campaigns.
+- **Key Lessons**:
+    1. **Multi-Select UX**: For small sets (like Tiers/Stores), a row of toggleable buttons often provides better visual confirmation than a dropdown menu.
+    2. **Prop-Drilling vs. Context**: For specialized detail views, passing `campaignId` via navigation payload and fetching the specific entity in the detail component maintains a cleaner separation of concerns than passing the whole object.
+    3. **Polymorphic Rendering**: Using a simple `isReferral` check within a dedicated component makes for much more readable code than trying to build a "Swiss Army Knife" component that handles both cases via complex prop flags.
+    4. **State Parity**: Renaming states from `audienceScope` to `targetTiers` (internal name) to match the external data model (`Campaign` interface) avoids confusion during data mapping and debugging.
+
+- **Components Created/Updated**:
+    - `src/services/MockCampaignService.ts` - Persistent storage
+    - `src/pages/CampaignDetail.tsx` - New polymorphic analytics page
+    - `src/pages/CampaignEditor.tsx` - Updated with multi-select and stacking logic
+
+## 2026-01-06: Campaign Table Refinement - Polymorphic UI & Zone Sync
+
+- **Pattern**: Successfully implemented a high-density, type-aware campaign dashboard with real-time zone synchronization.
+- **Architecture Decisions**:
+    1. **Polymorphic Metrics**: Used a unified `getCampaignKPI` utility to map campaign types to human-readable primary metrics (ROI vs Growth), ensuring consistent table layout while handling diverse data shapes.
+    2. **Zone Synchronization (Pulse Sync)**: Summary metrics (Zone A) are derived directly from the filtered application state (Zone B/C). This ensures that search queries and status filters update the global "Health Score" instantly without redundant API calls.
+    3. **Operational Safety (Stop Modal)**: Implemented a mandatory "STOP" input confirmation for terminal actions, protecting active revenue-generating campaigns from accidental deletion.
+    4. **Quick Look Interaction**: Implemented a side-drawer triggered by row clicks (Rule 7: IA coverage). Added active row highlighting to maintain context during inspection.
+- **Key Lessons**:
+    1. **Derived State vs. Sync State**: For analytics dashboards, deriving summary stats from the filtered list in the render cycle is significantly cleaner than attempting to sync multiple state variables manually.
+    2. **Contextual Action Logic**: Decoupling the "Action Matrix" (which buttons show when) from the table rendering (using a logic-first approach) makes the UI more robust against status transitions.
+    3. **Tailwind Transition Durations**: Using `duration-500` with `ease-out` for side drawers provides a more "premium" feel than the default `300ms` for larger UI shifts.
+- **Components Created/Updated**:
+    - `src/components/campaign/QuickLookDrawer.tsx` - High-fidelity inspection tool
+    - `src/components/shared/StopConfirmationModal.tsx` - Reusable safety component
+    - `src/pages/CampaignDashboard.tsx` - Refactored for Zone Sync and Polymorphism
+- **Rule**: For table-based apps, avoid "Navigation vs. Interaction" confusion by clearly distinguishing between row clicks (Quick Look) and button clicks (Direct Action) using `e.stopPropagation()`.
+
+## 2026-01-06: Task Synchronization Oversight
+
+- **Incident**: Failed to update the feature-specific `tasks.md` in sync with the global `task.md` after phased implementation.
+- **Root Cause**: Synchronization tool call failed due to target content mismatch, and the failure was not immediately corrected before the `notify_user` call.
+- **Correction**: Manually verified and updated both task lists to 100% completion and added a specific "Sync all progress trackers" checkpoint to the internal workflow.
+- **Lesson**: When working with multiple progress trackers (Brain task.md vs. Feature tasks.md), verify the success of ALL edit calls before proceeding to the next phase or notifying the user.

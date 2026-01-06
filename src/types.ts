@@ -8,6 +8,8 @@ export type NavItemId =
   | 'member-detail'
   | 'campaign'
   | 'campaign-editor'
+  | 'campaign-detail'
+  | 'campaign-analytics'
   | 'campaign-advanced'
   | 'assets'
   | 'assets-coupon'
@@ -261,21 +263,96 @@ export interface TierDefinition {
 // --- Campaign Domain Types (New) ---
 
 export type CampaignPriority = 'standard' | 'high' | 'critical';
-export type CampaignStatus = 'active' | 'draft' | 'scheduled' | 'ended' | 'paused';
-export type CampaignType = 'boost_sales' | 'referral' | 'birthday' | 'custom' | 'accumulated';
+export type CampaignStatus = 'active' | 'draft' | 'scheduled' | 'ended' | 'paused' | 'running' | 'finish' | 'stop';
+export type CampaignType = 'boost_sales' | 'referral' | 'birthday' | 'custom' | 'accumulated' | 'spending' | 'coupon' | 'accumulation';
 
 export interface Campaign {
   id: string;
   name: string;
   type: CampaignType;
   status: CampaignStatus;
-  priority: CampaignPriority;
+  // priority: REMOVED per US1
+  stackable: boolean;       // Added per US2
+  targetStores: string[];   // Added per US2 (Store IDs)
+  targetTiers: string[];    // Added per US2 (Tier IDs)
   attributionRevenue: number;
   attributionRevenueDisplay: string; // Formatted string
   reachCount: number;
+  totalParticipants?: number; // Added per UI requirements
   startDate: string;
   endDate: string | null;
   lastEdited: string;
+}
+
+export interface CampaignLog {
+  id: string;
+  campaignId: string;
+  timestamp: string;
+  memberId: string;
+  memberName: string;
+  actionType: 'purchase' | 'referral' | 'join';
+  rewardContent: string;
+  attributedValue: number; // e.g., sales amount
+  cost: number;            // e.g., discount value
+  participationCount: number;
+  metadata?: Record<string, any>;
+}
+
+/**
+ * Interface for Polymorphic Campaign Metrics
+ * Maps to Zone C: Column 4 and Quick Look Drawer
+ */
+
+export interface CampaignKPI {
+  label: string;      // e.g., "ROI / Sales" or "New Members"
+  value: string;      // e.g., "$12,500 (4.5x)" or "+142 Users"
+  trend?: number;     // e.g., 0.12 (12%)
+}
+
+export interface QuickLookData {
+  scorecard: {
+    totalCost: number;
+    totalRevenue?: number;
+    participation: number;
+  };
+  ruleSummary: string; // "Trigger: Spend > $100. Reward: 500 Pts."
+  recentActivity: {
+    timestamp: string;
+    description: string;
+  }[];
+}
+
+/**
+ * Interface for State Sync between Zone A and Zone B
+ */
+export interface DashboardFilterState {
+  activeStatus: CampaignStatus | 'all';
+  searchQuery: string;
+}
+
+// --- Campaign Analytics Types (007-campaign-analytics) ---
+
+export interface AnalyticsSummary {
+  roi: number;
+  totalRevenue: number;
+  totalCost: number;
+  conversionRate: number;
+  cpa: number; // Cost Per Acquisition
+  newMembers: number; // For Referral Campaigns
+  participationCount: number;
+  // Trends (percentage change)
+  roiTrend?: number;
+  revenueTrend?: number;
+  costTrend?: number;
+  conversionTrend?: number;
+  cpaTrend?: number;
+  newMembersTrend?: number;
+  chartData: {
+    date: string;
+    revenue?: number;
+    cost: number;
+    signups?: number;
+  }[];
 }
 
 // --- Coupon Domain Types ---

@@ -40,15 +40,21 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({
   children,
   footer,
 }) => {
+  const isFirstRender = useRef(true);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  // Scroll into view when section becomes active
+  // Scroll into view when section becomes active, but not on initial mount
   useEffect(() => {
     if (isActive && contentRef.current) {
+      if (isFirstRender.current) {
+        isFirstRender.current = false;
+        return;
+      }
+
       // Small delay to allow animation to start
       const timer = setTimeout(() => {
         contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 100);
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [isActive]);
@@ -105,9 +111,8 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({
     <div ref={contentRef} className={getContainerStyles()}>
       {/* Header - Always visible, clickable */}
       <div
-        className={`p-6 flex items-center justify-between cursor-pointer transition-colors ${
-          isActive ? 'bg-white' : 'hover:bg-slate-50/50'
-        }`}
+        className={`p-6 flex items-center justify-between cursor-pointer transition-colors ${isActive ? 'bg-white' : 'hover:bg-slate-50/50'
+          }`}
         onClick={handleClick}
         role="button"
         tabIndex={0}
@@ -132,9 +137,8 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({
           {/* Title and Edit Badge */}
           <div className="flex items-center gap-2">
             <h3
-              className={`text-lg font-bold transition-colors duration-200 ${
-                isActive ? 'text-slate-900' : 'text-slate-600'
-              }`}
+              className={`text-lg font-bold transition-colors duration-200 ${isActive ? 'text-slate-900' : 'text-slate-600'
+                }`}
             >
               {title}
             </h3>
@@ -154,9 +158,8 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({
                 {hasError && <AlertCircle size={14} className="text-red-500" />}
                 {isComplete && !hasError && <CheckCircle2 size={14} className="text-green-500" />}
                 <span
-                  className={`text-xs font-medium truncate max-w-[250px] ${
-                    hasError ? 'text-red-600' : isComplete ? 'text-slate-600' : 'text-slate-400'
-                  }`}
+                  className={`text-xs font-medium truncate max-w-[250px] ${hasError ? 'text-red-600' : isComplete ? 'text-slate-600' : 'text-slate-400'
+                    }`}
                 >
                   {summary}
                 </span>
@@ -178,11 +181,10 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({
       {/* Content - Animated expand/collapse */}
       <div
         id={`section-content-${section}`}
-        className={`transition-all duration-300 ease-out ${
-          isActive
-            ? 'max-h-[2000px] opacity-100'
-            : 'max-h-0 opacity-0 overflow-hidden'
-        }`}
+        className={`transition-all duration-300 ease-out ${isActive
+          ? 'max-h-[2000px] opacity-100'
+          : 'max-h-0 opacity-0 overflow-hidden'
+          }`}
       >
         {isActive && (
           <div className="px-6 pb-8 pl-[4.5rem] space-y-8 animate-in slide-in-from-top-2 duration-300">

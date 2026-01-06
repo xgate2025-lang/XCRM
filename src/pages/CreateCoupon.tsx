@@ -39,12 +39,12 @@ const SECTION_CONFIG: {
   title: string;
   Component: React.FC;
 }[] = [
-  { section: 'essentials', stepNumber: 1, title: 'Essentials & Value', Component: EssentialsSection },
-  { section: 'lifecycle', stepNumber: 2, title: 'Lifecycle', Component: LifecycleSection },
-  { section: 'guardrails', stepNumber: 3, title: 'Guardrails', Component: GuardrailsSection },
-  { section: 'inventory', stepNumber: 4, title: 'Inventory & Codes', Component: InventorySection },
-  { section: 'distribution', stepNumber: 5, title: 'Distribution', Component: DistributionSection },
-];
+    { section: 'essentials', stepNumber: 1, title: 'Essentials & Value', Component: EssentialsSection },
+    { section: 'lifecycle', stepNumber: 2, title: 'Lifecycle', Component: LifecycleSection },
+    { section: 'guardrails', stepNumber: 3, title: 'Guardrails', Component: GuardrailsSection },
+    { section: 'inventory', stepNumber: 4, title: 'Inventory & Codes', Component: InventorySection },
+    { section: 'distribution', stepNumber: 5, title: 'Distribution', Component: DistributionSection },
+  ];
 
 // Inner component that uses the wizard context
 const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }) => {
@@ -66,7 +66,7 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(Boolean(couponId));
   const [loadError, setLoadError] = useState<string | null>(null);
 
   // Determine if we're in edit mode
@@ -94,6 +94,14 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
         });
     }
   }, [couponId, loadCoupon]);
+
+  // T020: Lock body scroll when wizard is open to prevent background jumping
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, []);
 
   // Auto-save draft periodically
   useEffect(() => {
@@ -266,7 +274,7 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
   };
 
   return (
-    <div className="fixed inset-0 z-[60] flex flex-col bg-white overflow-hidden animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[60] flex flex-col bg-white overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
       {/* Loading State */}
       {isLoading && (
         <div className="absolute inset-0 z-50 bg-white flex items-center justify-center">
@@ -317,9 +325,8 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
           <div className="h-4 w-px bg-slate-200"></div>
           <div className="text-sm font-bold text-slate-900">
             {isEditMode ? 'Edit Coupon' : 'Create Coupon'}{' '}
-            <span className={`ml-2 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
-              isEditMode ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-500'
-            }`}>
+            <span className={`ml-2 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${isEditMode ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-500'
+              }`}>
               {isEditMode ? 'Editing' : 'Draft'}
             </span>
           </div>
@@ -341,7 +348,7 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
             {SECTION_CONFIG.map(({ section, stepNumber, title, Component }) => {
               const sectionIsComplete = isSectionComplete(section);
               const sectionHasError = state.sectionValidation[section].isTouched &&
-                                      !state.sectionValidation[section].isValid;
+                !state.sectionValidation[section].isValid;
               const sectionIsActive = state.activeSection === section;
 
               // Check if this section is being edited (active and before furthest)
@@ -365,11 +372,10 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
                     !isLastSection || section !== state.activeSection ? (
                       <button
                         onClick={handleContinue}
-                        className={`px-8 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-md hover:shadow-lg ${
-                          isEditing && sectionIsActive
-                            ? 'bg-amber-500 text-white hover:bg-amber-600'
-                            : 'bg-slate-900 text-white hover:bg-slate-800'
-                        }`}
+                        className={`px-8 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-md hover:shadow-lg ${isEditing && sectionIsActive
+                          ? 'bg-amber-500 text-white hover:bg-amber-600'
+                          : 'bg-slate-900 text-white hover:bg-slate-800'
+                          }`}
                       >
                         {sectionIsActive ? getContinueButtonContent() : (
                           <>Continue <ArrowRight size={16} /></>
@@ -431,10 +437,10 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
             {isProcessing
               ? (isEditMode ? 'Updating...' : 'Publishing...')
               : isEditMode
-              ? 'Update Coupon'
-              : isUniqueCodeStrategy
-              ? 'Publish & Generate CSV'
-              : 'Publish Coupon'}
+                ? 'Update Coupon'
+                : isUniqueCodeStrategy
+                  ? 'Publish & Generate CSV'
+                  : 'Publish Coupon'}
           </button>
         </div>
       </div>
