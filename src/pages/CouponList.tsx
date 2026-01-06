@@ -8,10 +8,11 @@ import {
   Eye, DollarSign, Gift, Info, Tag
 } from 'lucide-react';
 import { NavItemId, CouponType, CouponStatus } from '../types';
+import { NavigationPayload } from '../App';
 import { useCoupon } from '../context/CouponContext';
 
 interface CouponListProps {
-  onNavigate: (id: NavItemId) => void;
+  onNavigate: (id: NavItemId, payload?: NavigationPayload) => void;
 }
 
 const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
@@ -309,7 +310,7 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
                         >
                           <Eye size={18} />
                         </button>
-                        <button className="p-2 text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl transition-all shadow-none hover:shadow-sm" title="Edit Properties">
+                        <button className="p-2 text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl transition-all shadow-none hover:shadow-sm" title="Edit Properties" onClick={(e) => { e.stopPropagation(); onNavigate('coupon-edit', { id: coupon.id }); }}>
                           <Edit3 size={18} />
                         </button>
                         <button className="p-2 text-slate-400 hover:text-slate-900 hover:bg-white rounded-xl transition-all shadow-none hover:shadow-sm" title="Performance Analytics">

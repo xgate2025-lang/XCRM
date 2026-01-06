@@ -12,6 +12,7 @@ export type NavItemId =
   | 'assets'
   | 'assets-coupon'
   | 'coupon-create'
+  | 'coupon-edit'
   | 'assets-rewards'
   | 'performance'
   | 'performance-analytics'

@@ -27,10 +27,76 @@ export class MockCouponService {
 
   // --- Coupon CRUD ---
 
+  private static INITIAL_COUPONS: Coupon[] = [
+    {
+      id: 'cpn_001',
+      code: 'WELCOME10',
+      name: 'New Member Welcome $10',
+      type: 'cash',
+      value: 10,
+      minSpend: 0,
+      isStackable: false,
+      cartLimit: 1,
+      codeStrategy: 'custom',
+      totalQuota: 5000,
+      userQuota: 1,
+      validityType: 'dynamic',
+      validityDays: 30,
+      startDate: '2024-01-01',
+      endDate: undefined,
+      extendToEndOfMonth: true,
+      channels: ['public_app'],
+      status: 'Live',
+    },
+    {
+      id: 'cpn_002',
+      code: 'GOLD20OFF',
+      name: 'Gold Tier Anniversary 20%',
+      type: 'percentage',
+      value: 20,
+      minSpend: 50,
+      isStackable: true,
+      cartLimit: 1,
+      codeStrategy: 'custom',
+      totalQuota: 1000,
+      userQuota: 1,
+      validityType: 'fixed',
+      startDate: '2024-06-01',
+      endDate: '2024-12-31',
+      extendToEndOfMonth: false,
+      channels: ['public_app', 'points_mall'],
+      status: 'Live',
+    },
+    {
+      id: 'cpn_003',
+      code: 'FLASH_SHIP',
+      name: 'Weekend Free Shipping',
+      type: 'shipping',
+      value: 0,
+      minSpend: 0,
+      isStackable: false,
+      cartLimit: 1,
+      codeStrategy: 'custom',
+      totalQuota: 10000,
+      userQuota: 1,
+      validityType: 'fixed',
+      startDate: '2024-12-14',
+      endDate: '2024-12-16',
+      extendToEndOfMonth: false,
+      channels: ['public_app'],
+      status: 'Scheduled',
+    }
+  ];
+
   static getAllCoupons(): Coupon[] {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
+      if (!stored) {
+        // Seed initial data if empty
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.INITIAL_COUPONS));
+        return this.INITIAL_COUPONS;
+      }
+      return JSON.parse(stored);
     } catch {
       console.warn('MockCouponService: Failed to parse stored coupons');
       return [];
@@ -163,6 +229,10 @@ export class MockCouponService {
 
   static async getAllCouponsAsync(): Promise<Coupon[]> {
     return this.simulateApiCall(this.getAllCoupons());
+  }
+
+  static async getCouponByIdAsync(id: string): Promise<Coupon | null> {
+    return this.simulateApiCall(this.getCouponById(id), 400);
   }
 
   static async saveCouponAsync(coupon: Partial<Coupon>, status?: CouponStatus): Promise<Coupon> {

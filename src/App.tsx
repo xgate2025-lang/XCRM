@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
 import PlaceholderPage from './pages/Placeholder';
@@ -20,13 +20,22 @@ import { OnboardingProvider, useOnboarding } from './context/OnboardingContext';
 import { OPERATIONAL_NAV, CONFIG_NAV } from './constants';
 import { NavItemId } from './types';
 
+/** Navigation payload for passing data between pages (e.g., coupon ID for edit) */
+export interface NavigationPayload {
+  id?: string;
+}
+
 // Inner component that has access to OnboardingContext
 function AppContent() {
   const [currentPage, setCurrentPageInternal] = useState<NavItemId>('dashboard');
-  const setCurrentPage = React.useCallback((id: NavItemId) => {
-    console.log('[App] 🧭 Navigation requested to:', id);
+  const [navigationPayload, setNavigationPayload] = useState<NavigationPayload | undefined>(undefined);
+
+  const setCurrentPage = useCallback((id: NavItemId, payload?: NavigationPayload) => {
+    console.log('[App] 🧭 Navigation requested to:', id, payload ? `with payload: ${JSON.stringify(payload)}` : '');
     setCurrentPageInternal(id);
+    setNavigationPayload(payload);
   }, []);
+
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { setNavigateFunction } = useOnboarding();
 
@@ -60,6 +69,9 @@ function AppContent() {
       case 'coupon-create':
         console.log('[App] 🎯 Rendering CreateCoupon page');
         return <CreateCoupon onNavigate={setCurrentPage} />;
+      case 'coupon-edit':
+        console.log('[App] 🎯 Rendering CreateCoupon page (Edit Mode)', navigationPayload);
+        return <CreateCoupon onNavigate={setCurrentPage} couponId={navigationPayload?.id} />;
       case 'performance-analytics':
         return <PerformanceAnalytics onNavigate={setCurrentPage} />;
       case 'program-tier':

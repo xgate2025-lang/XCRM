@@ -6,6 +6,7 @@ interface CouponContextType {
   coupons: CouponData[];
   addCoupon: (coupon: CouponData) => void;
   updateCoupon: (id: string, updates: Partial<CouponData>) => void;
+  replaceCoupon: (id: string, coupon: CouponData) => void;
   deleteCoupon: (id: string) => void;
   duplicateCoupon: (id: string) => void;
   toggleCouponStatus: (id: string) => void;
@@ -66,6 +67,19 @@ export const CouponProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     setCoupons(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
   };
 
+  const replaceCoupon = (id: string, coupon: CouponData) => {
+    setCoupons(prev => {
+      const existingIndex = prev.findIndex(c => c.id === id);
+      if (existingIndex >= 0) {
+        const updated = [...prev];
+        updated[existingIndex] = coupon;
+        return updated;
+      }
+      // If not found, add to beginning
+      return [coupon, ...prev];
+    });
+  };
+
   const deleteCoupon = (id: string) => {
     setCoupons(prev => prev.filter(c => c.id !== id));
   };
@@ -94,13 +108,14 @@ export const CouponProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   };
 
   return (
-    <CouponContext.Provider value={{ 
-        coupons, 
-        addCoupon, 
-        updateCoupon, 
-        deleteCoupon, 
-        duplicateCoupon, 
-        toggleCouponStatus 
+    <CouponContext.Provider value={{
+        coupons,
+        addCoupon,
+        updateCoupon,
+        replaceCoupon,
+        deleteCoupon,
+        duplicateCoupon,
+        toggleCouponStatus
     }}>
       {children}
     </CouponContext.Provider>
