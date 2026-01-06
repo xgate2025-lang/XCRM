@@ -80,3 +80,36 @@ INPUTS:
     4. **Types First**: Defining types (`AssetLog`, `PointPacket`, etc.) before implementation ensures type safety throughout.
 - **Rule**: For any component exceeding ~300 lines, consider breaking into smaller, focused components with clear props interfaces.
 
+## 2026-01-06: Coupon Refinement - Create Coupon Wizard
+
+- **Pattern**: Successfully implemented a 5-step accordion wizard for coupon creation with live preview.
+- **Architecture Decisions**:
+    1. **State Management**: Created `CouponWizardContext` with reducer-based state, validation tracking, and smart navigation.
+    2. **Section Validation**: Each section has a dedicated validation function with field-specific error messages.
+    3. **Smart Navigation**: `continueFromCurrentSection()` handles both normal progression and returning from editing earlier sections.
+    4. **Accordion Pattern**: `AccordionSection` component with Tailwind transitions, visual states (active/complete/error), and ARIA accessibility.
+    5. **Live Preview**: Mobile device simulation showing real-time updates as user fills the form.
+    6. **CSV Export**: Blob API-based CSV generation for unique code strategy with automatic download on publish.
+
+- **Key Lessons**:
+    1. **Wizard State Complexity**: Tracking `activeSection`, `furthestSection`, `previousSection`, and per-section `isTouched`/`isValid` enables sophisticated UX (e.g., "Editing" badge, smart return navigation).
+    2. **Auto-Save Pattern**: Using `useEffect` with debounce (2s delay) for draft persistence provides good UX without excessive writes.
+    3. **Context + Reducer**: For multi-step forms, combining React Context with `useReducer` provides cleaner state updates than multiple `useState` calls.
+    4. **Validation on Navigate**: Validating the current section before allowing navigation prevents data loss and provides immediate feedback.
+    5. **ARIA Toggle Buttons**: Using `aria-pressed` on selection buttons and `aria-label` with descriptions makes wizard accessible.
+    6. **CSV Blob Download**: Creating a hidden anchor, triggering click, and cleaning up with `URL.revokeObjectURL()` is the standard browser pattern.
+
+- **Components Created**:
+    - `src/context/CouponWizardContext.tsx` - State management with validation
+    - `src/components/coupon/AccordionSection.tsx` - Animated accordion wrapper
+    - `src/components/coupon/sections/EssentialsSection.tsx` - Name, type, value
+    - `src/components/coupon/sections/LifecycleSection.tsx` - Validity period
+    - `src/components/coupon/sections/GuardrailsSection.tsx` - Min spend, stacking
+    - `src/components/coupon/sections/InventorySection.tsx` - Codes, quotas
+    - `src/components/coupon/sections/DistributionSection.tsx` - Channels
+    - `src/components/coupon/LivePreview.tsx` - Mobile preview simulation
+    - `src/services/MockCouponService.ts` - LocalStorage persistence
+    - `src/utils/csv_utils.ts` - CSV generation utilities
+
+- **Rule**: For multi-step wizards, define a clear `SECTION_ORDER` array and derive all navigation logic from it. This makes adding/removing/reordering steps trivial.
+

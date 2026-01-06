@@ -302,6 +302,74 @@ export interface CouponData {
   revenue: number;
 }
 
+// --- Coupon Wizard Types (003-coupon-refinement) ---
+
+/** Code generation strategy for coupons */
+export type CodeStrategy = 'random' | 'custom' | 'unique';
+
+/** Distribution channels for coupons */
+export type DistributionChannel = 'public_app' | 'points_mall' | 'manual_issue';
+
+/** Validity type for coupon lifecycle */
+export type ValidityType = 'dynamic' | 'fixed';
+
+/** Exception rules for coupon usage */
+export interface CouponExceptions {
+  blockedStores?: string[];
+  blockedDates?: string[];
+}
+
+/** Complete Coupon entity for the wizard (based on data-model.md) */
+export interface Coupon {
+  id: string;
+  code: string;
+  name: string;
+  type: CouponType;
+  value: number;
+  minSpend: number;
+  isStackable: boolean;
+  cartLimit: number;
+  exceptions?: CouponExceptions;
+  codeStrategy: CodeStrategy;
+  customCode?: string;
+  totalQuota: number;
+  userQuota: number;
+  validityType: ValidityType;
+  validityDays?: number;
+  startDate?: string;
+  endDate?: string;
+  extendToEndOfMonth: boolean;
+  channels: DistributionChannel[];
+  status: CouponStatus;
+}
+
+/** Section identifiers for the accordion wizard */
+export type CouponWizardSection =
+  | 'essentials'
+  | 'lifecycle'
+  | 'guardrails'
+  | 'inventory'
+  | 'distribution';
+
+/** Validation state for each wizard section */
+export interface SectionValidation {
+  isValid: boolean;
+  isTouched: boolean;
+  errors: string[];
+}
+
+/** State shape for the CouponWizardContext */
+export interface CouponWizardState {
+  coupon: Partial<Coupon>;
+  activeSection: CouponWizardSection;
+  sectionValidation: Record<CouponWizardSection, SectionValidation>;
+  isDirty: boolean;
+  /** Tracks the furthest section the user has navigated to (for smart "Continue" after editing) */
+  furthestSection: CouponWizardSection;
+  /** Previous section before current (for back navigation context) */
+  previousSection: CouponWizardSection | null;
+}
+
 // --- Dashboard V2 Types ---
 
 export interface DateRange {
