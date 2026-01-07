@@ -44,26 +44,23 @@ const InventorySection: React.FC = () => {
               onClick={() => updateCoupon({ codeStrategy: strategy })}
               aria-pressed={coupon.codeStrategy === strategy}
               aria-label={`${label}: ${description}`}
-              className={`flex flex-col items-center gap-3 p-5 rounded-2xl border-2 text-center transition-all ${
-                coupon.codeStrategy === strategy
-                  ? 'border-primary-500 bg-primary-50 shadow-md'
-                  : 'border-slate-100 bg-slate-50 hover:border-slate-200'
-              }`}
+              className={`flex flex-col items-center gap-3 p-5 rounded-2xl border-2 text-center transition-all ${coupon.codeStrategy === strategy
+                ? 'border-primary-500 bg-primary-50 shadow-md'
+                : 'border-slate-100 bg-slate-50 hover:border-slate-200'
+                }`}
             >
               <div
-                className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  coupon.codeStrategy === strategy
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-slate-200 text-slate-500'
-                }`}
+                className={`w-12 h-12 rounded-xl flex items-center justify-center ${coupon.codeStrategy === strategy
+                  ? 'bg-primary-500 text-white'
+                  : 'bg-slate-200 text-slate-500'
+                  }`}
               >
                 {icon}
               </div>
               <div>
                 <div
-                  className={`font-bold text-sm ${
-                    coupon.codeStrategy === strategy ? 'text-primary-700' : 'text-slate-700'
-                  }`}
+                  className={`font-bold text-sm ${coupon.codeStrategy === strategy ? 'text-primary-700' : 'text-slate-700'
+                    }`}
                 >
                   {label}
                 </div>
@@ -146,54 +143,6 @@ const InventorySection: React.FC = () => {
         </div>
       )}
 
-      {/* Quota Settings */}
-      <div className="grid grid-cols-2 gap-6">
-        <div className="bg-slate-50 rounded-2xl p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center text-slate-500 shrink-0">
-              <span className="text-sm font-black">#</span>
-            </div>
-            <div className="flex-1">
-              <div className="font-bold text-slate-700 mb-1">Total Quota</div>
-              <div className="flex items-center gap-3">
-                <SentenceInput
-                  value={coupon.totalQuota || 1000}
-                  onChange={(v) => updateCoupon({ totalQuota: Number(v) })}
-                  width="w-28"
-                  type="number"
-                />
-                <span className="text-xs font-bold text-slate-400">Redemptions</span>
-              </div>
-              <p className="text-[10px] text-slate-400 mt-2">
-                Max uses across all customers.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-slate-50 rounded-2xl p-6">
-          <div className="flex items-start gap-4">
-            <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center text-slate-500 shrink-0">
-              <Users size={18} />
-            </div>
-            <div className="flex-1">
-              <div className="font-bold text-slate-700 mb-1">Per Member Limit</div>
-              <div className="flex items-center gap-3">
-                <SentenceInput
-                  value={coupon.userQuota || 1}
-                  onChange={(v) => updateCoupon({ userQuota: Number(v) })}
-                  width="w-20"
-                  type="number"
-                />
-                <span className="text-xs font-bold text-slate-400">Use(s)</span>
-              </div>
-              <p className="text-[10px] text-slate-400 mt-2">
-                Times each member can redeem.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

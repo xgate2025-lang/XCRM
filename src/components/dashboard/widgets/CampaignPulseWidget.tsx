@@ -6,15 +6,16 @@
 
 import React from 'react';
 import { Megaphone, Plus, ArrowUpRight } from 'lucide-react';
-import { DashboardMetrics } from '../../../types';
+import { DashboardMetrics, NavItemId } from '../../../types';
 
 interface CampaignPulseWidgetProps {
   metrics: DashboardMetrics;
+  onNavigate: (id: NavItemId) => void;
 }
 
-export function CampaignPulseWidget({ metrics }: CampaignPulseWidgetProps) {
+export function CampaignPulseWidget({ metrics, onNavigate }: CampaignPulseWidgetProps) {
   const { activeCampaigns, campaignParticipation } = metrics;
-  
+
   // Mock active campaign list (would usually come from a separate API/store)
   const campaigns = activeCampaigns > 0 ? [
     { id: 1, name: 'Summer Sale Boost', type: 'Multiplier', roi: '4.2x', participation: 120 },
@@ -34,9 +35,12 @@ export function CampaignPulseWidget({ metrics }: CampaignPulseWidgetProps) {
             <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{activeCampaigns} Active · {campaignParticipation} Users</p>
           </div>
         </div>
-        
+
         {activeCampaigns > 0 && (
-          <button className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-full hover:bg-slate-800 transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10">
+          <button
+            onClick={() => onNavigate('campaign')}
+            className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-full hover:bg-slate-800 transition-colors flex items-center gap-2 shadow-lg shadow-slate-900/10"
+          >
             <Plus size={14} /> New Campaign
           </button>
         )}
@@ -46,11 +50,14 @@ export function CampaignPulseWidget({ metrics }: CampaignPulseWidgetProps) {
         // Empty State
         <div className="text-center py-12 bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
-             <Megaphone size={24} className="text-slate-300" />
+            <Megaphone size={24} className="text-slate-300" />
           </div>
           <div className="text-slate-900 font-bold mb-1">Quiet on the front</div>
           <div className="text-slate-400 text-sm mb-6">No active campaigns running right now.</div>
-          <button className="text-sm font-bold text-white bg-slate-900 px-6 py-3 rounded-full hover:shadow-xl transition-all">
+          <button
+            onClick={() => onNavigate('campaign')}
+            className="text-sm font-bold text-white bg-slate-900 px-6 py-3 rounded-full hover:shadow-xl transition-all"
+          >
             + Create your first campaign
           </button>
         </div>

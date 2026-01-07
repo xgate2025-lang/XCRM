@@ -37,6 +37,8 @@ const createDefaultCoupon = (): Partial<Coupon> => ({
   validityType: 'dynamic',
   validityDays: 30,
   extendToEndOfMonth: false,
+  personalQuota: { maxCount: 1, timeWindow: 'lifetime' },
+  storeRestriction: { mode: 'all', storeIds: [] },
   channels: ['public_app'],
   status: 'Draft',
 });
@@ -207,6 +209,10 @@ function validateGuardrails(coupon: Partial<Coupon>): { isValid: boolean; errors
   const errors: string[] = [];
   if (coupon.minSpend !== undefined && coupon.minSpend < 0) errors.push('Min spend cannot be negative');
   if (coupon.cartLimit !== undefined && coupon.cartLimit < 1) errors.push('Cart limit must be at least 1');
+  if (coupon.totalQuota === undefined || coupon.totalQuota < 1) errors.push('Total quota must be at least 1');
+  if (coupon.personalQuota === undefined || (coupon.personalQuota?.maxCount || 0) < 1) {
+    errors.push('Personal limit must be at least 1');
+  }
   return { isValid: errors.length === 0, errors };
 }
 
@@ -216,8 +222,6 @@ function validateInventory(coupon: Partial<Coupon>): { isValid: boolean; errors:
   if (coupon.codeStrategy === 'custom' && !coupon.customCode?.trim()) {
     errors.push('Custom code is required');
   }
-  if (coupon.totalQuota === undefined || coupon.totalQuota < 1) errors.push('Total quota must be at least 1');
-  if (coupon.userQuota === undefined || coupon.userQuota < 1) errors.push('User quota must be at least 1');
   return { isValid: errors.length === 0, errors };
 }
 
@@ -225,6 +229,9 @@ function validateDistribution(coupon: Partial<Coupon>): { isValid: boolean; erro
   const errors: string[] = [];
   if (!coupon.channels || coupon.channels.length === 0) {
     errors.push('At least one distribution channel is required');
+  }
+  if (coupon.storeRestriction?.mode !== 'all' && (!coupon.storeRestriction?.storeIds || coupon.storeRestriction.storeIds.length === 0)) {
+    errors.push('At least one store must be selected for restricted coupons');
   }
   return { isValid: errors.length === 0, errors };
 }

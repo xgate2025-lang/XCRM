@@ -2,10 +2,9 @@
 import React, { useState, useMemo } from 'react';
 import {
   Plus, Search, Filter, ChevronDown, MoreHorizontal,
-  Ticket, Percent, Package, Truck, Users, Calendar,
-  ArrowUpRight, AlertCircle, CheckCircle2, Clock,
+  Ticket, Percent, Package, Truck, Calendar,
   Pause, Play, Copy, Trash2, Edit3, X, RotateCcw,
-  Tag
+  Clock
 } from 'lucide-react';
 import { NavItemId, CouponType, CouponStatus } from '../types';
 import { NavigationPayload } from '../App';
@@ -100,15 +99,7 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Zone A-2: Quick Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard label="Total Redemptions" value={coupons.reduce((acc, c) => acc + c.inventory.used, 0).toLocaleString()} trend="+12%" color="blue" />
-        <StatCard label="Total Assets" value={coupons.length.toString()} trend="Active" color="green" />
-        <StatCard label="Incremental Revenue" value={`$${(coupons.reduce((acc, c) => acc + c.revenue, 0) / 1000).toFixed(1)}k`} trend="+18%" color="indigo" />
-        <StatCard label="Oversell Risk" value={coupons.filter(c => c.inventory.used / c.inventory.total > 0.9).length.toString()} trend="High" color="red" isWarning />
-      </div>
-
-      {/* Zone A-3: Fixed Smart Filters Toolbar */}
+      {/* Zone A-3: Fixed Smart Filters Toolbar - FR-COUPON-01: Stats removed */}
       <div className="space-y-4">
         <div className="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex flex-col lg:flex-row gap-4 items-center">
 
@@ -211,7 +202,6 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
               <tr className="bg-slate-50/50 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                 <th className="px-8 py-5">Coupon Identity</th>
                 <th className="px-8 py-5">Value / Type</th>
-                <th className="px-8 py-5">Audience</th>
                 <th className="px-8 py-5">Inventory Usage</th>
                 <th className="px-8 py-5">Validity</th>
                 <th className="px-8 py-5">Status</th>
@@ -249,14 +239,6 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
                           <span className="text-sm font-black text-slate-900 leading-none">{coupon.value}</span>
                           <span className="text-[10px] font-bold text-slate-400 uppercase mt-1.5">{coupon.type}</span>
                         </div>
-                      </div>
-                    </td>
-
-                    <td className="px-8 py-6">
-                      <div className="flex flex-wrap gap-1 max-w-[150px]">
-                        {coupon.audience.map(t => (
-                          <span key={t} className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[10px] font-bold border border-slate-200 uppercase tracking-tighter whitespace-nowrap">{t}</span>
-                        ))}
                       </div>
                     </td>
 
@@ -362,32 +344,6 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
         )}
       </div>
 
-    </div>
-  );
-};
-
-// --- Sub-components ---
-
-const StatCard = ({ label, value, trend, color, isWarning = false }: { label: string, value: string, trend: string, color: string, isWarning?: boolean }) => {
-  const colorMap: any = {
-    blue: 'bg-blue-50 text-blue-600',
-    green: 'bg-green-50 text-green-600',
-    indigo: 'bg-indigo-50 text-indigo-600',
-    red: 'bg-red-50 text-red-600',
-  };
-
-  return (
-    <div className={`p-6 rounded-2xl border border-slate-200 bg-white shadow-sm flex flex-col justify-between h-36 relative overflow-hidden group hover:border-slate-300 transition-all cursor-default`}>
-      <div className="flex justify-between items-start relative z-10">
-        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em]">{label}</span>
-        <div className={`px-2.5 py-1 rounded-full text-[10px] font-black border ${isWarning ? 'bg-red-50 text-red-600 border-red-100' : 'bg-green-50 text-green-600 border-green-100'}`}>
-          {trend}
-        </div>
-      </div>
-      <div className="text-4xl font-black text-slate-900 relative z-10 tracking-tight">{value}</div>
-      <div className={`absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 group-hover:opacity-10 transition-all duration-700 pointer-events-none ${colorMap[color]}`}>
-        {isWarning ? <AlertCircle size={110} /> : <ArrowUpRight size={110} />}
-      </div>
     </div>
   );
 };

@@ -17,7 +17,6 @@ import { MemberScaleWidget } from '../components/dashboard/widgets/MemberScaleWi
 import { TierDistributionWidget } from '../components/dashboard/widgets/TierDistributionWidget';
 import { PointsEngineWidget } from '../components/dashboard/widgets/PointsEngineWidget';
 import { CouponMachineWidget } from '../components/dashboard/widgets/CouponMachineWidget';
-import { CampaignPulseWidget } from '../components/dashboard/widgets/CampaignPulseWidget';
 const DashboardContent = ({ onNavigate }: { onNavigate: (id: NavItemId) => void }) => {
   const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
   const { metrics } = useDashboard();
@@ -179,12 +178,6 @@ const DashboardContent = ({ onNavigate }: { onNavigate: (id: NavItemId) => void 
               <PointsEngineWidget metrics={metrics} onNavigate={onNavigate} />
               <CouponMachineWidget metrics={metrics} onNavigate={onNavigate} />
             </div>
-          </section>
-
-          {/* Zone 4: Strategy Pulse */}
-          <section>
-            <h2 className="text-lg font-bold text-slate-900 mb-4">Strategy Pulse</h2>
-            <CampaignPulseWidget metrics={metrics} />
           </section>
 
         </div>

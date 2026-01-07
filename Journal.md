@@ -168,3 +168,70 @@ INPUTS:
 - **Root Cause**: Synchronization tool call failed due to target content mismatch, and the failure was not immediately corrected before the `notify_user` call.
 - **Correction**: Manually verified and updated both task lists to 100% completion and added a specific "Sync all progress trackers" checkpoint to the internal workflow.
 - **Lesson**: When working with multiple progress trackers (Brain task.md vs. Feature tasks.md), verify the success of ALL edit calls before proceeding to the next phase or notifying the user.
+## 2026-01-07: Workflow Oversight - Speckit Task Generation
+
+- **Incident**: Proceeded to manual task list creation without executing the mandatory `speckit.tasks` workflow after the implementation plan was drafted.
+- **Root Cause**: Over-reliance on manual planning and a lapse in checking the local workflow requirements (`speckit.plan` must be followed by `speckit.tasks`).
+- **Correction**: Recorded the incident in `Journal.md`, invalidated the manual task list in favor of the workflow-generated one, and immediately executed the `speckit.tasks` command.
+- **Lesson**: Standardized workflows (slash commands) are mandatory checkpoints. Always cross-reference the feature's workflow guide before transitioning from planning to execution.
+
+## 2026-01-07: Overall UI Refinement - Phase 1 Setup
+
+- **Pattern**: Added new shared types to support enhanced member asset management and coupon configuration.
+- **Types Added**:
+    1. `PointsSummary`: Summary statistics interface (Available Balance, Lifetime Earned, Used, Expired) per FR-MEM-03.
+    2. `MemberCoupon`: Member wallet coupon instance with status, usage details, and void tracking per FR-MEM-07.
+    3. `ManualRedemptionForm` / `ManualVoidForm`: Form data structures for manual coupon actions.
+    4. `IdentifierMode`, `QuotaTimeUnit`, `StoreRestriction`, `PersonalQuota`: Extended Coupon types for FR-COUPON-02 requirements (identifier auto/manual, per-person quota with time window, store restrictions).
+- **Lesson**: Define types before implementation to ensure type safety and clear contracts between components.
+
+## 2026-01-07: Overall UI Refinement - Phase 2 Foundational
+
+- **Pattern**: Extended MockAssetService and MemberContext to support packet-based point logic and member coupon wallet actions.
+- **Service Methods Added** (`MockAssetService.ts`):
+    1. `getPointsSummary(memberId)`: Calculates Available Balance, Lifetime Earned, Used, Expired from packets and logs.
+    2. `getMemberCoupons(memberId, status?)`: Retrieves wallet coupons with optional status filter.
+    3. `getMemberCoupon(couponId)`: Gets a single coupon by ID.
+    4. `redeemCouponManually(couponId, form)`: Marks coupon as used with store/time/reason.
+    5. `voidCouponManually(couponId, form)`: Marks coupon as voided with reason/notes.
+- **Context Methods Added** (`MemberContext.tsx`):
+    - Wrapped all new MockAssetService methods with `useCallback` for stable references.
+- **Data Added**: Mock `MemberCoupon` records with various statuses (available, used, expired) for testing.
+- **Lesson**: Keep service layer and context layer in sync - service handles persistence, context provides React hooks.
+
+## 2026-01-07: Overall UI Refinement - Phase 3 User Story 1
+
+- **Pattern**: Streamlined Dashboard and Onboarding experience by removing non-essential elements.
+- **Changes Made**:
+    1. **T005 - GlobalNavigator.tsx**: Removed Store Scope Picker per FR-DASH-01. Only Date Range Picker remains.
+    2. **T006 - MockOnboardingService.ts**: Updated 5-step onboarding sequence per FR-ONBOARD-01 to FR-ONBOARD-04:
+        - Step 1: Establish Identity (removed "Upload Logo" subtask)
+        - Step 2: Load Master Data (new - store and product import)
+        - Step 3: Define Point Logic (unchanged)
+        - Step 4: Define Coupon Library (new - welcome and tier privilege coupons)
+        - Step 5: Build the Ladder (moved from step 4 - basic and premium tiers)
+    3. **T007 - TierDistributionWidget.tsx**: Changed from "Sales %" to "Active Members" dimension per FR-DASH-02. Now shows Total vs Active members per tier with engagement insights.
+    4. **T008 - Dashboard.tsx**: Removed Strategy Pulse section (CampaignPulseWidget import and JSX).
+    5. **T008a - CouponList.tsx**: Removed top stats cards and Audience column per FR-COUPON-01.
+- **Lesson**: When removing features, also remove unused imports and sub-components to keep bundle size minimal. 
+
+## 2026-01-07: Overall UI Refinement - Phase 4 & 5 Program Wizards
+
+- **Pattern**: Simplified Points and Tier Wizards by stripping non-standard configuration options.
+- **Architecture Decisions**:
+    1. **Restrictive Form Rendering**: Cleaned up `renderEarnRules` and `renderExpirationContent` in `PointsWizard.tsx` to remove "Product Scope" and "Fixed Date" triggers.
+    2. **Term Harmonization**: Renamed "Onboarding Missions" to "Onboarding Gift" globally across `TierWizard.tsx` and `AddRewardModal.tsx` to align with the simplified retention model.
+    3. **Privilege Consolidation**: Restricted ongoing tier benefits to "Points Multiplier" only, removing the dynamic "Add Privilege" dropdown and its associated complexity.
+- **Key Lessons**:
+    1. **Visual Simulation Sync**: When removing features from a configuration form, ensure the "Live Preview" (e.g., the mobile simulator card) is updated in parallel to prevent user confusion.
+    2. **Complex Deletions**: Automated multi-line deletions in highly nested JSX (like `renderPreviewCard`) are prone to syntax errors (broken tags/missing imports). Smaller, targeted replacements are safer.
+    3. **Term Consistency**: When a fundamental concept changes (e.g., Missions → Gift), propagate the change to all UI labels, tooltips, and modal headers immediately.
+
+## 2026-01-07: Phase 6 Visual Verification & Walkthrough
+
+- **Observation**: Comprehensive visual checks revealed subtle discrepancies in `MemberDetail.tsx`:
+    1. **Tier Journey Swap**: The "Privileges" and "Status Timeline" blocks weren't successfully swapped in the layout, leaving Timeline as a secondary element.
+    2. **Missing Filters**: Status Timeline was missing the specified "Change Type" and "Time" dropdowns.
+    3. **Fragmented Summary**: Member point summaries lacked the "Used" and "Expired" totals in the header despite log implementation.
+- **Correction**: These items were documented for a final "Polish" pass before shipping.
+- **Lesson**: Automated browser verification is excellent for "Presence/Absence" checks (e.g., Was the button removed?), but "Layout Ordering" and "Content Precision" often require a manual human-in-the-loop check.

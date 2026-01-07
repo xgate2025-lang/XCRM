@@ -1,8 +1,8 @@
 /**
- * TierDistributionWidget - Zone 2B: Tier & Sales Distribution
- * 
+ * TierDistributionWidget - Zone 2B: Tier & Member Distribution
+ *
  * Visual: Combo Chart (Bar + Line) using Recharts.
- * Insight: "Gold is 10% of users but 40% of sales."
+ * Per FR-DASH-02: Shows "Total Members" and "Active Members" dimensions per tier.
  */
 
 import React from 'react';
@@ -15,7 +15,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Cell
+  Cell,
+  Legend
 } from 'recharts';
 import type { ComboChartData } from '../../../types';
 import { Crown } from 'lucide-react';
@@ -24,13 +25,34 @@ interface TierDistributionWidgetProps {
   data: ComboChartData[];
 }
 
-export function TierDistributionWidget({ data }: TierDistributionWidgetProps) {
+// Extended data type for Total vs Active members
+interface TierMemberData extends ComboChartData {
+  activeCount: number; // Active members in this tier
+}
 
-  // Calculate Insight (Mock logic: finding the tier with highest sales %)
-  const topTier = [...data].sort((a, b) => b.salesPercent - a.salesPercent)[0];
-  const insight = topTier
-    ? `${topTier.name} is only ${Math.round((topTier.count / data.reduce((acc, curr) => acc + curr.count, 0)) * 100)}% of users but ${topTier.salesPercent}% of sales.`
-    : "Data insufficient for insights.";
+export function TierDistributionWidget({ data }: TierDistributionWidgetProps) {
+  // Transform data to include active members (mock: 60-90% of total are active)
+  const enrichedData: TierMemberData[] = data.map((tier) => ({
+    ...tier,
+    activeCount: Math.round(tier.count * (0.6 + Math.random() * 0.3)),
+  }));
+
+  // Calculate totals for insight
+  const totalMembers = enrichedData.reduce((acc, curr) => acc + curr.count, 0);
+  const totalActive = enrichedData.reduce((acc, curr) => acc + curr.activeCount, 0);
+  const activeRate = totalMembers > 0 ? Math.round((totalActive / totalMembers) * 100) : 0;
+
+  // Find tier with highest active rate
+  const tierWithBestActiveRate = [...enrichedData].sort(
+    (a, b) => (b.activeCount / b.count) - (a.activeCount / a.count)
+  )[0];
+  const bestActiveRate = tierWithBestActiveRate
+    ? Math.round((tierWithBestActiveRate.activeCount / tierWithBestActiveRate.count) * 100)
+    : 0;
+
+  const insight = tierWithBestActiveRate
+    ? `${tierWithBestActiveRate.name} tier has the highest engagement at ${bestActiveRate}% active rate. Overall: ${activeRate}% of members are active.`
+    : 'Data insufficient for insights.';
 
   const COLORS = ['#94a3b8', '#64748b', '#EAB308']; // Bronze (Slate-400), Silver (Slate-500), Gold (Yellow-500)
 
@@ -44,7 +66,18 @@ export function TierDistributionWidget({ data }: TierDistributionWidgetProps) {
           </div>
           <div>
             <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tier Impact</div>
-            <div className="text-sm font-bold text-slate-900">Distribution vs Value</div>
+            <div className="text-sm font-bold text-slate-900">Total vs Active Members</div>
+          </div>
+        </div>
+        {/* Legend hint */}
+        <div className="flex items-center gap-3 text-[10px] font-bold">
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded bg-slate-400"></div>
+            <span className="text-slate-500">Total</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded bg-emerald-500"></div>
+            <span className="text-slate-500">Active</span>
           </div>
         </div>
       </div>
@@ -52,7 +85,7 @@ export function TierDistributionWidget({ data }: TierDistributionWidgetProps) {
       {/* Chart */}
       <div className="flex-1 w-full min-h-[200px]">
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={data} margin={{ top: 20, right: 20, bottom: 20, left: -20 }}>
+          <ComposedChart data={enrichedData} margin={{ top: 20, right: 20, bottom: 20, left: -20 }}>
             <CartesianGrid stroke="#f1f5f9" vertical={false} />
             <XAxis
               dataKey="name"
@@ -68,30 +101,30 @@ export function TierDistributionWidget({ data }: TierDistributionWidgetProps) {
               tickLine={false}
               tick={{ fill: '#94a3b8', fontSize: 10 }}
             />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              unit="%"
-              axisLine={false}
-              tickLine={false}
-              tick={{ fill: '#3b82f6', fontSize: 10 }}
-            />
             <Tooltip
-              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: 'none' }}
+              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+              formatter={(value: number, name: string) => [
+                value.toLocaleString(),
+                name === 'count' ? 'Total Members' : 'Active Members'
+              ]}
             />
 
-            <Bar yAxisId="left" dataKey="count" barSize={32} radius={[6, 6, 0, 0]}>
-              {data.map((entry, index) => (
+            {/* Total Members - Bars */}
+            <Bar yAxisId="left" dataKey="count" barSize={32} radius={[6, 6, 0, 0]} name="Total Members">
+              {enrichedData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Bar>
+
+            {/* Active Members - Line */}
             <Line
-              yAxisId="right"
+              yAxisId="left"
               type="monotone"
-              dataKey="salesPercent"
-              stroke="#3b82f6"
+              dataKey="activeCount"
+              stroke="#10b981"
               strokeWidth={3}
               dot={{ r: 4, strokeWidth: 2, fill: 'white' }}
+              name="Active Members"
             />
           </ComposedChart>
         </ResponsiveContainer>

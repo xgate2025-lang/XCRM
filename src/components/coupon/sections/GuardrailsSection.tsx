@@ -45,26 +45,23 @@ const GuardrailsSection: React.FC = () => {
             onClick={() => updateCoupon({ isStackable: true })}
             aria-pressed={coupon.isStackable === true}
             aria-label="Stackable: Can be combined with other coupons"
-            className={`flex items-start gap-4 p-5 rounded-2xl border-2 text-left transition-all ${
-              coupon.isStackable === true
-                ? 'border-primary-500 bg-primary-50 shadow-md'
-                : 'border-slate-100 bg-slate-50 hover:border-slate-200'
-            }`}
+            className={`flex items-start gap-4 p-5 rounded-2xl border-2 text-left transition-all ${coupon.isStackable === true
+              ? 'border-primary-500 bg-primary-50 shadow-md'
+              : 'border-slate-100 bg-slate-50 hover:border-slate-200'
+              }`}
           >
             <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                coupon.isStackable === true
-                  ? 'bg-primary-500 text-white'
-                  : 'bg-slate-200 text-slate-500'
-              }`}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${coupon.isStackable === true
+                ? 'bg-primary-500 text-white'
+                : 'bg-slate-200 text-slate-500'
+                }`}
             >
               <Layers size={20} />
             </div>
             <div>
               <div
-                className={`font-bold text-sm ${
-                  coupon.isStackable === true ? 'text-primary-700' : 'text-slate-700'
-                }`}
+                className={`font-bold text-sm ${coupon.isStackable === true ? 'text-primary-700' : 'text-slate-700'
+                  }`}
               >
                 Stackable
               </div>
@@ -79,26 +76,23 @@ const GuardrailsSection: React.FC = () => {
             onClick={() => updateCoupon({ isStackable: false })}
             aria-pressed={coupon.isStackable === false}
             aria-label="Exclusive: Cannot be used with other coupons"
-            className={`flex items-start gap-4 p-5 rounded-2xl border-2 text-left transition-all ${
-              coupon.isStackable === false
-                ? 'border-primary-500 bg-primary-50 shadow-md'
-                : 'border-slate-100 bg-slate-50 hover:border-slate-200'
-            }`}
+            className={`flex items-start gap-4 p-5 rounded-2xl border-2 text-left transition-all ${coupon.isStackable === false
+              ? 'border-primary-500 bg-primary-50 shadow-md'
+              : 'border-slate-100 bg-slate-50 hover:border-slate-200'
+              }`}
           >
             <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                coupon.isStackable === false
-                  ? 'bg-primary-500 text-white'
-                  : 'bg-slate-200 text-slate-500'
-              }`}
+              className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${coupon.isStackable === false
+                ? 'bg-primary-500 text-white'
+                : 'bg-slate-200 text-slate-500'
+                }`}
             >
               <Ban size={20} />
             </div>
             <div>
               <div
-                className={`font-bold text-sm ${
-                  coupon.isStackable === false ? 'text-primary-700' : 'text-slate-700'
-                }`}
+                className={`font-bold text-sm ${coupon.isStackable === false ? 'text-primary-700' : 'text-slate-700'
+                  }`}
               >
                 Exclusive
               </div>
@@ -107,6 +101,65 @@ const GuardrailsSection: React.FC = () => {
               </div>
             </div>
           </button>
+        </div>
+      </div>
+
+      {/* Total Issuance Limit (Moved from Inventory) */}
+      <div className="bg-slate-50 rounded-2xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center text-slate-500 shrink-0">
+            <span className="text-sm font-black">#</span>
+          </div>
+          <div className="flex-1">
+            <div className="font-bold text-slate-700 mb-1">Total Issuance Limit (Quota)</div>
+            <div className="text-lg font-medium text-slate-600 leading-relaxed">
+              Max
+              <SentenceInput
+                value={coupon.totalQuota || 1000}
+                onChange={(v) => updateCoupon({ totalQuota: Number(v) })}
+                width="w-28"
+                className="mx-2"
+                type="number"
+              />
+              <span className="font-bold text-slate-900">coupons</span> can be issued in total.
+            </div>
+            <p className="text-xs text-slate-400 mt-2">The campaign will stop automatically once this limit is reached.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Personal Redemption Limit */}
+      <div className="bg-slate-50 rounded-2xl p-6">
+        <div className="flex items-start gap-4">
+          <div className="w-10 h-10 rounded-xl bg-slate-200 flex items-center justify-center text-slate-500 shrink-0">
+            <span className="text-sm font-black">👤</span>
+          </div>
+          <div className="flex-1">
+            <div className="font-bold text-slate-700 mb-1">Personal Redemption Limit</div>
+            <div className="text-lg font-medium text-slate-600 leading-relaxed">
+              Each member can redeem up to
+              <SentenceInput
+                value={coupon.personalQuota?.maxCount || 1}
+                onChange={(v) => updateCoupon({ personalQuota: { ...coupon.personalQuota!, maxCount: Number(v) } })}
+                width="w-16"
+                className="mx-2"
+                type="number"
+              />
+              <span className="font-bold text-slate-900">times</span>
+              <select
+                value={coupon.personalQuota?.timeWindow || 'lifetime'}
+                onChange={(e) => updateCoupon({ personalQuota: { ...coupon.personalQuota!, timeWindow: e.target.value as any } })}
+                className="ml-2 bg-transparent border-b-2 border-slate-200 font-bold text-slate-900 outline-none focus:border-primary-500 transition-colors"
+              >
+                <option value="lifetime">in Total</option>
+                <option value="day">per Day</option>
+                <option value="week">per Week</option>
+                <option value="month">per Month</option>
+              </select>
+              .
+            </div>
+            <p className="text-xs text-slate-400 mt-2">Controls how often a single customer can benefit from this offer.</p>
+          </div>
         </div>
       </div>
 

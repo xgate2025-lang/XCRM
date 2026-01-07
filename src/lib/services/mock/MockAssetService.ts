@@ -1,8 +1,9 @@
-import { AssetLog, PointPacket } from '../../../types';
+import { AssetLog, PointPacket, PointsSummary, MemberCoupon, MemberCouponStatus, ManualRedemptionForm, ManualVoidForm } from '../../../types';
 
 // LocalStorage keys
 const ASSET_LOGS_KEY = 'xcrm_asset_logs';
 const POINT_PACKETS_KEY = 'xcrm_point_packets';
+const MEMBER_COUPONS_KEY = 'xcrm_member_coupons';
 
 // --- Mock Data ---
 
@@ -83,6 +84,60 @@ const INITIAL_POINT_PACKETS: PointPacket[] = [
     },
 ];
 
+const INITIAL_MEMBER_COUPONS: MemberCoupon[] = [
+    {
+        id: 'MC-001',
+        memberId: 'MEM-001',
+        couponTemplateId: 'COUP-001',
+        code: 'WELCOME10',
+        name: 'Welcome Discount',
+        identifier: 'WEL-2024-001',
+        earnTime: '2024-01-15T10:00:00Z',
+        expiryTime: '2025-01-15T23:59:59Z',
+        source: 'Points Mall',
+        status: 'available',
+    },
+    {
+        id: 'MC-002',
+        memberId: 'MEM-001',
+        couponTemplateId: 'COUP-002',
+        code: 'BDAY20',
+        name: 'Birthday Special',
+        identifier: 'BDAY-2024-001',
+        earnTime: '2024-06-20T00:00:00Z',
+        expiryTime: '2024-07-20T23:59:59Z',
+        source: 'Birthday Campaign',
+        status: 'used',
+        usedStore: 'Downtown Store',
+        usedDate: '2024-06-25T14:30:00Z',
+        usedNote: 'Applied to purchase #ORD-92445',
+    },
+    {
+        id: 'MC-003',
+        memberId: 'MEM-001',
+        couponTemplateId: 'COUP-003',
+        code: 'FREESHIP',
+        name: 'Free Shipping',
+        identifier: 'SHIP-2024-001',
+        earnTime: '2024-11-01T10:00:00Z',
+        expiryTime: '2024-11-30T23:59:59Z',
+        source: 'Manual Issue',
+        status: 'expired',
+    },
+    {
+        id: 'MC-004',
+        memberId: 'MEM-001',
+        couponTemplateId: 'COUP-004',
+        code: 'HOLIDAY25',
+        name: 'Holiday Special 25% Off',
+        identifier: 'HOL-2024-001',
+        earnTime: '2024-12-01T00:00:00Z',
+        expiryTime: '2025-12-31T23:59:59Z',
+        source: 'Campaign',
+        status: 'available',
+    },
+];
+
 // --- Service Functions ---
 
 const getStoredLogs = (): AssetLog[] => {
@@ -103,6 +158,16 @@ const getStoredPackets = (): PointPacket[] => {
     // Initialize with mock data
     localStorage.setItem(POINT_PACKETS_KEY, JSON.stringify(INITIAL_POINT_PACKETS));
     return INITIAL_POINT_PACKETS;
+};
+
+const getStoredMemberCoupons = (): MemberCoupon[] => {
+    const stored = localStorage.getItem(MEMBER_COUPONS_KEY);
+    if (stored) {
+        return JSON.parse(stored);
+    }
+    // Initialize with mock data
+    localStorage.setItem(MEMBER_COUPONS_KEY, JSON.stringify(INITIAL_MEMBER_COUPONS));
+    return INITIAL_MEMBER_COUPONS;
 };
 
 export const MockAssetService = {
@@ -156,11 +221,109 @@ export const MockAssetService = {
     },
 
     /**
+     * Calculate point summary statistics for a member (FR-MEM-03).
+     */
+    getPointsSummary: (memberId: string): PointsSummary => {
+        const packets = getStoredPackets().filter(p => p.memberId === memberId);
+        const logs = getStoredLogs().filter(l => l.memberId === memberId && l.type === 'point');
+        const now = new Date();
+
+        // Available = sum of remaining points from non-expired packets
+        const availableBalance = packets
+            .filter(p => new Date(p.expiryDate) >= now)
+            .reduce((sum, p) => sum + p.remainingPoints, 0);
+
+        // Lifetime earned = sum of all totalPoints from all packets
+        const lifetimeEarned = packets.reduce((sum, p) => sum + p.totalPoints, 0);
+
+        // Used = sum of negative changeValues from point logs (redemptions, adjustments)
+        const used = logs
+            .filter(l => typeof l.changeValue === 'number' && l.changeValue < 0)
+            .reduce((sum, l) => sum + Math.abs(l.changeValue as number), 0);
+
+        // Expired = totalPoints - remainingPoints from expired packets
+        const expired = packets
+            .filter(p => new Date(p.expiryDate) < now)
+            .reduce((sum, p) => sum + (p.totalPoints - p.remainingPoints), 0);
+
+        return { availableBalance, lifetimeEarned, used, expired };
+    },
+
+    // --- Member Coupon Methods (FR-MEM-07) ---
+
+    /**
+     * Get all coupons in a member's wallet.
+     */
+    getMemberCoupons: (memberId: string, status?: MemberCouponStatus): MemberCoupon[] => {
+        const coupons = getStoredMemberCoupons();
+        return coupons
+            .filter(c => c.memberId === memberId && (!status || c.status === status))
+            .sort((a, b) => new Date(b.earnTime).getTime() - new Date(a.earnTime).getTime());
+    },
+
+    /**
+     * Get a single member coupon by ID.
+     */
+    getMemberCoupon: (couponId: string): MemberCoupon | undefined => {
+        const coupons = getStoredMemberCoupons();
+        return coupons.find(c => c.id === couponId);
+    },
+
+    /**
+     * Manually redeem a coupon for a member.
+     */
+    redeemCouponManually: (couponId: string, form: ManualRedemptionForm): MemberCoupon | null => {
+        const coupons = getStoredMemberCoupons();
+        const index = coupons.findIndex(c => c.id === couponId);
+        if (index === -1) return null;
+
+        const coupon = coupons[index];
+        if (coupon.status !== 'available') return null;
+
+        const updatedCoupon: MemberCoupon = {
+            ...coupon,
+            status: 'used',
+            usedStore: form.storeId,
+            usedDate: form.redemptionTime,
+            usedNote: `[${form.reasonCategory}] ${form.notes}`,
+        };
+
+        coupons[index] = updatedCoupon;
+        localStorage.setItem(MEMBER_COUPONS_KEY, JSON.stringify(coupons));
+        return updatedCoupon;
+    },
+
+    /**
+     * Manually void a coupon for a member.
+     */
+    voidCouponManually: (couponId: string, form: ManualVoidForm): MemberCoupon | null => {
+        const coupons = getStoredMemberCoupons();
+        const index = coupons.findIndex(c => c.id === couponId);
+        if (index === -1) return null;
+
+        const coupon = coupons[index];
+        if (coupon.status !== 'available') return null;
+
+        const updatedCoupon: MemberCoupon = {
+            ...coupon,
+            status: 'voided',
+            voidReason: form.reasonCategory,
+            voidNote: form.notes,
+            voidDate: new Date().toISOString(),
+        };
+
+        coupons[index] = updatedCoupon;
+        localStorage.setItem(MEMBER_COUPONS_KEY, JSON.stringify(coupons));
+        return updatedCoupon;
+    },
+
+    /**
      * Reset to initial mock data (for testing).
      */
     resetMockData: (): void => {
         localStorage.setItem(ASSET_LOGS_KEY, JSON.stringify(INITIAL_ASSET_LOGS));
         localStorage.setItem(POINT_PACKETS_KEY, JSON.stringify(INITIAL_POINT_PACKETS));
+        localStorage.setItem(MEMBER_COUPONS_KEY, JSON.stringify(INITIAL_MEMBER_COUPONS));
     },
 };
 

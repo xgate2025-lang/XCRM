@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ProgramLogic, NavItemId, TierDefinition } from '../types';
-import { Layers, Zap, ArrowRight, ChevronUp, ChevronDown, CheckCircle2, Coins, X, AlertTriangle } from 'lucide-react';
+import { Layers, Zap, ArrowRight, ChevronUp, ChevronDown, CheckCircle2, Coins, X, AlertTriangle, Crown } from 'lucide-react';
 import GhostMatrix from '../components/program/GhostMatrix';
 import ActiveTierMatrix from '../components/program/ActiveTierMatrix';
 import LogicWizard from '../components/program/LogicWizard';
@@ -18,6 +18,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
   // View State
   const [view, setView] = useState<'landing' | 'logic_wizard' | 'tier_wizard'>('landing');
   const [isHeroCollapsed, setIsHeroCollapsed] = useState(false);
+  const [activeTab, setActiveTab] = useState<'standard' | 'paid'>('standard');
 
   // Feedback States
   const [showSuccessToast, setShowSuccessToast] = useState<string | null>(null);
@@ -265,7 +266,35 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Zone B: The Narrative Bridge (Hero) */}
+      {/* Tab Navigation */}
+      <div className="flex gap-1 border-b border-slate-200">
+        <button
+          onClick={() => setActiveTab('standard')}
+          className={`flex items-center gap-2 px-5 py-3 font-bold text-sm transition-all border-b-2 -mb-[2px] ${
+            activeTab === 'standard'
+              ? 'text-slate-900 border-slate-900'
+              : 'text-slate-400 border-transparent hover:text-slate-600 hover:border-slate-300'
+          }`}
+        >
+          <Layers size={18} />
+          Standard
+        </button>
+        <button
+          onClick={() => setActiveTab('paid')}
+          className={`flex items-center gap-2 px-5 py-3 font-bold text-sm transition-all border-b-2 -mb-[2px] ${
+            activeTab === 'paid'
+              ? 'text-amber-600 border-amber-500'
+              : 'text-slate-400 border-transparent hover:text-amber-500 hover:border-amber-300'
+          }`}
+        >
+          <Crown size={18} />
+          Paid
+        </button>
+      </div>
+
+      {activeTab === 'standard' ? (
+        <>
+          {/* Zone B: The Narrative Bridge (Hero) */}
       <div className="relative bg-white rounded-3xl border border-slate-200 overflow-hidden transition-all duration-500">
 
         {/* Collapse Toggle */}
@@ -426,6 +455,57 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
           />
         )}
       </div>
+        </>
+      ) : (
+        /* Paid Tier Coming Soon Placeholder */
+        <div className="relative bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl border border-amber-200 overflow-hidden p-8 md:p-12">
+          {/* Background Decoration */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-100 rounded-full -mr-20 -mt-20 opacity-50 blur-3xl pointer-events-none"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-orange-100 rounded-full -ml-16 -mb-16 opacity-40 blur-2xl pointer-events-none"></div>
+
+          <div className="relative z-10 max-w-2xl">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-xs font-bold text-amber-700 bg-amber-100 px-3 py-1 rounded-full border border-amber-200 flex items-center gap-1.5">
+                <Crown size={12} />
+                Coming Soon
+              </span>
+            </div>
+
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 mb-4">
+              Paid Memberships
+            </h2>
+
+            <p className="text-slate-600 text-lg leading-relaxed mb-6">
+              Unlock a new revenue stream with premium, paid membership tiers.
+              Offer exclusive benefits, VIP access, and special perks to your most dedicated members.
+            </p>
+
+            <div className="flex flex-wrap gap-3 mb-8">
+              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-amber-100">
+                <CheckCircle2 size={16} className="text-amber-600" />
+                <span className="text-sm font-medium text-slate-700">Premium Benefits</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-amber-100">
+                <CheckCircle2 size={16} className="text-amber-600" />
+                <span className="text-sm font-medium text-slate-700">Recurring Revenue</span>
+              </div>
+              <div className="flex items-center gap-2 bg-white/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-amber-100">
+                <CheckCircle2 size={16} className="text-amber-600" />
+                <span className="text-sm font-medium text-slate-700">VIP Experiences</span>
+              </div>
+            </div>
+
+            <p className="text-sm text-slate-500">
+              We're working hard to bring you this feature. Stay tuned for updates!
+            </p>
+          </div>
+
+          {/* Visual decoration on the right */}
+          <div className="absolute top-1/2 -translate-y-1/2 right-8 md:right-12 hidden lg:block opacity-20 pointer-events-none">
+            <Crown size={180} className="text-amber-400" />
+          </div>
+        </div>
+      )}
 
     </div>
   );

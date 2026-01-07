@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
-import { Member, AssetLog, PointPacket } from '../types';
+import { Member, AssetLog, PointPacket, PointsSummary, MemberCoupon, MemberCouponStatus, ManualRedemptionForm, ManualVoidForm } from '../types';
 import { MockAssetService } from '../lib/services/mock/MockAssetService';
 
 // Enhanced Mock Data with valid phones and card numbers
@@ -95,6 +95,13 @@ interface MemberContextType {
   changeTier: (memberId: string, newTier: string, reasonType: string, remark: string) => void;
   getAssetLogs: (memberId: string, type?: 'point' | 'tier') => AssetLog[];
   getPointPackets: (memberId: string) => PointPacket[];
+  // New Point Summary (FR-MEM-03)
+  getPointsSummary: (memberId: string) => PointsSummary;
+  // Member Coupon Wallet (FR-MEM-07)
+  getMemberCoupons: (memberId: string, status?: MemberCouponStatus) => MemberCoupon[];
+  getMemberCoupon: (couponId: string) => MemberCoupon | undefined;
+  redeemCouponManually: (couponId: string, form: ManualRedemptionForm) => MemberCoupon | null;
+  voidCouponManually: (couponId: string, form: ManualVoidForm) => MemberCoupon | null;
 }
 
 const MemberContext = createContext<MemberContextType | undefined>(undefined);
@@ -188,6 +195,28 @@ export const MemberProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     return MockAssetService.getPointPackets(memberId);
   }, []);
 
+  // --- New Point Summary (FR-MEM-03) ---
+  const getPointsSummary = useCallback((memberId: string): PointsSummary => {
+    return MockAssetService.getPointsSummary(memberId);
+  }, []);
+
+  // --- Member Coupon Wallet Methods (FR-MEM-07) ---
+  const getMemberCoupons = useCallback((memberId: string, status?: MemberCouponStatus): MemberCoupon[] => {
+    return MockAssetService.getMemberCoupons(memberId, status);
+  }, []);
+
+  const getMemberCoupon = useCallback((couponId: string): MemberCoupon | undefined => {
+    return MockAssetService.getMemberCoupon(couponId);
+  }, []);
+
+  const redeemCouponManually = useCallback((couponId: string, form: ManualRedemptionForm): MemberCoupon | null => {
+    return MockAssetService.redeemCouponManually(couponId, form);
+  }, []);
+
+  const voidCouponManually = useCallback((couponId: string, form: ManualVoidForm): MemberCoupon | null => {
+    return MockAssetService.voidCouponManually(couponId, form);
+  }, []);
+
   return (
     <MemberContext.Provider value={{
       members,
@@ -202,6 +231,11 @@ export const MemberProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       changeTier,
       getAssetLogs,
       getPointPackets,
+      getPointsSummary,
+      getMemberCoupons,
+      getMemberCoupon,
+      redeemCouponManually,
+      voidCouponManually,
     }}>
       {children}
     </MemberContext.Provider>

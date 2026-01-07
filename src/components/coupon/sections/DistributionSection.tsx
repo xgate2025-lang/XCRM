@@ -9,25 +9,25 @@ const DISTRIBUTION_CHANNELS: {
   description: string;
   icon: React.ReactNode;
 }[] = [
-  {
-    channel: 'public_app',
-    label: 'Public (App)',
-    description: 'Visible in the member app for self-claim',
-    icon: <Smartphone size={20} />,
-  },
-  {
-    channel: 'points_mall',
-    label: 'Points Mall',
-    description: 'Redeemable using loyalty points',
-    icon: <Gift size={20} />,
-  },
-  {
-    channel: 'manual_issue',
-    label: 'Manual Issue',
-    description: 'Admin assigns to specific members',
-    icon: <UserPlus size={20} />,
-  },
-];
+    {
+      channel: 'public_app',
+      label: 'Public (App)',
+      description: 'Visible in the member app for self-claim',
+      icon: <Smartphone size={20} />,
+    },
+    {
+      channel: 'points_mall',
+      label: 'Points Mall',
+      description: 'Redeemable using loyalty points',
+      icon: <Gift size={20} />,
+    },
+    {
+      channel: 'manual_issue',
+      label: 'Manual Issue',
+      description: 'Admin assigns to specific members',
+      icon: <UserPlus size={20} />,
+    },
+  ];
 
 const DistributionSection: React.FC = () => {
   const { state, updateCoupon } = useCouponWizard();
@@ -67,19 +67,17 @@ const DistributionSection: React.FC = () => {
                 onClick={() => toggleChannel(channel)}
                 aria-pressed={isSelected}
                 aria-label={`${label}: ${description}`}
-                className={`w-full flex items-center gap-4 p-5 rounded-2xl border-2 text-left transition-all ${
-                  isSelected
-                    ? 'border-primary-500 bg-primary-50'
-                    : 'border-slate-100 bg-slate-50 hover:border-slate-200'
-                }`}
+                className={`w-full flex items-center gap-4 p-5 rounded-2xl border-2 text-left transition-all ${isSelected
+                  ? 'border-primary-500 bg-primary-50'
+                  : 'border-slate-100 bg-slate-50 hover:border-slate-200'
+                  }`}
               >
                 {/* Checkbox */}
                 <div
-                  className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shrink-0 ${
-                    isSelected
-                      ? 'bg-primary-500 border-primary-500'
-                      : 'border-slate-300 bg-white'
-                  }`}
+                  className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all shrink-0 ${isSelected
+                    ? 'bg-primary-500 border-primary-500'
+                    : 'border-slate-300 bg-white'
+                    }`}
                 >
                   {isSelected && (
                     <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 12 12">
@@ -90,9 +88,8 @@ const DistributionSection: React.FC = () => {
 
                 {/* Icon */}
                 <div
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                    isSelected ? 'bg-primary-500 text-white' : 'bg-slate-200 text-slate-500'
-                  }`}
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isSelected ? 'bg-primary-500 text-white' : 'bg-slate-200 text-slate-500'
+                    }`}
                 >
                   {icon}
                 </div>
@@ -100,9 +97,8 @@ const DistributionSection: React.FC = () => {
                 {/* Label */}
                 <div className="flex-1">
                   <div
-                    className={`font-bold text-sm ${
-                      isSelected ? 'text-primary-700' : 'text-slate-700'
-                    }`}
+                    className={`font-bold text-sm ${isSelected ? 'text-primary-700' : 'text-slate-700'
+                      }`}
                   >
                     {label}
                   </div>
@@ -112,6 +108,66 @@ const DistributionSection: React.FC = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* Store Restrictions (FR-COUPON-02) */}
+      <div className="pt-8 border-t border-slate-100">
+        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
+          Store Restrictions
+        </label>
+        <div className="flex bg-slate-100 p-1 rounded-xl mb-6 w-fit">
+          {[
+            { mode: 'all', label: 'All Stores' },
+            { mode: 'include', label: 'Include' },
+            { mode: 'exclude', label: 'Exclude' },
+          ].map((option) => (
+            <button
+              key={option.mode}
+              type="button"
+              onClick={() => updateCoupon({ storeRestriction: { ...coupon.storeRestriction!, mode: option.mode as any } })}
+              className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${coupon.storeRestriction?.mode === option.mode
+                ? 'bg-white text-slate-900 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700'
+                }`}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+
+        {coupon.storeRestriction?.mode !== 'all' && (
+          <div className="space-y-4 animate-in fade-in slide-in-from-top-2 duration-300">
+            <div className="flex flex-wrap gap-2">
+              {['Store #101', 'Store #102', 'Store #201', 'Store #202', 'Flagship Store'].map((store) => {
+                const isSelected = coupon.storeRestriction?.storeIds?.includes(store);
+                return (
+                  <button
+                    key={store}
+                    type="button"
+                    onClick={() => {
+                      const currentIds = coupon.storeRestriction?.storeIds || [];
+                      const newIds = isSelected
+                        ? currentIds.filter(id => id !== store)
+                        : [...currentIds, store];
+                      updateCoupon({ storeRestriction: { ...coupon.storeRestriction!, storeIds: newIds } });
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${isSelected
+                      ? 'bg-primary-50 border-primary-200 text-primary-700'
+                      : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
+                      }`}
+                  >
+                    {store}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[10px] text-slate-400">
+              {coupon.storeRestriction?.mode === 'include'
+                ? 'Only members shopping at these stores can use the coupon.'
+                : 'Members shopping at these stores cannot use the coupon.'}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Summary */}

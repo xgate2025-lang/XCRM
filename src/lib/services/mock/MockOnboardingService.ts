@@ -18,12 +18,12 @@ const MOCK_DELAY = 500;
 
 const MISSION_ORDER: MissionId[] = ['identity', 'tier_method', 'currency', 'tiers', 'launch'];
 
-// Default mission definitions (the 4 cards from IA.md)
+// Default mission definitions (the 5 steps from spec FR-ONBOARD)
 const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
     identity: {
         id: 'identity',
         title: 'Establish your Identity',
-        description: 'Upload your logo and set your timezone & currency.',
+        description: 'Set your timezone & currency for the program.',
         tag: 'Step 1',
         timeEstimate: '⏱️ 2 mins',
         actionLabel: 'Go to Settings',
@@ -31,22 +31,24 @@ const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
         isSkipped: false,
         isComplete: false,
         subtasks: [
-            { id: 'upload_logo', label: 'Upload Store Logo', isDone: false },
+            // FR-ONBOARD-01: MUST NOT include "Upload Store Logo"
             { id: 'set_timezone', label: 'Set Timezone & Currency', isDone: false },
         ],
     },
     tier_method: {
         id: 'tier_method',
-        title: 'Decide Physics',
-        description: 'Setup how members progress (Revenue vs Engagement).',
+        title: 'Load Master Data',
+        description: 'Import your stores and product catalog.',
         tag: 'Step 2',
         timeEstimate: '⏱️ 3 mins',
-        actionLabel: 'Setup Method',
-        actionRoute: 'program-tier', // NavItemId
+        actionLabel: 'Import Data',
+        actionRoute: 'setting', // NavItemId
         isSkipped: false,
         isComplete: false,
         subtasks: [
-            { id: 'define_base_tier', label: 'Setup Tier Upgrade method', isDone: false },
+            // FR-ONBOARD-02: Loading master data (store and product)
+            { id: 'import_stores', label: 'Import Store List', isDone: false },
+            { id: 'import_products', label: 'Import Product Catalog', isDone: false },
         ],
     },
     currency: {
@@ -66,32 +68,34 @@ const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
     },
     tiers: {
         id: 'tiers',
-        title: 'Build the Ladder',
-        description: 'Define your tier structure and benefits.',
+        title: 'Define Coupon Library',
+        description: 'Create welcome and tier privilege coupons.',
         tag: 'Step 4',
+        timeEstimate: '⏱️ 5 mins',
+        actionLabel: 'Create Coupons',
+        actionRoute: 'coupon-create', // NavItemId
+        isSkipped: false,
+        isComplete: false,
+        subtasks: [
+            // FR-ONBOARD-03: Coupons - "Create new member coupon" and "Create tier privilege coupons"
+            { id: 'create_welcome_coupon', label: 'Create New Member Coupon', isDone: false },
+            { id: 'create_tier_coupons', label: 'Create Tier Privilege Coupons', isDone: false },
+        ],
+    },
+    launch: {
+        id: 'launch',
+        title: 'Build the Ladder',
+        description: 'Define your tier structure and entry thresholds.',
+        tag: 'Step 5',
         timeEstimate: '⏱️ 10 mins',
         actionLabel: 'Open Tier Matrix',
         actionRoute: 'program-tier', // NavItemId
         isSkipped: false,
         isComplete: false,
         subtasks: [
-            { id: 'create_premium_tier', label: 'Create Premium Tier (Gold)', isDone: false },
-            { id: 'add_benefit', label: 'Add One Benefit to Gold', isDone: false },
-        ],
-    },
-    launch: {
-        id: 'launch',
-        title: 'Create Welcome Offer',
-        description: 'Create your first coupon and launch your program.',
-        tag: 'Step 5',
-        timeEstimate: '⏱️ 3 mins',
-        actionLabel: 'Create Coupon',
-        actionRoute: 'coupon-create', // NavItemId
-        isSkipped: false,
-        isComplete: false,
-        subtasks: [
-            { id: 'create_coupon', label: 'Create "New Member" Coupon', isDone: false },
-            { id: 'activate_campaign', label: 'Activate the Campaign', isDone: false },
+            // FR-ONBOARD-04: Tiers - "Create basic tier" and "Create premium tiers"
+            { id: 'create_basic_tier', label: 'Create Basic Tier', isDone: false },
+            { id: 'create_premium_tiers', label: 'Create Premium Tiers', isDone: false },
         ],
     },
 };
@@ -102,7 +106,7 @@ let mockState: OnboardingState = ((): OnboardingState => {
 
     // Default system state
     const defaultState: OnboardingState = {
-        completionPercentage: 10,
+        completionPercentage: 0,
         currentStepIndex: 0,
         isDismissed: false,
         missions: JSON.parse(JSON.stringify(DEFAULT_MISSIONS)),
@@ -157,9 +161,9 @@ function calculateCompletion(missions: Record<MissionId, MissionData>): number {
     const completed = allSubtasks.filter((s) => s.isDone).length;
     const total = allSubtasks.length;
 
-    // Base 10% for account creation, remaining 90% for subtasks
-    const subtaskProgress = total > 0 ? (completed / total) * 90 : 0;
-    return Math.round(10 + subtaskProgress);
+    // Calculate progress based on subtasks (0-100%)
+    const subtaskProgress = total > 0 ? (completed / total) * 100 : 0;
+    return Math.round(subtaskProgress);
 }
 
 /**
@@ -261,7 +265,7 @@ export const MockOnboardingService: IOnboardingService = {
 export const MockDebug = {
     resetState(): void {
         mockState = {
-            completionPercentage: 10,
+            completionPercentage: 0,
             currentStepIndex: 0,
             isDismissed: false,
             missions: JSON.parse(JSON.stringify(DEFAULT_MISSIONS)),

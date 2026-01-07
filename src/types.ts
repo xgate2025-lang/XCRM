@@ -103,6 +103,54 @@ export interface PointPacket {
   remark: string;
 }
 
+/** Summary statistics for member point assets (FR-MEM-03) */
+export interface PointsSummary {
+  availableBalance: number;
+  lifetimeEarned: number;
+  used: number;
+  expired: number;
+}
+
+// --- Member Wallet Coupon Types (FR-MEM-07) ---
+
+export type MemberCouponStatus = 'available' | 'used' | 'expired' | 'voided';
+
+/** Coupon instance in a member's wallet */
+export interface MemberCoupon {
+  id: string;
+  memberId: string;
+  couponTemplateId: string;
+  code: string;
+  name: string;
+  identifier: string; // Unique coupon identifier
+  earnTime: string; // ISO DateTime when issued
+  expiryTime: string; // ISO DateTime when expires
+  source: string; // e.g., 'Points Mall', 'Campaign', 'Manual Issue'
+  status: MemberCouponStatus;
+  // Usage details (populated when status is 'used')
+  usedStore?: string;
+  usedDate?: string;
+  usedNote?: string;
+  // Void details (populated when status is 'voided')
+  voidReason?: string;
+  voidNote?: string;
+  voidDate?: string;
+}
+
+/** Form data for manual coupon redemption action */
+export interface ManualRedemptionForm {
+  storeId: string;
+  redemptionTime: string; // ISO DateTime
+  reasonCategory: string; // e.g., 'Customer Service', 'Goodwill', 'Error Correction'
+  notes: string;
+}
+
+/** Form data for manual coupon void action */
+export interface ManualVoidForm {
+  reasonCategory: string; // e.g., 'Customer Request', 'Duplicate', 'Error'
+  notes: string;
+}
+
 export interface TransactionItem {
   sku: string;
   name: string;
@@ -391,10 +439,28 @@ export type DistributionChannel = 'public_app' | 'points_mall' | 'manual_issue';
 /** Validity type for coupon lifecycle */
 export type ValidityType = 'dynamic' | 'fixed';
 
+/** Identifier generation mode for coupons (FR-COUPON-02) */
+export type IdentifierMode = 'auto' | 'manual';
+
+/** Time unit for per-person quota window (FR-COUPON-02) */
+export type QuotaTimeUnit = 'day' | 'week' | 'month' | 'lifetime';
+
+/** Store restriction configuration (FR-COUPON-02) */
+export interface StoreRestriction {
+  mode: 'all' | 'include' | 'exclude';
+  storeIds: string[]; // Only used when mode is 'include' or 'exclude'
+}
+
 /** Exception rules for coupon usage */
 export interface CouponExceptions {
   blockedStores?: string[];
   blockedDates?: string[];
+}
+
+/** Per-person quota configuration (FR-COUPON-02) */
+export interface PersonalQuota {
+  maxCount: number; // Max X coupons
+  timeWindow: QuotaTimeUnit; // In Y time (e.g., 'month' = per month)
 }
 
 /** Complete Coupon entity for the wizard (based on data-model.md) */
@@ -402,6 +468,9 @@ export interface Coupon {
   id: string;
   code: string;
   name: string;
+  // FR-COUPON-02: Identifier with auto/manual mode
+  identifier: string;
+  identifierMode: IdentifierMode;
   type: CouponType;
   value: number;
   minSpend: number;
@@ -411,13 +480,17 @@ export interface Coupon {
   codeStrategy: CodeStrategy;
   customCode?: string;
   totalQuota: number;
+  // FR-COUPON-02: Per-person quota with time window
   userQuota: number;
+  personalQuota?: PersonalQuota;
   validityType: ValidityType;
   validityDays?: number;
   startDate?: string;
   endDate?: string;
   extendToEndOfMonth: boolean;
   channels: DistributionChannel[];
+  // FR-COUPON-02: Store restrictions
+  storeRestriction?: StoreRestriction;
   status: CouponStatus;
 }
 
