@@ -439,6 +439,9 @@ export type DistributionChannel = 'public_app' | 'points_mall' | 'manual_issue';
 /** Validity type for coupon lifecycle */
 export type ValidityType = 'dynamic' | 'fixed';
 
+/** Validity mode for coupon instance validity (FR-002) */
+export type ValidityMode = 'template' | 'dynamic';
+
 /** Identifier generation mode for coupons (FR-COUPON-02) */
 export type IdentifierMode = 'auto' | 'manual';
 
@@ -461,6 +464,7 @@ export interface CouponExceptions {
 export interface PersonalQuota {
   maxCount: number; // Max X coupons
   timeWindow: QuotaTimeUnit; // In Y time (e.g., 'month' = per month)
+  windowValue?: number; // [NEW] Multiplier for window (e.g., 2 for "Every 2 Weeks")
 }
 
 /** Complete Coupon entity for the wizard (based on data-model.md) */
@@ -473,6 +477,8 @@ export interface Coupon {
   identifierMode: IdentifierMode;
   type: CouponType;
   value: number;
+  // [NEW] Text description for Product/Service value (FR-001)
+  productText?: string;
   minSpend: number;
   isStackable: boolean;
   cartLimit: number;
@@ -484,6 +490,10 @@ export interface Coupon {
   userQuota: number;
   personalQuota?: PersonalQuota;
   validityType: ValidityType;
+  // [NEW] Validity mode for coupon instance validity (FR-002)
+  validityMode: ValidityMode;
+  // [NEW] Days to wait before coupon becomes active (for Dynamic mode)
+  validityDelay?: number;
   validityDays?: number;
   startDate?: string;
   endDate?: string;

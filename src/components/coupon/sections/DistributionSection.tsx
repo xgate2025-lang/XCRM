@@ -1,7 +1,18 @@
-import React from 'react';
-import { Smartphone, Gift, UserPlus } from 'lucide-react';
+import React, { useState } from 'react';
+import { Smartphone, Gift, UserPlus, Store, Search, MapPin } from 'lucide-react';
 import { DistributionChannel } from '../../../types';
 import { useCouponWizard } from '../../../context/CouponWizardContext';
+
+// Mock store data - in production this would come from an API
+const AVAILABLE_STORES = [
+  { id: 'store_101', name: 'Store #101', location: 'Downtown Mall' },
+  { id: 'store_102', name: 'Store #102', location: 'East Side Plaza' },
+  { id: 'store_201', name: 'Store #201', location: 'West End Center' },
+  { id: 'store_202', name: 'Store #202', location: 'North Station' },
+  { id: 'store_flagship', name: 'Flagship Store', location: 'City Center' },
+  { id: 'store_outlet', name: 'Outlet Store', location: 'Factory District' },
+  { id: 'store_airport', name: 'Airport Store', location: 'Terminal 2' },
+];
 
 const DISTRIBUTION_CHANNELS: {
   channel: DistributionChannel;

@@ -146,17 +146,63 @@ const GuardrailsSection: React.FC = () => {
                 type="number"
               />
               <span className="font-bold text-slate-900">times</span>
+              {/* Time Window Selection */}
               <select
                 value={coupon.personalQuota?.timeWindow || 'lifetime'}
-                onChange={(e) => updateCoupon({ personalQuota: { ...coupon.personalQuota!, timeWindow: e.target.value as any } })}
+                onChange={(e) => updateCoupon({
+                  personalQuota: {
+                    ...coupon.personalQuota!,
+                    timeWindow: e.target.value as any,
+                    // Reset windowValue to 1 when switching to lifetime
+                    windowValue: e.target.value === 'lifetime' ? 1 : (coupon.personalQuota?.windowValue || 1)
+                  }
+                })}
                 className="ml-2 bg-transparent border-b-2 border-slate-200 font-bold text-slate-900 outline-none focus:border-primary-500 transition-colors"
               >
                 <option value="lifetime">in Total</option>
-                <option value="day">per Day</option>
-                <option value="week">per Week</option>
-                <option value="month">per Month</option>
+                <option value="day">per Day(s)</option>
+                <option value="week">per Week(s)</option>
+                <option value="month">per Month(s)</option>
               </select>
+              {/* Window Value Input - only show when not lifetime */}
+              {coupon.personalQuota?.timeWindow && coupon.personalQuota.timeWindow !== 'lifetime' && (
+                <>
+                  <span className="mx-1 text-slate-500">every</span>
+                  <SentenceInput
+                    value={coupon.personalQuota?.windowValue || 1}
+                    onChange={(v) => updateCoupon({ personalQuota: { ...coupon.personalQuota!, windowValue: Number(v) } })}
+                    width="w-14"
+                    className="mx-1"
+                    type="number"
+                  />
+                  <span className="font-bold text-slate-900">
+                    {coupon.personalQuota?.timeWindow === 'day' ? 'day(s)' :
+                     coupon.personalQuota?.timeWindow === 'week' ? 'week(s)' :
+                     coupon.personalQuota?.timeWindow === 'month' ? 'month(s)' : ''}
+                  </span>
+                </>
+              )}
               .
+            </div>
+            {/* Frequency Summary */}
+            <div className="mt-3 p-3 bg-white rounded-lg border border-slate-200">
+              <div className="text-sm text-slate-600">
+                <span className="font-bold text-slate-800">Example: </span>
+                {coupon.personalQuota?.timeWindow === 'lifetime' ? (
+                  <>A member can claim this coupon <span className="font-bold text-primary-600">{coupon.personalQuota?.maxCount || 1} time(s)</span> ever.</>
+                ) : (
+                  <>
+                    A member can claim <span className="font-bold text-primary-600">{coupon.personalQuota?.maxCount || 1} coupon(s)</span> every{' '}
+                    <span className="font-bold text-primary-600">
+                      {(coupon.personalQuota?.windowValue || 1) > 1 ? `${coupon.personalQuota?.windowValue} ` : ''}
+                      {coupon.personalQuota?.timeWindow === 'day' ? 'day' :
+                       coupon.personalQuota?.timeWindow === 'week' ? 'week' :
+                       coupon.personalQuota?.timeWindow === 'month' ? 'month' : ''}
+                      {(coupon.personalQuota?.windowValue || 1) > 1 ? 's' : ''}
+                    </span>.
+                  </>
+                )}
+              </div>
             </div>
             <p className="text-xs text-slate-400 mt-2">Controls how often a single customer can benefit from this offer.</p>
           </div>

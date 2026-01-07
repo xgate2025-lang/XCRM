@@ -5,6 +5,7 @@ import {
   CouponWizardState,
   SectionValidation,
   DistributionChannel,
+  ValidityMode,
 } from '../types';
 
 // --- Initial State ---
@@ -28,6 +29,7 @@ const createDefaultCoupon = (): Partial<Coupon> => ({
   code: '',
   type: 'cash',
   value: 10,
+  productText: '',
   minSpend: 0,
   isStackable: false,
   cartLimit: 1,
@@ -35,9 +37,11 @@ const createDefaultCoupon = (): Partial<Coupon> => ({
   totalQuota: 1000,
   userQuota: 1,
   validityType: 'dynamic',
+  validityMode: 'template',
+  validityDelay: 0,
   validityDays: 30,
   extendToEndOfMonth: false,
-  personalQuota: { maxCount: 1, timeWindow: 'lifetime' },
+  personalQuota: { maxCount: 1, timeWindow: 'lifetime', windowValue: 1 },
   storeRestriction: { mode: 'all', storeIds: [] },
   channels: ['public_app'],
   status: 'Draft',
@@ -188,20 +192,44 @@ function validateEssentials(coupon: Partial<Coupon>): { isValid: boolean; errors
   const errors: string[] = [];
   if (!coupon.name?.trim()) errors.push('Name is required');
   if (!coupon.type) errors.push('Discount type is required');
-  if (coupon.value === undefined || coupon.value <= 0) errors.push('Value must be greater than 0');
+
+  // For 'sku' (Product/Service) type: productText is required when value is 0
+  if (coupon.type === 'sku') {
+    if ((coupon.value === undefined || coupon.value === 0) && !coupon.productText?.trim()) {
+      errors.push('Product description is required for Product/Service type');
+    }
+  } else {
+    // For other types, value must be > 0
+    if (coupon.value === undefined || coupon.value <= 0) errors.push('Value must be greater than 0');
+  }
+
   return { isValid: errors.length === 0, errors };
 }
 
 function validateLifecycle(coupon: Partial<Coupon>): { isValid: boolean; errors: string[] } {
   const errors: string[] = [];
   if (!coupon.validityType) errors.push('Validity type is required');
-  if (coupon.validityType === 'dynamic' && (!coupon.validityDays || coupon.validityDays <= 0)) {
-    errors.push('Validity days must be greater than 0');
-  }
-  if (coupon.validityType === 'fixed') {
+
+  // Template mode: must have fixed dates
+  if (coupon.validityMode === 'template' || coupon.validityType === 'fixed') {
     if (!coupon.startDate) errors.push('Start date is required');
     if (!coupon.endDate) errors.push('End date is required');
+    if (coupon.startDate && coupon.endDate && new Date(coupon.startDate) > new Date(coupon.endDate)) {
+      errors.push('End date must be after start date');
+    }
   }
+
+  // Dynamic mode: must have duration (validityDays)
+  if (coupon.validityMode === 'dynamic' || coupon.validityType === 'dynamic') {
+    if (!coupon.validityDays || coupon.validityDays <= 0) {
+      errors.push('Validity duration must be greater than 0');
+    }
+    // validityDelay is optional but must be non-negative if provided
+    if (coupon.validityDelay !== undefined && coupon.validityDelay < 0) {
+      errors.push('Validity delay cannot be negative');
+    }
+  }
+
   return { isValid: errors.length === 0, errors };
 }
 
@@ -210,9 +238,20 @@ function validateGuardrails(coupon: Partial<Coupon>): { isValid: boolean; errors
   if (coupon.minSpend !== undefined && coupon.minSpend < 0) errors.push('Min spend cannot be negative');
   if (coupon.cartLimit !== undefined && coupon.cartLimit < 1) errors.push('Cart limit must be at least 1');
   if (coupon.totalQuota === undefined || coupon.totalQuota < 1) errors.push('Total quota must be at least 1');
-  if (coupon.personalQuota === undefined || (coupon.personalQuota?.maxCount || 0) < 1) {
+
+  // Personal quota validation
+  if (coupon.personalQuota) {
+    if (coupon.personalQuota.maxCount < 1) {
+      errors.push('Personal limit must be at least 1');
+    }
+    // windowValue validation: must be >= 1 when specified
+    if (coupon.personalQuota.windowValue !== undefined && coupon.personalQuota.windowValue < 1) {
+      errors.push('Quota window value must be at least 1');
+    }
+  } else {
     errors.push('Personal limit must be at least 1');
   }
+
   return { isValid: errors.length === 0, errors };
 }
 
@@ -407,15 +446,25 @@ export const CouponWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
     switch (section) {
       case 'essentials': {
         if (!coupon.name) return 'Not configured';
+        // Handle Product/Service type with productText
+        if (coupon.type === 'sku' && coupon.productText) {
+          return `${coupon.name} • ${coupon.productText}`;
+        }
         const typeLabel = coupon.type === 'cash' ? '$' : coupon.type === 'percentage' ? '%' : coupon.type?.toUpperCase();
         return `${coupon.name} • ${typeLabel}${coupon.value || 0}`;
       }
       case 'lifecycle': {
-        if (coupon.validityType === 'dynamic') {
-          return `${coupon.validityDays || 0} Days Rolling`;
+        // Show validityMode-aware summary
+        if (coupon.validityMode === 'dynamic' || coupon.validityType === 'dynamic') {
+          const delayText = coupon.validityDelay && coupon.validityDelay > 0
+            ? `After ${coupon.validityDelay}d, `
+            : '';
+          return `${delayText}${coupon.validityDays || 0} Days Rolling`;
         }
-        if (coupon.validityType === 'fixed' && coupon.startDate && coupon.endDate) {
-          return `${coupon.startDate} → ${coupon.endDate}`;
+        if (coupon.validityMode === 'template' || coupon.validityType === 'fixed') {
+          if (coupon.startDate && coupon.endDate) {
+            return `${coupon.startDate} → ${coupon.endDate}`;
+          }
         }
         return 'Not configured';
       }

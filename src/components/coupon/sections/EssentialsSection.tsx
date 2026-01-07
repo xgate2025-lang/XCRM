@@ -1,6 +1,6 @@
 import React from 'react';
 import { Ticket, Percent, Package, Truck, Tag, Wand2 } from 'lucide-react';
-import { CouponType, IdentifierMode, ValidityType } from '../../../types';
+import { CouponType, IdentifierMode } from '../../../types';
 import { useCouponWizard } from '../../../context/CouponWizardContext';
 import SentenceInput from '../../program/SentenceInput';
 
@@ -16,10 +16,6 @@ const IDENTIFIER_MODES: { mode: IdentifierMode; label: string; description: stri
   { mode: 'manual', label: 'Custom', description: 'Enter your own identifier code', icon: <Tag size={20} /> },
 ];
 
-const VALIDITY_TYPES: { type: ValidityType; label: string; description: string }[] = [
-  { type: 'fixed', label: 'Fixed Date Range', description: 'Valid from specific start to end date' },
-  { type: 'dynamic', label: 'Dynamic Duration', description: 'Valid for X days after issuance' },
-];
 
 const EssentialsSection: React.FC = () => {
   const { state, updateCoupon } = useCouponWizard();
@@ -78,9 +74,18 @@ const EssentialsSection: React.FC = () => {
               Free Standard Shipping
             </span>
           ) : coupon.type === 'sku' ? (
-            <span className="mx-2 font-black text-slate-900 uppercase underline decoration-primary-500 decoration-2 underline-offset-4">
-              A Free Gift
-            </span>
+            <>
+              <span className="mx-2 font-black text-slate-900">a</span>
+              <SentenceInput
+                value={coupon.productText || ''}
+                onChange={(v) => updateCoupon({ productText: String(v), value: 0 })}
+                placeholder="Free Coffee"
+                width="w-40"
+                className="mx-1"
+                type="text"
+              />
+              <span className="font-bold text-slate-500 text-sm">(Product/Service)</span>
+            </>
           ) : (
             <>
               <SentenceInput
@@ -99,6 +104,12 @@ const EssentialsSection: React.FC = () => {
           )}
           .
         </div>
+        {/* Product Description Help Text */}
+        {coupon.type === 'sku' && (
+          <p className="text-xs text-slate-400 mt-2">
+            Describe the product or service reward (e.g., "Free Medium Coffee", "Complimentary Dessert").
+          </p>
+        )}
       </div>
 
       {/* Identifier Mode (FR-COUPON-02) */}
@@ -154,53 +165,6 @@ const EssentialsSection: React.FC = () => {
         )}
       </div>
 
-      {/* Dynamic Validity (FR-COUPON-02) */}
-      <div>
-        <label className="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">
-          Validity Period
-        </label>
-        <div className="grid grid-cols-2 gap-4">
-          {VALIDITY_TYPES.map(({ type, label, description }) => (
-            <button
-              key={type}
-              type="button"
-              onClick={() => updateCoupon({ validityType: type })}
-              aria-pressed={coupon.validityType === type}
-              aria-label={`${label}: ${description}`}
-              className={`flex flex-col p-5 rounded-2xl border-2 text-left transition-all ${coupon.validityType === type
-                  ? 'border-primary-500 bg-primary-50 shadow-md'
-                  : 'border-slate-100 bg-slate-50 hover:border-slate-200'
-                }`}
-            >
-              <div
-                className={`font-bold text-sm ${coupon.validityType === type ? 'text-primary-700' : 'text-slate-700'
-                  }`}
-              >
-                {label}
-              </div>
-              <div className="text-xs text-slate-500 mt-1">{description}</div>
-            </button>
-          ))}
-        </div>
-        {coupon.validityType === 'dynamic' && (
-          <div className="mt-4 bg-slate-50 rounded-2xl p-6">
-            <div className="text-lg font-medium text-slate-600 leading-relaxed">
-              Coupon is valid for
-              <SentenceInput
-                value={coupon.validityDays || 30}
-                onChange={(v) => updateCoupon({ validityDays: Number(v) })}
-                width="w-20"
-                className="mx-2"
-                type="number"
-              />
-              <span className="font-bold text-slate-900">days</span> after issuance.
-            </div>
-            <p className="text-xs text-slate-400 mt-2">
-              Each member's coupon will expire based on when they receive it.
-            </p>
-          </div>
-        )}
-      </div>
     </div>
   );
 };

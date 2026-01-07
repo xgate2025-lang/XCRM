@@ -39,20 +39,39 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
 
   const getFormattedValue = () => {
     if (coupon.type === 'shipping') return 'FREE';
-    if (coupon.type === 'sku') return 'GIFT';
+    if (coupon.type === 'sku') {
+      // Show product text if available, otherwise show GIFT
+      return coupon.productText?.trim() ? coupon.productText : 'GIFT';
+    }
     if (coupon.type === 'cash') return `$${coupon.value || 0}`;
     if (coupon.type === 'percentage') return `${coupon.value || 0}%`;
     return `$${coupon.value || 0}`;
   };
 
   const getExpiryDisplay = () => {
-    if (coupon.validityType === 'dynamic') {
-      return `${coupon.validityDays || 30} Days`;
+    // Handle dynamic validity mode with delay
+    if (coupon.validityMode === 'dynamic' || coupon.validityType === 'dynamic') {
+      const delay = coupon.validityDelay || 0;
+      const duration = coupon.validityDays || 30;
+      if (delay > 0) {
+        return `+${delay}d → ${duration}d`;
+      }
+      return `${duration} Days`;
     }
-    if (coupon.validityType === 'fixed' && coupon.endDate) {
-      return coupon.endDate;
+    // Handle template/fixed mode
+    if (coupon.validityMode === 'template' || coupon.validityType === 'fixed') {
+      if (coupon.endDate) {
+        return coupon.endDate;
+      }
     }
     return 'TBD';
+  };
+
+  const getActivationText = () => {
+    if (coupon.validityMode === 'dynamic' && (coupon.validityDelay || 0) > 0) {
+      return `Active after ${coupon.validityDelay} days`;
+    }
+    return null;
   };
 
   const getChannelLabels = () => {
@@ -63,6 +82,30 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
       manual_issue: 'Manual',
     };
     return coupon.channels.map((c) => labels[c] || c).join(', ');
+  };
+
+  const getRedemptionLimitText = () => {
+    const quota = coupon.personalQuota;
+    if (!quota) {
+      return `Limited to ${coupon.userQuota || 1} use(s) per member`;
+    }
+    const count = quota.maxCount || 1;
+    const window = quota.timeWindow || 'lifetime';
+    const windowVal = quota.windowValue || 1;
+
+    if (window === 'lifetime') {
+      return `${count} use(s) per member (lifetime)`;
+    }
+
+    const unitLabels: Record<string, string> = {
+      day: 'day',
+      week: 'week',
+      month: 'month',
+    };
+    const unit = unitLabels[window] || window;
+    const plural = windowVal > 1 ? 's' : '';
+
+    return `${count} per ${windowVal > 1 ? windowVal + ' ' : ''}${unit}${plural}`;
   };
 
   return (
@@ -100,6 +143,14 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
                     {coupon.customCode}
                   </span>
                 )}
+                {/* Dynamic Validity Activation Badge */}
+                {getActivationText() && (
+                  <div className="mt-1">
+                    <span className="text-[8px] font-bold px-1.5 py-0.5 rounded bg-amber-400/80 text-amber-900 uppercase tracking-wide">
+                      {getActivationText()}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="w-8 h-8 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center shrink-0 shadow-inner">
                 {getTypeIcon(coupon.type)}
@@ -109,15 +160,17 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
             <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between z-10">
               <div>
                 <div className="text-[8px] font-black uppercase tracking-widest opacity-80 mb-0.5">
-                  Value
+                  {coupon.type === 'sku' ? 'Reward' : 'Value'}
                 </div>
-                <div className="text-2xl font-black tracking-tighter drop-shadow-lg leading-none">
+                <div className={`font-black tracking-tighter drop-shadow-lg leading-none ${
+                  coupon.type === 'sku' && coupon.productText ? 'text-sm' : 'text-2xl'
+                }`}>
                   {getFormattedValue()}
                 </div>
               </div>
               <div className="text-right">
                 <div className="text-[7px] font-black uppercase tracking-widest opacity-80 mb-0.5">
-                  Expires
+                  {coupon.validityMode === 'dynamic' && (coupon.validityDelay || 0) > 0 ? 'Duration' : 'Expires'}
                 </div>
                 <div className="text-[10px] font-bold whitespace-nowrap">{getExpiryDisplay()}</div>
               </div>
@@ -146,7 +199,7 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
               <div>
                 <div className="text-[10px] font-bold uppercase text-slate-400">Redemption</div>
                 <div className="text-xs font-bold text-slate-700 leading-snug">
-                  Limited to {coupon.userQuota || 1} use(s) per member
+                  {getRedemptionLimitText()}
                 </div>
               </div>
             </div>
