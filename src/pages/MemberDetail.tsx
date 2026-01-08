@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import ActionModal, { ActionType } from '../components/member/ActionModal';
 import EditProfileModal from '../components/member/EditProfileModal';
+import PointDetailTab from '../components/member/detail/PointDetailTab';
 
 interface MemberDetailProps {
   onNavigate: (id: NavItemId) => void;
@@ -948,165 +949,56 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
 
         {/* ### Tab 4: Points (Assets) ### */}
         {activeTab === 'points' && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-400">
-
-            {/* Top Row: Points Economics Widgets */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm relative overflow-hidden group">
-                <div className="absolute right-[-10px] top-[-10px] opacity-[0.03] group-hover:rotate-12 transition-transform duration-700">
-                  <Coins size={120} />
-                </div>
-                <div className="relative z-10">
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Available Balance</div>
-                  <div className="text-4xl font-black text-slate-900 tracking-tighter">{member.points.toLocaleString()}</div>
-                  <div className="mt-4 flex items-center gap-2">
-                    <div className="flex items-center gap-1 text-[10px] font-black text-green-600 bg-green-50 px-2 py-1 rounded-lg border border-green-100">
-                      <TrendingUp size={12} /> +2,450
-                    </div>
-                    <span className="text-[10px] font-bold text-slate-400">Valued at ~$HK 125.00</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm group">
-                <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Lifetime Earned</div>
-                <div className="text-4xl font-black text-slate-900 tracking-tighter">84,200</div>
-                <div className="mt-4 text-[11px] font-bold text-slate-500 flex items-center gap-2">
-                  <History size={14} className="text-slate-300" /> Member since {member.joinDate}
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm group">
-                <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Used (Redeemed)</div>
-                <div className="text-4xl font-black text-slate-900 tracking-tighter">71,850</div>
-                <div className="mt-4 text-[11px] font-bold text-slate-500 flex items-center gap-2">
-                  <Calculator size={14} className="text-slate-300" /> Avg $85/redemption
-                </div>
-              </div>
-
-              <div className="bg-slate-900 p-6 rounded-3xl shadow-xl shadow-slate-200 relative overflow-hidden group">
-                <div className="absolute right-[-10px] top-[-10px] opacity-10">
-                  <Clock size={120} className="text-white" />
-                </div>
-                <div className="relative z-10 flex flex-col h-full justify-between">
-                  <div>
-                    <div className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Expiring / Expired</div>
-                    <div className="text-4xl font-black text-orange-400 tracking-tighter">1,250</div>
-                  </div>
-                  <div className="mt-4 flex items-center gap-2 text-[10px] font-black text-white/60">
-                    <AlertTriangle size={14} className="text-orange-500" /> Next expiry: Dec 31
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Expiration Roadmap / Urgency Bar */}
-            <div className="bg-orange-50 border border-orange-100 rounded-4xl p-6 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden relative">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-orange-100/50 rounded-full blur-3xl -mr-16 -mt-16"></div>
-              <div className="flex items-center gap-4 relative z-10">
-                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-orange-500 shadow-sm border border-orange-100">
-                  <Clock size={24} />
-                </div>
-                <div>
-                  <h4 className="text-sm font-black text-slate-900 uppercase">Points Expiration Alert</h4>
-                  <p className="text-xs text-slate-600 font-medium">1,250 points will expire in <strong className="text-orange-600">27 days</strong>. Suggest a redemption campaign.</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Ledger Section */}
-            <div className="bg-white border border-slate-200 rounded-4xl shadow-sm overflow-hidden">
-              <div className="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-slate-100 rounded-lg text-slate-500">
-                    <History size={18} />
-                  </div>
-                  <h3 className="font-black text-slate-900 uppercase tracking-wider text-sm">Points Ledger</h3>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="relative">
-                    <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                    <input
-                      type="text"
-                      placeholder="Filter ledger..."
-                      className="bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-1.5 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-50"
-                    />
-                  </div>
-                  <button className="p-2 bg-white border border-slate-200 text-slate-400 hover:text-slate-900 rounded-xl transition-all shadow-sm">
-                    <Download size={18} />
-                  </button>
-                </div>
-              </div>
-
-              <div className="overflow-x-auto">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
-                      <th className="px-8 py-5">Date & Time</th>
-                      <th className="px-8 py-5">Activity / Reference</th>
-                      <th className="px-8 py-5">Source</th>
-                      <th className="px-8 py-5">Status</th>
-                      <th className="px-8 py-5 text-right">Delta</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-50">
-                    {[
-                      { date: 'Dec 02, 2024', time: '14:23', event: 'POS Purchase', ref: 'ORD-99281', source: 'Store - K11', status: 'Settled', delta: 342, type: 'earn' },
-                      { date: 'Nov 28, 2024', time: '10:00', event: 'Birthday Bonus', ref: 'SYS-BDAY-24', source: 'Automation', status: 'Settled', delta: 1000, type: 'earn' },
-                      { date: 'Nov 15, 2024', time: '18:45', event: 'Coupon Redemption', ref: 'CPN-SALE-20', source: 'Checkout', status: 'Settled', delta: -2500, type: 'burn' },
-                      { date: 'Nov 02, 2024', time: '09:12', event: 'Admin Adjustment', ref: 'ADJ-10292', source: 'Internal Console', status: 'In Review', delta: 500, type: 'earn' },
-                      { date: 'Oct 31, 2024', time: '23:59', event: 'Points Expired', ref: 'EXP-MONTHLY', source: 'System', status: 'Settled', delta: -120, type: 'expire' },
-                      { date: 'Oct 22, 2024', time: '11:15', event: 'Return Reversal', ref: 'ORD-98542', source: 'POS - IFC', status: 'Settled', delta: -45, type: 'burn' },
-                    ].map((row, i) => (
-                      <tr key={i} className="hover:bg-slate-50/50 transition-colors group">
-                        <td className="px-8 py-5">
-                          <div className="text-sm font-bold text-slate-800">{row.date}</div>
-                          <div className="text-[10px] font-medium text-slate-400 uppercase tracking-widest">{row.time}</div>
-                        </td>
-                        <td className="px-8 py-5">
-                          <div className="text-sm font-black text-slate-900 flex items-center gap-2">
-                            {row.event}
-                            {row.type === 'earn' && <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>}
-                            {row.type === 'burn' && <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>}
-                          </div>
-                          <div className="text-[10px] font-mono font-bold text-slate-400">{row.ref}</div>
-                        </td>
-                        <td className="px-8 py-5">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-md bg-slate-100 flex items-center justify-center text-slate-400">
-                              {row.source.includes('Store') ? <MapPin size={10} /> : <History size={10} />}
-                            </div>
-                            <span className="text-xs font-bold text-slate-600">{row.source}</span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-5">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${row.status === 'Settled' ? 'bg-green-50 text-green-700 border-green-100' :
-                            row.status === 'In Review' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                              'bg-slate-50 text-slate-500 border-slate-200'
-                            }`}>
-                            {row.status}
-                          </span>
-                        </td>
-                        <td className={`px-8 py-5 text-right text-sm font-black font-mono ${row.type === 'earn' ? 'text-green-600' :
-                          row.type === 'burn' || row.type === 'expire' ? 'text-red-600' : 'text-slate-400'
-                          }`}>
-                          {row.delta > 0 ? '+' : ''}{row.delta.toLocaleString()}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="px-8 py-4 bg-slate-50/50 border-t border-slate-100 flex justify-center">
-                <button className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-primary-600 transition-colors py-2 px-4 rounded-xl hover:bg-white shadow-sm border border-transparent hover:border-slate-100">
-                  View Complete Audit Log
-                </button>
-              </div>
-            </div>
-
-          </div>
+          <PointDetailTab
+            packets={[
+              {
+                id: 'PD-9921',
+                memberId: member?.id || 'MEM-001',
+                totalPoints: 1000,
+                remainingPoints: 1000,
+                receivedDate: '2026-01-01T10:00:00Z',
+                expiryDate: '2026-12-31T23:59:59Z',
+                source: 'Campaign: New Year Bonus',
+                remark: 'New Year Bonus'
+              },
+              {
+                id: 'PD-9922',
+                memberId: member?.id || 'MEM-001',
+                totalPoints: 500,
+                remainingPoints: 250,
+                receivedDate: '2025-12-01T09:00:00Z',
+                expiryDate: new Date(Date.now() + 27 * 24 * 60 * 60 * 1000).toISOString(),
+                source: 'Purchase: ORD-99105',
+                remark: 'Purchase Reward'
+              },
+              {
+                id: 'PD-9923',
+                memberId: member?.id || 'MEM-001',
+                totalPoints: 200,
+                remainingPoints: 0,
+                receivedDate: '2024-11-15T10:00:00Z',
+                expiryDate: '2025-11-15T23:59:59Z',
+                source: 'Purchase: ORD-98542',
+                remark: 'Depleted Packet'
+              }
+            ]}
+            logs={[
+              { id: '1', memberId: member?.id || 'MEM-001', type: 'point', changeType: 'Earn', changeValue: 342, balanceBefore: 5000, balanceAfter: 5342, source: 'Store - K11', reasonType: 'purchase', remark: 'POS Purchase', timestamp: '2024-12-02T14:23:00' },
+              { id: '2', memberId: member?.id || 'MEM-001', type: 'point', changeType: 'Earn', changeValue: 1000, balanceBefore: 4000, balanceAfter: 5000, source: 'Automation', reasonType: 'bonus', remark: 'Birthday Bonus', timestamp: '2024-11-28T10:00:00' },
+              { id: '3', memberId: member?.id || 'MEM-001', type: 'point', changeType: 'Redeem', changeValue: -2500, balanceBefore: 6500, balanceAfter: 4000, source: 'Checkout', reasonType: 'redemption', remark: 'Coupon Redemption', timestamp: '2024-11-15T18:45:00' },
+              { id: '4', memberId: member?.id || 'MEM-001', type: 'point', changeType: 'Adjust', changeValue: 500, balanceBefore: 6000, balanceAfter: 6500, source: 'Internal Console', reasonType: 'adjust', remark: 'Admin Adjustment', timestamp: '2024-11-02T09:12:00' },
+              { id: '5', memberId: member?.id || 'MEM-001', type: 'point', changeType: 'Expire', changeValue: -120, balanceBefore: 6120, balanceAfter: 6000, source: 'System', reasonType: 'expiry', remark: 'Points Expired', timestamp: '2024-10-31T23:59:00' },
+              { id: '6', memberId: member?.id || 'MEM-001', type: 'point', changeType: 'Burn', changeValue: -45, balanceBefore: 6165, balanceAfter: 6120, source: 'POS - IFC', reasonType: 'return', remark: 'Return Reversal', timestamp: '2024-10-22T11:15:00' }
+            ]}
+            summary={{
+              availableBalance: member?.points || 12450,
+              lifetimeEarned: 84200,
+              used: 71850,
+              expired: 1250
+            }}
+          />
         )}
+
 
         {/* ### Tab 5: My Wallet (Coupons) ### */}
         {activeTab === 'coupons' && (
@@ -1442,7 +1334,7 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 

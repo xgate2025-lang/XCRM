@@ -8,6 +8,8 @@ Auto-generated from all feature plans. Last updated: 2026-01-06
 - TypeScript 5.0+ (React 19) + `react`, `lucide-react`, `tailwindcss` (009-paid-tier-tabs)
 - TypeScript (React 19) + `lucide-react`, `react-router-dom`, `framer-motion` (011-coupon-flow-adjustments)
 - Mock Service with `window.localStorage` persistence (no backend) (011-coupon-flow-adjustments)
+- TypeScript 5.x / React 19 + `lucide-react` (Icons), `tailwindcss` (Styling), `react-router-dom` (Navigation) (012-point-assets-refine)
+- N/A (Mock Services / In-memory for now, strict types in `types.ts`) (012-point-assets-refine)
 
 - TypeScript (React 19) + `lucide-react`, `react-router-dom` (context), Tailwind CSS (004-edit-coupon-sync)
 
@@ -27,9 +29,9 @@ npm test && npm run lint
 TypeScript (React 19): Follow standard conventions
 
 ## Recent Changes
+- 012-point-assets-refine: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+- 012-point-assets-refine: Added TypeScript 5.x / React 19 + `lucide-react` (Icons), `tailwindcss` (Styling), `react-router-dom` (Navigation)
 - 011-coupon-flow-adjustments: Added TypeScript (React 19) + `lucide-react`, `react-router-dom`, `framer-motion`
-- 011-coupon-flow-adjustments: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
-- 009-paid-tier-tabs: Added TypeScript 5.0+ (React 19) + `react`, `lucide-react`, `tailwindcss`
 
 
 <!-- MANUAL ADDITIONS START -->

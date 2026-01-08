@@ -235,3 +235,17 @@ INPUTS:
     3. **Fragmented Summary**: Member point summaries lacked the "Used" and "Expired" totals in the header despite log implementation.
 - **Correction**: These items were documented for a final "Polish" pass before shipping.
 - **Lesson**: Automated browser verification is excellent for "Presence/Absence" checks (e.g., Was the button removed?), but "Layout Ordering" and "Content Precision" often require a manual human-in-the-loop check.
+
+## 2026-01-08: Redundant Artifact Creation
+
+- **Incident**: Created new `task.md` and `implementation_plan.md` in the brain directory, ignoring existing feature-specific documents.
+- **Root Cause**: Overlooking the existing `specs/012-point-assets-refine/tasks.md` and `plan.md` during initialization, leading to redundant planning effort.
+- **Correction**: Reverting to follow the existing feature documents and recording the error in `Journal.md` as per Constitution Rule 8.
+- **Lesson**: Always perform a deep scan of the feature directory for existing specs and tasks before initializing new ones. Use the existing documents as the source of truth if available.
+
+## 2026-01-08: Legacy Code Persistence Blocking Component Updates
+
+- **Incident**: The "Suggest a redemption campaign" text and old table layout persisted in `MemberDetail.tsx` despite creating a new `PointDetailTab` component.
+- **Root Cause**: `MemberDetail.tsx` contained a hardcoded inline implementation of the Points tab that was not removed when the new component was created. The new `PointDetailTab` was initialized but blocked by the legacy code remaining in the render return.
+- **Correction**: Refactored `MemberDetail.tsx` to remove the 100+ lines of inline legacy code and replaced it with the `<PointDetailTab />` component.
+- **Lesson**: When extracting a large section of valid JSX into a new component, the *deletion* of the old code from the parent file is just as critical as the *creation* of the new file. Verification must confirm that the new component is actively rendering in the parent, not just that it exists.
