@@ -12,6 +12,8 @@ import type {
   DashboardMetrics
 } from '../types';
 import { loadConfig, saveConfig, getMetrics } from '../lib/mockData';
+import { useProgram } from './ProgramContext';
+import { getTierColor } from '../utils/tierColors';
 
 // --- Default Values ---
 
@@ -63,11 +65,28 @@ export function DashboardProvider({ children }: DashboardProviderProps) {
     saveConfig(config);
   }, [config]);
 
+  const { tiers } = useProgram();
+
   // Recalculate metrics when dateRange or storeScope changes
   useEffect(() => {
-    const newMetrics = getMetrics(dateRange, storeScope);
-    setMetrics(newMetrics);
-  }, [dateRange, storeScope]);
+    const baseMetrics = getMetrics(dateRange, storeScope, tiers);
+
+    // Enrich tier data with user-defined colors from ProgramContext
+    const enrichedTierDistribution = baseMetrics.tierDistribution.map(metric => {
+      // Find matching tier in program configuration (fallback to name match)
+      const matchingTier = tiers.find(t => t.name.toLowerCase() === metric.name.toLowerCase());
+
+      return {
+        ...metric,
+        color: matchingTier ? getTierColor(matchingTier.design) : undefined
+      };
+    });
+
+    setMetrics({
+      ...baseMetrics,
+      tierDistribution: enrichedTierDistribution
+    });
+  }, [dateRange, storeScope, tiers]);
 
   // --- Global State Actions ---
 

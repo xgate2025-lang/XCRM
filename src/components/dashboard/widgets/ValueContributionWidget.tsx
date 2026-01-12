@@ -14,12 +14,10 @@ interface ValueContributionWidgetProps {
   tierData: TierMetric[];
 }
 
-// Tier color mapping (per branding - progressive value intensity)
-const TIER_COLORS: Record<string, string> = {
-  'Bronze': '#94a3b8', // Slate-400 - Base tier
-  'Silver': '#64748b', // Slate-500 - Mid tier
-  'Gold': '#0f172a',   // Slate-900 - Premium tier (darkest = highest value)
-};
+// Fallback color for tiers without a defined color
+const FALLBACK_COLOR = '#94a3b8';
+
+
 
 // Custom Tooltip for Donut Chart
 interface CustomTooltipProps {
@@ -86,7 +84,7 @@ export function ValueContributionWidget({ tierData }: ValueContributionWidgetPro
                 {tierData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={TIER_COLORS[entry.name] || '#94a3b8'}
+                    fill={entry.color || FALLBACK_COLOR}
                     stroke="white"
                     strokeWidth={2}
                   />
@@ -116,7 +114,7 @@ export function ValueContributionWidget({ tierData }: ValueContributionWidgetPro
               <div className="flex items-center gap-3">
                 <div
                   className="w-4 h-4 rounded-full"
-                  style={{ backgroundColor: TIER_COLORS[tier.name] || '#94a3b8' }}
+                  style={{ backgroundColor: tier.color || FALLBACK_COLOR }}
                 ></div>
                 <span className="text-sm font-bold text-slate-700">{tier.name}</span>
               </div>

@@ -573,6 +573,8 @@ export interface TierMetric {
   activeCount: number; // Active members in tier
   totalSales: number; // Total GMV for this tier
   salesPercent: number; // Contribution % of total
+  color?: string; // [NEW] User-defined tier color
+  [key: string]: any; // Satisfy Recharts requirement
 }
 
 export interface DashboardMetrics {

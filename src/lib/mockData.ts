@@ -5,7 +5,7 @@
  * Per Constitution Section 5: AI Service Isolation - all service logic lives in src/lib/.
  */
 
-import type { DashboardMetrics, DateRange, DashboardConfiguration, TierMetric } from '../types';
+import type { DashboardMetrics, DateRange, DashboardConfiguration, TierMetric, TierDefinition } from '../types';
 
 // --- Storage Key ---
 const STORAGE_KEY = 'xcrm_dashboard_config';
@@ -44,19 +44,27 @@ function generateSparkline(baseValue: number, trend: number, dataPoints: number 
  * SUCCESS CRITERIA VERIFICATION (SC-003):
  * Sales percentages: Bronze 20% + Silver 35% + Gold 45% = 100% ✓
  */
-function getTierDistribution(totalMembers: number, activeMembers: number, totalSalesGMV: number): TierMetric[] {
-  // Define tier distribution (percentages of total members)
-  const tierData = [
-    { name: 'Bronze', memberPercent: 0.68, activeRate: 0.62, salesPercent: 0.20 }, // 68% of members, 62% active, 20% of sales
-    { name: 'Silver', memberPercent: 0.256, activeRate: 0.72, salesPercent: 0.35 }, // 25.6% of members, 72% active, 35% of sales
-    { name: 'Gold', memberPercent: 0.064, activeRate: 0.85, salesPercent: 0.45 }, // 6.4% of members, 85% active, 45% of sales
-  ];
+function getTierDistribution(totalMembers: number, activeMembers: number, totalSalesGMV: number, tiers?: TierDefinition[]): TierMetric[] {
+  // If no user-defined tiers, fallback to defaults
+  const tierConfigs = tiers && tiers.length > 0
+    ? tiers.map((t, idx) => ({
+      name: t.name,
+      // Calculate distribution: first tier gets 70%, next 20%, others rest
+      memberPercent: idx === 0 ? 0.7 : (idx === 1 ? 0.2 : 0.1 / (tiers.length - 2 || 1)),
+      activeRate: 0.6 + (idx * 0.1), // Higher tiers are more active
+      salesPercent: idx === 0 ? 0.2 : (idx === 1 ? 0.35 : 0.45 / (tiers.length - 2 || 1))
+    }))
+    : [
+      { name: 'Bronze', memberPercent: 0.68, activeRate: 0.62, salesPercent: 0.20 },
+      { name: 'Silver', memberPercent: 0.256, activeRate: 0.72, salesPercent: 0.35 },
+      { name: 'Gold', memberPercent: 0.064, activeRate: 0.85, salesPercent: 0.45 },
+    ];
 
-  return tierData.map(tier => {
+  return tierConfigs.map(tier => {
     const count = Math.round(totalMembers * tier.memberPercent);
-    const activeCount = Math.round(count * tier.activeRate);
+    const activeCount = Math.round(count * (tier.activeRate || 0.6));
     const totalSales = Math.round(totalSalesGMV * tier.salesPercent);
-    const salesPercent = tier.salesPercent * 100; // Convert to percentage
+    const salesPercent = tier.salesPercent * 100;
 
     return {
       name: tier.name,
@@ -72,7 +80,7 @@ function getTierDistribution(totalMembers: number, activeMembers: number, totalS
  * Generates mock dashboard metrics based on the selected date range.
  * Values vary slightly based on range to simulate real data recalculation.
  */
-export function getMetrics(range: DateRange, _stores: string[] = []): DashboardMetrics {
+export function getMetrics(range: DateRange, _stores: string[] = [], tiers?: TierDefinition[]): DashboardMetrics {
   const daysMultiplier = getDaysInRange(range);
 
   // Helper to attach history to a metric
@@ -102,7 +110,7 @@ export function getMetrics(range: DateRange, _stores: string[] = []): DashboardM
     campaignParticipation: Math.round(450 * daysMultiplier),
     pointsRedemptionRate: 28.5,
     couponsUsageRate: 35.2,
-    tierDistribution: getTierDistribution(totalMembers, activeMembers, totalSalesGMV),
+    tierDistribution: getTierDistribution(totalMembers, activeMembers, totalSalesGMV, tiers),
   };
 }
 

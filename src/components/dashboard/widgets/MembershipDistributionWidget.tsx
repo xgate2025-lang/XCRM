@@ -7,7 +7,7 @@
 
 import React from 'react';
 import { Users } from 'lucide-react';
-import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import type { TierMetric } from '../../../types';
 
 interface MembershipDistributionWidgetProps {
@@ -16,8 +16,8 @@ interface MembershipDistributionWidgetProps {
   tierData: TierMetric[];
 }
 
-// Brand colors for active members (per Journal.md design system)
-const ACTIVE_COLOR = '#10b981'; // Emerald-500 for active/healthy status
+// Fallback color for active members if no tier color is defined
+const FALLBACK_ACTIVE_COLOR = '#10b981'; // Emerald-500
 
 // Custom Tooltip Component
 interface CustomTooltipProps {
@@ -130,13 +130,19 @@ export function MembershipDistributionWidget({
               name="Total Members"
             />
 
-            {/* Foreground Bar: Active Members (Brand Emerald) */}
+            {/* Foreground Bar: Active Members (Dynamic Tier Color) */}
             <Bar
               dataKey="activeCount"
-              fill={ACTIVE_COLOR}
               radius={[8, 8, 0, 0]}
               name="Active Members"
-            />
+            >
+              {tierData.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={entry.color || FALLBACK_ACTIVE_COLOR}
+                />
+              ))}
+            </Bar>
           </ComposedChart>
         </ResponsiveContainer>
       </div>
