@@ -29,9 +29,9 @@ npm test && npm run lint
 TypeScript (React 19): Follow standard conventions
 
 ## Recent Changes
+- 014-ri-dashboard: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
+- 013-coupon-wallet-refine: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 012-point-assets-refine: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
-- 012-point-assets-refine: Added TypeScript 5.x / React 19 + `lucide-react` (Icons), `tailwindcss` (Styling), `react-router-dom` (Navigation)
-- 011-coupon-flow-adjustments: Added TypeScript (React 19) + `lucide-react`, `react-router-dom`, `framer-motion`
 
 
 <!-- MANUAL ADDITIONS START -->

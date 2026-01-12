@@ -5,7 +5,7 @@
  * Per Constitution Section 5: AI Service Isolation - all service logic lives in src/lib/.
  */
 
-import type { DashboardMetrics, DateRange, DashboardConfiguration } from '../types';
+import type { DashboardMetrics, DateRange, DashboardConfiguration, TierMetric } from '../types';
 
 // --- Storage Key ---
 const STORAGE_KEY = 'xcrm_dashboard_config';
@@ -38,14 +38,34 @@ function generateSparkline(baseValue: number, trend: number, dataPoints: number 
 }
 
 /**
- * Generates tier distribution data from Zone 2B.
+ * Generates tier distribution data for Relationship Intelligence dashboard.
+ * Per data-model.md: Active Rate 40-80% variable per tier, higher tiers have higher per-capita sales.
+ *
+ * SUCCESS CRITERIA VERIFICATION (SC-003):
+ * Sales percentages: Bronze 20% + Silver 35% + Gold 45% = 100% ✓
  */
-function getTierDistribution(): any[] {
-  return [
-    { name: 'Bronze', count: 8500, salesPercent: 20 },
-    { name: 'Silver', count: 3200, salesPercent: 35 },
-    { name: 'Gold', count: 800, salesPercent: 45 },
+function getTierDistribution(totalMembers: number, activeMembers: number, totalSalesGMV: number): TierMetric[] {
+  // Define tier distribution (percentages of total members)
+  const tierData = [
+    { name: 'Bronze', memberPercent: 0.68, activeRate: 0.62, salesPercent: 0.20 }, // 68% of members, 62% active, 20% of sales
+    { name: 'Silver', memberPercent: 0.256, activeRate: 0.72, salesPercent: 0.35 }, // 25.6% of members, 72% active, 35% of sales
+    { name: 'Gold', memberPercent: 0.064, activeRate: 0.85, salesPercent: 0.45 }, // 6.4% of members, 85% active, 45% of sales
   ];
+
+  return tierData.map(tier => {
+    const count = Math.round(totalMembers * tier.memberPercent);
+    const activeCount = Math.round(count * tier.activeRate);
+    const totalSales = Math.round(totalSalesGMV * tier.salesPercent);
+    const salesPercent = tier.salesPercent * 100; // Convert to percentage
+
+    return {
+      name: tier.name,
+      count,
+      activeCount,
+      totalSales,
+      salesPercent,
+    };
+  });
 }
 
 /**
@@ -64,20 +84,25 @@ export function getMetrics(range: DateRange, _stores: string[] = []): DashboardM
     history: generateSparkline(value, trend),
   });
 
+  // Calculate base metrics
+  const totalMembers = Math.round(12500 + 50 * daysMultiplier);
+  const activeMembers = Math.round(8200 + 30 * daysMultiplier);
+  const totalSalesGMV = Math.round(85000 * daysMultiplier);
+
   return {
     newMembers: withHistory(Math.round(120 * daysMultiplier), 5.2, 'New Members'),
     firstPurchaseConversion: withHistory(32.5, -1.3, 'First-Purchase Conversion', '%'),
     repurchaseRate: withHistory(45.8, 3.1, 'Repurchase Rate', '%'),
-    memberSalesGMV: withHistory(Math.round(85000 * daysMultiplier), 8.7, 'Member Sales GMV', '$'),
+    memberSalesGMV: withHistory(totalSalesGMV, 8.7, 'Member Sales GMV', '$'),
     memberAOV: withHistory(156.25, 2.1, 'Member AOV', '$'),
 
-    totalMembers: Math.round(12500 + 50 * daysMultiplier),
-    activeMembers: Math.round(8200 + 30 * daysMultiplier),
+    totalMembers,
+    activeMembers,
     activeCampaigns: 3,
     campaignParticipation: Math.round(450 * daysMultiplier),
     pointsRedemptionRate: 28.5,
     couponsUsageRate: 35.2,
-    tierDistribution: getTierDistribution(),
+    tierDistribution: getTierDistribution(totalMembers, activeMembers, totalSalesGMV),
   };
 }
 

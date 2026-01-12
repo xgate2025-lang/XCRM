@@ -28,6 +28,7 @@ export interface Coupon {
     issueDate: string;
     expiryDate: string;
     usedDate?: string;
+    usedStore?: string;
     source: string;
     minSpend?: number;
     description?: string;
@@ -112,9 +113,9 @@ const CouponWalletTab: React.FC<CouponWalletTabProps> = ({
     };
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-300">
+        <div className="space-y-8 animate-in fade-in duration-300 pb-10">
             {/* Summary Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <SummaryCard
                     label="Total Coupons"
                     count={statusCounts.all}
@@ -153,12 +154,12 @@ const CouponWalletTab: React.FC<CouponWalletTabProps> = ({
                         className="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-2xl text-sm font-medium focus:outline-none focus:border-slate-900 transition-colors"
                     />
                 </div>
-                <div className="flex bg-slate-100 p-1 rounded-xl">
+                <div className="flex bg-slate-100 p-1 rounded-2xl">
                     {(['all', 'active', 'used', 'expired'] as FilterStatus[]).map((status) => (
                         <button
                             key={status}
                             onClick={() => setFilterStatus(status)}
-                            className={`px-4 py-2 text-xs font-bold rounded-lg capitalize transition-all ${filterStatus === status
+                            className={`px-5 py-2 text-sm font-bold rounded-xl capitalize transition-all ${filterStatus === status
                                     ? 'bg-white text-slate-900 shadow-sm'
                                     : 'text-slate-500 hover:text-slate-700'
                                 }`}
@@ -210,20 +211,22 @@ const SummaryCard: React.FC<{
     icon: React.ReactNode;
     color: 'slate' | 'green' | 'blue' | 'red';
 }> = ({ label, count, icon, color }) => {
-    const colorMap = {
-        slate: 'bg-slate-50 text-slate-600',
+    const iconColorMap = {
+        slate: 'bg-slate-50 text-slate-500',
         green: 'bg-green-50 text-green-600',
         blue: 'bg-blue-50 text-blue-600',
         red: 'bg-red-50 text-red-600',
     };
 
     return (
-        <div className={`p-4 rounded-2xl ${colorMap[color]}`}>
-            <div className="flex items-center gap-2 mb-2 opacity-70">
-                {icon}
-                <span className="text-[10px] font-black uppercase">{label}</span>
+        <div className="bg-white rounded-4xl p-6 shadow-sm border border-slate-200 hover:border-primary-300 transition-colors group">
+            <div className="flex items-center gap-2 mb-4">
+                <div className={`p-2 rounded-xl transition-colors ${iconColorMap[color]}`}>
+                    {icon}
+                </div>
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{label}</span>
             </div>
-            <p className="text-2xl font-black">{count}</p>
+            <p className="text-3xl font-black text-slate-900 leading-tight">{count}</p>
         </div>
     );
 };
@@ -253,7 +256,7 @@ const CouponCard: React.FC<{
 
     return (
         <div
-            className={`p-5 bg-white rounded-2xl border transition-all ${isActive ? 'border-slate-100 hover:border-slate-200 hover:shadow-sm' : 'border-slate-100 opacity-70'
+            className={`p-5 bg-white rounded-3xl border transition-all ${isActive ? 'border-slate-200 hover:border-primary-300 hover:shadow-sm' : 'border-slate-100 opacity-70'
                 }`}
         >
             <div className="flex items-start justify-between">
@@ -443,14 +446,14 @@ const DetailView: React.FC<{ coupon: Coupon }> = ({ coupon }) => {
 
             {/* Details Grid */}
             <div className="grid grid-cols-2 gap-4">
-                <DetailField label="Code" value={coupon.code} mono />
+                <DetailField label="Coupon Code" value={coupon.code} mono />
                 <DetailField label="Identifier" value={coupon.identifier || coupon.id} mono />
-                <DetailField label="Value" value={coupon.value} />
-                <DetailField label="Type" value={coupon.type} capitalize />
-                <DetailField label="Issue Date" value={coupon.issueDate} icon={<Calendar size={12} />} />
-                <DetailField label="Expiry Date" value={coupon.expiryDate} icon={<Clock size={12} />} />
+                <DetailField label="Name" value={coupon.name} />
+                <DetailField label="Status" value={status.label} capitalize />
+                <DetailField label="Earn Time" value={coupon.issueDate} icon={<Calendar size={12} />} />
+                <DetailField label="Expiry Time" value={coupon.expiryDate} icon={<Clock size={12} />} />
                 <DetailField label="Source" value={coupon.source} />
-                {coupon.minSpend && <DetailField label="Min. Spend" value={`$${coupon.minSpend}`} />}
+                <DetailField label="Value" value={coupon.value} />
             </div>
 
             {/* Usage Info (if used) */}
@@ -459,12 +462,12 @@ const DetailView: React.FC<{ coupon: Coupon }> = ({ coupon }) => {
                     <div className="text-xs font-black text-blue-600 uppercase tracking-widest">Usage Information</div>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
-                            <span className="text-blue-400 text-xs">Used Date</span>
+                            <span className="text-blue-400 text-xs">Redemption Time</span>
                             <p className="font-bold text-blue-700">{coupon.usedDate}</p>
                         </div>
                         <div>
-                            <span className="text-blue-400 text-xs">Store</span>
-                            <p className="font-bold text-blue-700">K11 Art Mall</p>
+                            <span className="text-blue-400 text-xs">Redemption Shop</span>
+                            <p className="font-bold text-blue-700">{coupon.usedStore || 'N/A'}</p>
                         </div>
                     </div>
                 </div>

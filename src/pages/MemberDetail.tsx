@@ -14,6 +14,8 @@ import {
 import ActionModal, { ActionType } from '../components/member/ActionModal';
 import EditProfileModal from '../components/member/EditProfileModal';
 import PointDetailTab from '../components/member/detail/PointDetailTab';
+import CouponWalletTab, { Coupon } from '../components/member/detail/CouponWalletTab';
+import { MockAssetService } from '../lib/services/mock/MockAssetService';
 
 interface MemberDetailProps {
   onNavigate: (id: NavItemId) => void;
@@ -22,7 +24,6 @@ interface MemberDetailProps {
 const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
   const { selectedMemberId, getMember } = useMember();
   const [activeTab, setActiveTab] = useState<'profile' | 'transactions' | 'tier' | 'points' | 'coupons' | 'log'>('profile');
-  const [couponFilter, setCouponFilter] = useState<'All Coupons' | 'Available' | 'Used' | 'Expired'>('All Coupons');
 
   // Tab 2 State
   const [searchOrderId, setSearchOrderId] = useState('');
@@ -1001,182 +1002,34 @@ const MemberDetail: React.FC<MemberDetailProps> = ({ onNavigate }) => {
 
 
         {/* ### Tab 5: My Wallet (Coupons) ### */}
-        {activeTab === 'coupons' && (
-          <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-400">
-
-            {/* Top Row: Coupon Inventory Summary */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-primary-50 text-primary-600 flex items-center justify-center shrink-0">
-                  <Ticket size={24} />
-                </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Issued</div>
-                  <div className="text-2xl font-black text-slate-900">14</div>
-                </div>
-              </div>
-              <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center shrink-0">
-                  <CheckCircle2 size={24} />
-                </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Available</div>
-                  <div className="text-2xl font-black text-slate-900">4</div>
-                </div>
-              </div>
-              <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center shrink-0">
-                  <Clock size={24} />
-                </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Expiring Soon</div>
-                  <div className="text-2xl font-black text-slate-900">2</div>
-                </div>
-              </div>
-              <div className="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-slate-50 text-slate-400 flex items-center justify-center shrink-0">
-                  <X size={24} />
-                </div>
-                <div>
-                  <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Used/Expired</div>
-                  <div className="text-2xl font-black text-slate-900">8</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Filter & Toolbar */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-6">
-              <div className="flex gap-2">
-                {['All Coupons', 'Available', 'Used', 'Expired'].map((filter) => (
-                  <button
-                    key={filter}
-                    onClick={() => setCouponFilter(filter as any)}
-                    className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${couponFilter === filter ? 'bg-slate-900 text-white shadow-lg shadow-slate-200' : 'bg-white border border-slate-200 text-slate-500 hover:bg-slate-50'}`}
-                  >
-                    {filter}
-                  </button>
-                ))}
-              </div>
-              <div className="relative w-full md:w-64">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                <input
-                  type="text"
-                  placeholder="Search coupon code..."
-                  className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs font-bold focus:outline-none focus:ring-2 focus:ring-primary-100"
-                />
-              </div>
-            </div>
-
-            {/* Coupons Grid (Skeuomorphic Ticket Design) */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              {[
-                { id: 'C-9281-X', name: '$10 Cash Voucher', status: 'Available', expiry: 'Dec 31, 2024', type: 'cash', value: '$10', color: 'primary' },
-                { id: 'C-5521-A', name: 'Free Shipping Token', status: 'Available', expiry: 'Jan 15, 2025', type: 'ship', value: 'FREE', color: 'blue' },
-                { id: 'C-1120-B', name: 'Birthday 20% Off', status: 'Expiring', expiry: 'Dec 20, 2024', type: 'percent', value: '20%', color: 'orange' },
-                { id: 'C-0092-Z', name: 'Platinum Renewal Gift', status: 'Used', expiry: 'Nov 02, 2024', type: 'gift', value: 'GIFT', color: 'slate' },
-              ].filter(cpn => {
-                if (couponFilter === 'All Coupons') return true;
-                if (couponFilter === 'Available') return cpn.status === 'Available' || cpn.status === 'Expiring';
-                return cpn.status === couponFilter;
-              }).map((cpn, i) => {
-                const isAvailable = cpn.status === 'Available' || cpn.status === 'Expiring';
-                const isOrange = cpn.status === 'Expiring';
-
-                return (
-                  <div
-                    key={cpn.id}
-                    className={`group relative flex h-36 rounded-3xl overflow-hidden border transition-all ${!isAvailable ? 'bg-slate-50 border-slate-200 opacity-60 grayscale' :
-                      isOrange ? 'bg-white border-orange-200 shadow-xl shadow-orange-100/50 hover:-translate-y-1' :
-                        'bg-white border-slate-200 shadow-lg shadow-slate-100 hover:shadow-xl hover:-translate-y-1'
-                      }`}
-                  >
-                    {/* Left Ticket Part: The Value Box */}
-                    <div className={`w-32 flex flex-col items-center justify-center border-r border-dashed shrink-0 relative transition-colors ${!isAvailable ? 'bg-slate-200 border-slate-300' :
-                      isOrange ? 'bg-orange-500 border-orange-400' : 'bg-slate-900 border-slate-700'
-                      }`}>
-                      {/* Punch Holes (Skeuomorphic cutout) */}
-                      <div className="absolute -top-3 -right-3 w-6 h-6 rounded-full bg-[#FDFDFD] border border-slate-100 shadow-inner z-10"></div>
-                      <div className="absolute -bottom-3 -right-3 w-6 h-6 rounded-full bg-[#FDFDFD] border border-slate-100 shadow-inner z-10"></div>
-
-                      <div className={`text-3xl font-black tracking-tighter ${!isAvailable ? 'text-slate-400' : 'text-white'}`}>{cpn.value}</div>
-                      <div className={`text-[9px] font-black uppercase tracking-[0.2em] mt-1 ${!isAvailable ? 'text-slate-400' : 'text-white/60'}`}>{cpn.type}</div>
-                    </div>
-
-                    {/* Right Ticket Part: The Content */}
-                    <div className="flex-1 p-5 flex flex-col justify-between">
-                      <div>
-                        <div className="flex items-center justify-between mb-1">
-                          <h4 className="text-base font-black text-slate-900 truncate">{cpn.name}</h4>
-                          <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider ${cpn.status === 'Available' ? 'bg-green-100 text-green-700' :
-                            cpn.status === 'Expiring' ? 'bg-orange-100 text-orange-700' :
-                              'bg-slate-200 text-slate-500'
-                            }`}>
-                            {cpn.status}
-                          </span>
-                        </div>
-                        <div className="font-mono text-xs font-bold text-slate-400">CODE: <span className="text-slate-900">{cpn.id}</span></div>
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500">
-                          <Calendar size={12} className="text-slate-300" />
-                          Exp: {cpn.expiry}
-                        </div>
-
-                        {isAvailable && (
-                          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button
-                              onClick={() => setActionModal({ isOpen: true, type: 'resend_coupon' })}
-                              className="p-2 bg-slate-50 text-slate-400 hover:text-primary-600 rounded-lg transition-colors"
-                              title="Resend to Customer"
-                            >
-                              <Mail size={14} />
-                            </button>
-                            <button
-                              onClick={() => setActionModal({ isOpen: true, type: 'redeem_coupon' })}
-                              className="p-2 bg-slate-100 text-slate-500 hover:text-green-600 rounded-lg transition-colors"
-                              title="Manual Redemption"
-                            >
-                              <CheckCircle2 size={14} />
-                            </button>
-                            <button
-                              onClick={() => setActionModal({ isOpen: true, type: 'void_coupon' })}
-                              className="p-2 bg-red-50 text-red-300 hover:text-red-600 rounded-lg transition-colors"
-                              title="Manual Void"
-                            >
-                              <Trash2 size={14} />
-                            </button>
-                            <button
-                              onClick={() => { }} // TODO: View Details logic
-                              className="p-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors shadow-lg shadow-slate-200"
-                              title="View Detail"
-                            >
-                              <Search size={14} />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Empty State / Footer */}
-            <div className="flex flex-col items-center justify-center p-12 bg-white border border-dashed border-slate-200 rounded-4xl text-center">
-              <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4">
-                <Plus size={32} />
-              </div>
-              <h4 className="text-lg font-bold text-slate-900 mb-1">Issue a unique reward?</h4>
-              <p className="text-sm text-slate-500 mb-8 max-w-sm">Manually issuing a coupon will notify the customer via their preferred channel and add it to their wallet immediately.</p>
-              <button
-                onClick={() => setActionModal({ isOpen: true, type: 'issue_coupon' })}
-                className="px-8 py-3 bg-slate-900 text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 flex items-center gap-2"
-              >
-                <Ticket size={18} className="text-purple-400" /> Issue Custom Coupon
-              </button>
-            </div>
-          </div>
+        {activeTab === 'coupons' && member && (
+          <CouponWalletTab
+            coupons={MockAssetService.getMemberCoupons(member.id).map(mc => ({
+              id: mc.id,
+              code: mc.code,
+              name: mc.name,
+              type: mc.status === 'available' ? 'fixed' : 'percentage',
+              value: '$10',
+              status: mc.status === 'available' ? 'active' : mc.status === 'used' ? 'used' : mc.status === 'expired' ? 'expired' : 'invalidated',
+              issueDate: new Date(mc.earnTime).toLocaleDateString(),
+              expiryDate: new Date(mc.expiryTime).toLocaleDateString(),
+              usedDate: mc.usedDate ? new Date(mc.usedDate).toLocaleDateString() : undefined,
+              usedStore: mc.usedStore,
+              source: mc.source,
+              identifier: mc.identifier,
+            }))}
+            onSelectCoupon={(coupon) => console.log('Selected:', coupon)}
+            onVerifyCoupon={(coupon) => console.log('Verify:', coupon)}
+            onInvalidateCoupon={(coupon) => console.log('Invalidate:', coupon)}
+            onManualRedeem={(coupon, form) => {
+              MockAssetService.redeemCouponManually(coupon.id, form);
+              window.location.reload();
+            }}
+            onManualVoid={(coupon, form) => {
+              MockAssetService.voidCouponManually(coupon.id, form);
+              window.location.reload();
+            }}
+          />
         )}
 
         {/* ### Tab 6: Info Change Log (Audit) ### */}

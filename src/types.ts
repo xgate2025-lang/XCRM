@@ -142,13 +142,13 @@ export interface ManualRedemptionForm {
   storeId: string;
   redemptionTime: string; // ISO DateTime
   reasonCategory: string; // e.g., 'Customer Service', 'Goodwill', 'Error Correction'
-  notes: string;
+  notes?: string;
 }
 
 /** Form data for manual coupon void action */
 export interface ManualVoidForm {
   reasonCategory: string; // e.g., 'Customer Request', 'Duplicate', 'Error'
-  notes: string;
+  notes?: string;
 }
 
 export interface TransactionItem {
@@ -566,6 +566,15 @@ export interface ComboChartData {
   salesPercent: number; // Line Value (% of Sales)
 }
 
+/** Tier-level metrics for Relationship Intelligence dashboard (014-ri-dashboard) */
+export interface TierMetric {
+  name: string; // Tier Name (e.g., "Silver")
+  count: number; // Total members in tier
+  activeCount: number; // Active members in tier
+  totalSales: number; // Total GMV for this tier
+  salesPercent: number; // Contribution % of total
+}
+
 export interface DashboardMetrics {
   newMembers: MetricData;
   firstPurchaseConversion: MetricData;
@@ -578,7 +587,7 @@ export interface DashboardMetrics {
   campaignParticipation: number;
   pointsRedemptionRate: number;
   couponsUsageRate: number;
-  tierDistribution: ComboChartData[]; // Add this for Zone 2B
+  tierDistribution: TierMetric[]; // Tier-level metrics for RI dashboard
 }
 
 // --- Day Zero Onboarding Types ---

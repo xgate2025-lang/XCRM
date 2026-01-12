@@ -13,8 +13,8 @@ import { QuickActions } from '../components/dashboard/QuickActions';
 import { NavItemId } from '../types';
 
 // Widgets
-import { MemberScaleWidget } from '../components/dashboard/widgets/MemberScaleWidget';
-import { TierDistributionWidget } from '../components/dashboard/widgets/TierDistributionWidget';
+import { MembershipDistributionWidget } from '../components/dashboard/widgets/MembershipDistributionWidget';
+import { ValueContributionWidget } from '../components/dashboard/widgets/ValueContributionWidget';
 import { PointsEngineWidget } from '../components/dashboard/widgets/PointsEngineWidget';
 import { CouponMachineWidget } from '../components/dashboard/widgets/CouponMachineWidget';
 const DashboardContent = ({ onNavigate }: { onNavigate: (id: NavItemId) => void }) => {
@@ -162,12 +162,17 @@ const DashboardContent = ({ onNavigate }: { onNavigate: (id: NavItemId) => void 
           {/* Zone 2: Relationship Intelligence */}
           <section>
             <h2 className="text-lg font-bold text-slate-900 mb-4">Relationship Intelligence</h2>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-              <MemberScaleWidget
-                totalMembers={metrics.totalMembers}
-                activeMembers={metrics.activeMembers}
-              />
-              <TierDistributionWidget data={metrics.tierDistribution} />
+            <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 h-full">
+              <div className="lg:col-span-3">
+                <MembershipDistributionWidget
+                  totalMembers={metrics.totalMembers}
+                  activeMembers={metrics.activeMembers}
+                  tierData={metrics.tierDistribution}
+                />
+              </div>
+              <div className="lg:col-span-2">
+                <ValueContributionWidget tierData={metrics.tierDistribution} />
+              </div>
             </div>
           </section>
 

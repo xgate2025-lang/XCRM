@@ -26,6 +26,64 @@ INPUTS:
 
 # 📓 Project Journal & Lessons Learned
 
+## 2026-01-12: Inconsistent UI Design - Not Following Design System
+
+- **Incident**: After integrating `CouponWalletTab`, the UI looked inconsistent compared to other tabs (PointDetailTab, TierHistoryTab, etc.).
+- **Root Cause**: The component was implemented without checking existing design patterns in the codebase. Multiple inconsistencies were found:
+  1. **SummaryCard Design**: Used colored background cards instead of white cards with icons in colored boxes
+  2. **Border Radius**: Used `rounded-2xl` instead of `rounded-4xl` for cards
+  3. **Spacing**: Used `space-y-6` and `gap-4` instead of `space-y-8` and `gap-6`
+  4. **Typography**: Used `text-2xl` instead of `text-3xl` for values
+  5. **Segmented Control**: Used `rounded-xl/rounded-lg` instead of `rounded-2xl/rounded-xl`
+  6. **Padding**: Missing `pb-10` bottom padding
+  7. **Hover States**: Missing `hover:border-primary-300` on cards
+- **Correction**:
+  1. Updated SummaryCard to match PointDetailTab: white background, icon in colored box, proper shadows and borders
+  2. Changed all border radius values: `rounded-4xl` for summary cards, `rounded-3xl` for list items
+  3. Updated spacing: `space-y-8`, `gap-6`, added `pb-10`
+  4. Fixed typography: `text-3xl font-black` for values
+  5. Fixed segmented control: `rounded-2xl` container, `rounded-xl` buttons, `px-5 py-2 text-sm`
+  6. Added hover effect: `hover:border-primary-300 transition-colors`
+- **CRITICAL RULE FOR FUTURE**:
+  - **BEFORE** implementing any UI component, ALWAYS:
+    1. Check the Journal.md Style Cheat Sheet (top of file)
+    2. Find a similar existing component (e.g., if building a tab, check other tabs)
+    3. Copy the exact styling patterns: spacing, border-radius, shadows, colors, typography
+    4. Use a side-by-side comparison to verify consistency
+  - **NEVER** create your own design decisions - always follow the established patterns
+  - **Reference Components**: For tabs, check PointDetailTab, TierHistoryTab; for cards, check existing SummaryCard implementations
+  - **Common Patterns to Check**:
+    - Card border radius: `rounded-4xl` for cards, `rounded-3xl` for list items
+    - Spacing: `space-y-8`, `gap-6` for grids
+    - Tab padding: `pb-10` bottom padding
+    - Buttons: Segmented controls use `rounded-2xl` container, `rounded-xl` buttons
+    - Typography: `text-3xl font-black` for large numbers, `text-xs font-bold uppercase tracking-widest` for labels
+    - Hover: `hover:border-primary-300 transition-colors` for interactive cards
+- **Red Flag**: If your component looks visually different from similar components, STOP and check the design system.
+- **Lesson**: Consistency is critical. Always reference existing components and copy their exact styling patterns. The design system is already established - follow it, don't reinvent it.
+
+## 2026-01-12: Component Not Integrated - The "Unused Component" Error
+
+- **Incident**: Completed entire Phase 1-5 implementation for `CouponWalletTab` component refinement, but changes were NOT visible on the actual page.
+- **Root Cause**: The `MemberDetail.tsx` page had a hardcoded inline coupon implementation and was NOT importing or using the `CouponWalletTab` component at all. The refined component existed but was completely disconnected from the UI.
+- **Correction**:
+  1. Imported `CouponWalletTab` and `MockAssetService` into `MemberDetail.tsx`
+  2. Replaced the entire hardcoded coupon tab implementation (176 lines) with the actual `CouponWalletTab` component
+  3. Wired up proper data transformation from `MockAssetService` to component props
+  4. Connected manual redeem/void callbacks to service methods
+- **CRITICAL RULE FOR FUTURE**:
+  - **BEFORE** implementing any component refinement, ALWAYS verify:
+    1. Where is this component currently used?
+    2. Is it actually imported in the parent page/component?
+    3. Run a grep/search to confirm the component is in the active render tree
+  - **NEVER** assume a component file's existence means it's being used
+  - **ALWAYS** check the integration FIRST, implement SECOND
+  - If a component exists but isn't used, either:
+    - Integrate it into the page first
+    - Or question whether it's the right component to modify
+- **Red Flag**: If you're updating a component but don't see imports of it in the relevant pages, STOP and investigate immediately.
+- **Lesson**: Component implementation is worthless without integration. Always verify the connection between component and UI before starting work.
+
 ## 2026-01-04: Environment Variable Access
 
 - **Incident**: App crashed because `process.env.API_KEY` was undefined in the browser.
