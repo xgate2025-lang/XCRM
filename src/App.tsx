@@ -14,6 +14,9 @@ import CreateCoupon from './pages/CreateCoupon';
 import PerformanceAnalytics from './pages/PerformanceAnalytics';
 import CampaignDetail from './pages/CampaignDetail';
 import CampaignAnalytics from './pages/CampaignAnalytics';
+import GlobalSettings from './pages/settings/GlobalSettings';
+import IntegrationSettings from './pages/settings/IntegrationSettings';
+import BasicData from './pages/settings/BasicData';
 import { ProgramProvider } from './context/ProgramContext';
 import { MemberProvider } from './context/MemberContext';
 import { CampaignProvider } from './context/CampaignContext';
@@ -86,6 +89,12 @@ function AppContent() {
       case 'program-point':
         console.log('[App] 🎯 Rendering ProgramPoint page');
         return <ProgramPoint onNavigate={setCurrentPage} />;
+      case 'settings-global':
+        return <GlobalSettings />;
+      case 'settings-integration':
+        return <IntegrationSettings />;
+      case 'settings-basic':
+        return <BasicData />;
       default:
         return <PlaceholderPage title={getPageLabel(currentPage)} id={currentPage} onNavigate={setCurrentPage} />;
     }

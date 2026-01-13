@@ -21,7 +21,10 @@ export type NavItemId =
   | 'program'
   | 'program-tier'
   | 'program-point'
-  | 'setting';
+  | 'setting'
+  | 'settings-global'
+  | 'settings-integration'
+  | 'settings-basic';
 
 export interface NavSubItem {
   id: NavItemId;

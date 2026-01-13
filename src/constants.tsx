@@ -54,5 +54,10 @@ export const CONFIG_NAV: NavItem[] = [
     id: 'setting',
     label: 'Setting',
     icon: Settings,
+    children: [
+      { id: 'settings-global', label: 'Global Settings' },
+      { id: 'settings-integration', label: 'Integration Settings' },
+      { id: 'settings-basic', label: 'Basic Data' },
+    ],
   },
 ];

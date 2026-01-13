@@ -91,6 +91,21 @@ INPUTS:
 - **Correction**: Used `import.meta.env.VITE_GOOGLE_API_KEY`.
 - **Rule**: All client-side env vars must use `import.meta.env`.
 
+## 2026-01-13: Settings Navigation Structure Implementation
+
+- **Task**: Implemented nested navigation for Settings module with three sub-pages: Global Settings, Integration Settings, and Basic Data.
+- **Approach**:
+  1. Created `src/pages/settings/` directory structure
+  2. Updated `constants.tsx` to add children to Settings nav item (following existing Program pattern)
+  3. Created three placeholder pages with consistent design (icon, title, description, placeholder content)
+  4. Added routing cases in `App.tsx` and updated `NavItemId` type in `types.ts`
+- **Success Factors**:
+  1. **Pattern Reuse**: Followed the existing nested navigation pattern from Program (Tier/Point structure)
+  2. **TypeScript First**: Updated type definitions before implementation to catch errors early
+  3. **Parallel Implementation**: Created all three placeholder pages simultaneously since they had no dependencies
+  4. **Build Verification**: Ran build immediately to verify TypeScript correctness
+- **Lesson**: Following established patterns (nested nav structure, routing pattern, placeholder page design) makes implementation smooth and consistent. No custom decisions needed - just replicate what works.
+
 ## [Date]: [Short Title]
 
 - **Incident**: [What broke?]

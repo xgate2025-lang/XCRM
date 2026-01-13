@@ -1,82 +1,105 @@
-# Implementation Plan: Day Zero Onboarding Redesign
+# Implementation Plan: [FEATURE]
 
-**Branch**: `001-onboarding-redesign` | **Date**: 2026-01-05 | **Spec**: [spec.md](./spec.md)
-**Input**: Feature specification from `/specs/001-onboarding-redesign/spec.md`
+**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
+**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
 ## Summary
 
-This plan covers the redesign of the "Day Zero" Onboarding experience ("State A") for the Dashboard. It introduces a gamified "Hero Carousel" and a "Boomerang Loop" interaction pattern. The implementation will focus on a frontend-first architecture using a strict `MockOnboardingService` to enable immediate UX verification without backend dependencies, and `LocalStorage` for session persistence.
+[Extract from feature spec: primary requirement + technical approach from research]
 
 ## Technical Context
 
-**Language/Version**: TypeScript 5.x  
-**Primary Dependencies**: React (v19), Lucide React (Icons), Tailwind CSS (Styling)  
-**Storage**: `LocalStorage` (Namespaced: `xcrm:onboarding:last_card:{userId}`) for UI state; Mock Service for data persistence simulation.  
-**Testing**: Vitest (Unit), Manual UX Verification (Scenario-based)  
-**Target Platform**: Web (Responsive SPA)  
-**Project Type**: Single-Page Application (SPA)  
-**Performance Goals**: Dashboard Initial Load < 500ms; Carousel Scroll Animation ~300-500ms; Progress Update < 100ms.  
-**Constraints**: strictly matching "Sharia OS" visual style; no immediate backend API dependencies (Mock only).  
-**Scale/Scope**: ~5-7 new components, 1 new Context/Service, 1 modified Page (Dashboard).
+<!--
+  ACTION REQUIRED: Replace the content in this section with the technical details
+  for the project. The structure here is presented in advisory capacity to guide
+  the iteration process.
+-->
+
+**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
+**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
+**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
+**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
+**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
+**Project Type**: [single/web/mobile - determines source structure]  
+**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
+**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
+**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- [x] **Tech Stack**: Uses Vite + React + TypeScript. No Next.js.
-- [x] **Environment**: Uses `import.meta.env` if needed (though Mock Service mainly).
-- [x] **Styling**: Uses Tailwind CSS + `lucide-react`. Matches "Global Styling Zone" rules.
-- [x] **Routing**: SPA architecture; deep links use `react-router-dom` query params (`?source=onboarding`).
-- [x] **Structure**: Source code in `src/`. Logic isolated in `src/lib/`.
-- [x] **AI Patterns**: No direct AI calls in components (N/A for this ui feature, but principle holds).
-- [x] **Visual Integrity**: Design will match existing padding/shadow/rounding from `index.html`.
-- [x] **IA Integrity**: All 4 Missions maps to tasks.
-- [x] **UX Handshake**: "Boomerang" loop handles state transitions (Loading, Success).
-- [x] **UI Persistence**: Sidebar/Header remain static during "Loop".
+[Gates determined based on constitution file]
 
-*PRE-FLIGHT*: checked `Journal.md`.
+*PRE-FLIGHT*: Must read `Journal.md` to prevent recurring errors.
 
 ## Project Structure
 
 ### Documentation (this feature)
 
 ```text
-specs/001-onboarding-redesign/
-├── plan.md              # This file
-├── research.md          # Phase 0 output
-├── data-model.md        # Phase 1 output
-├── quickstart.md        # Phase 1 output
-├── contracts/           # Phase 1 output
-└── tasks.md             # Phase 2 output
+specs/[###-feature]/
+├── plan.md              # This file (/speckit.plan command output)
+├── research.md          # Phase 0 output (/speckit.plan command)
+├── data-model.md        # Phase 1 output (/speckit.plan command)
+├── quickstart.md        # Phase 1 output (/speckit.plan command)
+├── contracts/           # Phase 1 output (/speckit.plan command)
+└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
 ```
 
 ### Source Code (repository root)
+<!--
+  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
+  for this feature. Delete unused options and expand the chosen structure with
+  real paths (e.g., apps/admin, packages/something). The delivered plan must
+  not include Option labels.
+-->
 
 ```text
+# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
 ├── components/
-│   └── dashboard/
-│       ├── onboarding/
-│       │   ├── OnboardingHero.tsx         # Main Widget Container
-│       │   ├── MissionCarousel.tsx        # The Scrollable Card Rail
-│       │   ├── MissionCard.tsx            # Individual Card UI
-│       │   ├── ProgressHeader.tsx         # The Global Progress Bar
-│       │   └── Launchpad.tsx              # "Victory Lap" Success View
-│       └── DashboardV2.tsx                # Modified to switch State A/B
+├── pages/
 ├── context/
-│   └── OnboardingContext.tsx              # State Management (Progress, Active Card)
 ├── lib/
+│   └── gemini.ts
+├── App.tsx
+├── index.tsx
+├── constants.tsx
+└── types.ts
+
+tests/
+├── contract/
+├── integration/
+└── unit/
+
+# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
+backend/
+├── src/
+│   ├── models/
 │   ├── services/
-│   │   └── mock/
-│   │       └── MockOnboardingService.ts   # The "Boomerang" Logic Simulation
-│   └── storage/
-│       └── LocalStorageClient.ts          # Persistence Helper
-└── types.ts                               # Updated with Onboarding types
+│   └── api/
+└── tests/
+
+frontend/
+├── components/
+├── pages/
+├── themes/
+├── context/
+└── lib/
+
+# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
+api/
+└── [same as backend above]
+
+ios/ or android/
+└── [platform-specific structure: feature modules, UI flows, platform tests]
 ```
 
-**Structure Decision**: Standard "Single project" SPA layout. New components nested under `components/dashboard/onboarding` to keep the top-level clean. Logic isolated in `MockOnboardingService`.
+**Structure Decision**: [Document the selected structure and reference the real
+directories captured above]
 
 ## Complexity Tracking
 
@@ -84,4 +107,5 @@ src/
 
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 |-----------|------------|-------------------------------------|
-| Mocks in `src/lib` | Decoupling FE from BE delivery | Waiting for BE would block P1 User Story verification |
+| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
