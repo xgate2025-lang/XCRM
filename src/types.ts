@@ -634,4 +634,55 @@ export interface IOnboardingService {
   resetOnboarding(): Promise<OnboardingState>;
 }
 
+// --- Global Settings Types (016-global-settings) ---
+
+/** Currency configuration for exchange rates (FR-001 to FR-004) */
+export interface CurrencyConfig {
+  code: string;           // ISO 4217 code (e.g., "USD", "EUR") - Unique ID
+  name: string;           // Display name (e.g., "US Dollar")
+  rate: number;           // Exchange rate (1 Currency = X Default Base)
+  isDefault: boolean;     // True if this is the system base currency
+  createdAt: string;      // ISO 8601 DateTime
+  updatedAt: string;      // ISO 8601 DateTime
+}
+
+/** Attribute source type */
+export type AttributeType = 'STANDARD' | 'CUSTOM';
+
+/** Data format types for customer attributes (FR-007) */
+export type AttributeFormat = 'TEXT' | 'DATE' | 'DATETIME' | 'NUMBER' | 'BOOLEAN' | 'SELECT' | 'MULTISELECT';
+
+/** Option for Select/Multi-select attributes */
+export interface AttributeOption {
+  label: string;
+  value: string;
+}
+
+/** Customer attribute definition (FR-005 to FR-010) */
+export interface CustomerAttribute {
+  code: string;           // System ID (e.g., "email", "c_loyalty_tier")
+  displayName: string;    // Label shown in UI
+  type: AttributeType;    // Source of the attribute
+  format: AttributeFormat;// Input format
+  isRequired: boolean;    // Mandatory field?
+  isUnique: boolean;      // Unique value required?
+  status: 'ACTIVE' | 'DISABLED';
+  options?: AttributeOption[]; // For SELECT/MULTISELECT formats
+}
+
+/** Service interface for Global Settings */
+export interface IGlobalSettingsService {
+  // Currency methods
+  getCurrencies(): Promise<CurrencyConfig[]>;
+  addCurrency(currency: Omit<CurrencyConfig, 'createdAt' | 'updatedAt'>): Promise<CurrencyConfig>;
+  updateCurrency(code: string, rate: number): Promise<CurrencyConfig>;
+  deleteCurrency(code: string): Promise<void>;
+
+  // Customer Attribute methods
+  getAttributes(): Promise<CustomerAttribute[]>;
+  addAttribute(attribute: CustomerAttribute): Promise<CustomerAttribute>;
+  updateAttribute(code: string, updates: Partial<CustomerAttribute>): Promise<CustomerAttribute>;
+  deleteAttribute(code: string): Promise<void>;
+}
+
 

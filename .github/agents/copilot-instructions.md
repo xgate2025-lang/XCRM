@@ -29,9 +29,9 @@ npm test && npm run lint
 TypeScript (React 19): Follow standard conventions
 
 ## Recent Changes
+- 001-global-settings: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 001-settings-pages-setup: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 - 014-ri-dashboard: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
-- 013-coupon-wallet-refine: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 
 
 <!-- MANUAL ADDITIONS START -->

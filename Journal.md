@@ -322,3 +322,26 @@ INPUTS:
 - **Root Cause**: `MemberDetail.tsx` contained a hardcoded inline implementation of the Points tab that was not removed when the new component was created. The new `PointDetailTab` was initialized but blocked by the legacy code remaining in the render return.
 - **Correction**: Refactored `MemberDetail.tsx` to remove the 100+ lines of inline legacy code and replaced it with the `<PointDetailTab />` component.
 - **Lesson**: When extracting a large section of valid JSX into a new component, the *deletion* of the old code from the parent file is just as critical as the *creation* of the new file. Verification must confirm that the new component is actively rendering in the parent, not just that it exists.
+
+## 2026-01-16: Global Settings Implementation - Clean Architecture Pattern
+
+- **Pattern**: Successfully implemented Global Settings with Currency and Customer Attributes management.
+- **Architecture Decisions**:
+    1. **Service-Context-Component Stack**: `MockGlobalSettingsService` (localStorage persistence) → `GlobalSettingsContext` (React state + actions) → UI Components (GlobalSettings.tsx, CustomerAttributes.tsx)
+    2. **Tab-Based Navigation**: Used internal tab state within GlobalSettings.tsx rather than separate routes, keeping related settings co-located.
+    3. **Component Extraction**: CustomerAttributes extracted to `src/components/settings/` to keep GlobalSettings.tsx focused on Currency while delegating attribute logic.
+    4. **Uniqueness via UI**: Currency uniqueness enforced by filtering dropdown (already-added currencies excluded) rather than post-submission validation.
+    5. **Immutable Code Pattern**: Attribute codes auto-prefixed with `c_` on creation, displayed as locked field on edit.
+- **Key Lessons**:
+    1. **Phased Implementation**: Breaking into Setup → Foundational → User Story 1 → User Story 2 → Polish phases ensured dependencies were met before feature work.
+    2. **Type-First Development**: Defining interfaces in `types.ts` before service/context implementation caught contract mismatches early.
+    3. **ISO Standard Data**: Using ISO 4217 currency codes provided a ready-made dropdown list with proper naming.
+    4. **Format-Driven UI**: The 7 attribute formats (TEXT, NUMBER, DATE, DATETIME, BOOLEAN, SELECT, MULTISELECT) drove both the form UI and validation logic.
+    5. **Options Auto-Value**: Auto-generating option `value` from `label` (lowercase, underscores) reduced user friction for Select/Multi-select setup.
+- **Components Created**:
+    - `src/types.ts` - Added CurrencyConfig, CustomerAttribute, AttributeType, AttributeFormat, AttributeOption, IGlobalSettingsService
+    - `src/lib/services/mock/MockGlobalSettingsService.ts` - Full CRUD with localStorage
+    - `src/context/GlobalSettingsContext.tsx` - React context with loading/error states
+    - `src/pages/settings/GlobalSettings.tsx` - Currency management with tabs
+    - `src/components/settings/CustomerAttributes.tsx` - Attribute management component
+- **Rule**: For settings pages with multiple related entities, use internal tabs + extracted components rather than separate routes to maintain context cohesion.
