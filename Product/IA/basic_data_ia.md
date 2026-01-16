@@ -81,6 +81,14 @@ Central hub for merchandising data. Organized into three tabs.
     *   **Description**: Rich Text Editor.
 4.  **State**: Status toggle.
 
+#### Import (导入)
+**Trigger**: "Import" button.
+**Flow**:
+1.  Download Template (.csv/.xlsx).
+2.  Upload filled file.
+3.  Validate data (Code uniqueness, Required fields).
+4.  Result summary: "X Success, Y Failed". Download error report if failure.
+
 ### Tab 2: Category (分类)
 
 **Structure**: Hierarchical Tree (Category > Sub-category).
@@ -99,6 +107,15 @@ Central hub for merchandising data. Organized into three tabs.
 *   **Add Sub-level**: Create child of selected node.
 *   **Delete**: Only allowed if leaf node (no children) AND no active products linked.
 
+#### Import (导入)
+**Trigger**: "Import" button.
+**Flow**:
+1.  Download Template (.csv/.xlsx).
+2.  Upload filled file.
+3.  Validate data (Code uniqueness, Required fields).
+4.  Result summary: "X Success, Y Failed". Download error report if failure.
+
+
 ### Tab 3: Brand (品牌)
 
 **Structure**: Flat List.
@@ -114,3 +131,11 @@ Central hub for merchandising data. Organized into three tabs.
 *   **Drag to Reorder**: Adjust display order in filters.
 *   **Add/Edit**: Simple modal with Code, Name, Logo upload.
 *   **Delete**: Check constraint against linked products.
+
+#### Import (导入)
+**Trigger**: "Import" button.
+**Flow**:
+1.  Download Template (.csv/.xlsx).
+2.  Upload filled file.
+3.  Validate data (Code uniqueness, Required fields).
+4.  Result summary: "X Success, Y Failed". Download error report if failure.

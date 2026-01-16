@@ -270,9 +270,9 @@ const CustomerAttributes: React.FC = () => {
         {/* Add Button */}
         <button
           onClick={handleAddClick}
-          className="px-6 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] whitespace-nowrap"
+          className="px-4 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all flex items-center gap-2 whitespace-nowrap"
         >
-          <Plus size={20} className="text-primary-300" />
+          <Plus size={18} />
           New Attribute
         </button>
       </div>
@@ -280,12 +280,12 @@ const CustomerAttributes: React.FC = () => {
       {/* Attributes List */}
       <div className="space-y-6">
         {isLoading ? (
-          <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center">
+          <div className="bg-white rounded-4xl border border-slate-200 p-12 text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
             <p className="text-slate-500 mt-4">Loading attributes...</p>
           </div>
         ) : filteredAttributes.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center">
+          <div className="bg-white rounded-4xl border border-slate-200 p-12 text-center">
             <List size={48} className="text-slate-300 mx-auto mb-4" />
             <p className="text-slate-500 font-medium">No attributes found</p>
             {searchQuery && (
@@ -301,11 +301,11 @@ const CustomerAttributes: React.FC = () => {
           <>
             {/* Standard Attributes Section */}
             {(filterType === 'all' || filterType === 'STANDARD') && standardAttributes.length > 0 && (
-              <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
-                <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center gap-2">
+              <div className="bg-white rounded-4xl shadow-sm border border-slate-200 overflow-hidden">
+                <div className="px-6 py-4 bg-slate-50/50 border-b border-slate-100 flex items-center gap-2">
                   <Lock size={16} className="text-slate-400" />
-                  <h3 className="text-sm font-bold text-slate-600 uppercase tracking-wider">Standard Attributes</h3>
-                  <span className="text-xs text-slate-400 font-medium ml-2">({standardAttributes.length})</span>
+                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Standard Attributes</h3>
+                  <span className="text-[10px] text-slate-400 font-bold ml-2">({standardAttributes.length})</span>
                 </div>
                 <div className="divide-y divide-slate-100">
                   {standardAttributes.map((attr) => (
@@ -324,11 +324,11 @@ const CustomerAttributes: React.FC = () => {
 
             {/* Custom Attributes Section */}
             {(filterType === 'all' || filterType === 'CUSTOM') && customAttributes.length > 0 && (
-              <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+              <div className="bg-white rounded-4xl shadow-sm border border-slate-200 overflow-hidden">
                 <div className="px-6 py-4 bg-primary-50 border-b border-primary-100 flex items-center gap-2">
-                  <Edit3 size={16} className="text-primary-500" />
-                  <h3 className="text-sm font-bold text-primary-700 uppercase tracking-wider">Custom Attributes</h3>
-                  <span className="text-xs text-primary-400 font-medium ml-2">({customAttributes.length})</span>
+                  <Edit3 size={16} className="text-primary-600" />
+                  <h3 className="text-[10px] font-black text-primary-600 uppercase tracking-widest">Custom Attributes</h3>
+                  <span className="text-[10px] text-primary-500 font-bold ml-2">({customAttributes.length})</span>
                 </div>
                 <div className="divide-y divide-slate-100">
                   {customAttributes.map((attr) => (
@@ -635,10 +635,10 @@ const AttributeRow: React.FC<AttributeRowProps> = ({
   const isStandard = attribute.type === 'STANDARD';
 
   return (
-    <div className="px-6 py-4 flex items-center gap-4 hover:bg-slate-50 transition-colors">
+    <div className="px-6 py-4 flex items-center gap-4 hover:bg-slate-50/50 transition-colors">
       {/* Icon */}
       <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-        isStandard ? 'bg-slate-100 text-slate-500' : 'bg-primary-100 text-primary-600'
+        isStandard ? 'bg-slate-50 text-slate-400' : 'bg-primary-50 text-primary-600'
       }`}>
         {getFormatIcon(attribute.format)}
       </div>

@@ -74,7 +74,7 @@ This document visualizes the UI layout and interaction for the Basic Data module
 
 ```text
 +--------------------------------------------------------------------------------------------------------+
-|  [ Search SKU/Name... ]   [ Filter v ]                                                   [ + Add New ] |
+|  [ Search SKU/Name... ]   [ Filter v ]                                      [ Import ]   [ + Add New ] |
 +--------------------------------------------------------------------------------------------------------+
 |  | Thumb | SKU     | Product Name         | Price    | Category      | Brand   | Status | Actions    | |
 |  |-------|---------|----------------------|----------|---------------|---------|--------|------------| |
@@ -88,7 +88,7 @@ This document visualizes the UI layout and interaction for the Basic Data module
 
 ```text
 +----------------------------------------------------------------------------------+
-|  [ Search Category... ]                                      [ + Add Top-level ] |
+|  [ Search Category... ]                         [ Import ]   [ + Add Top-level ] |
 +----------------------------------------------------------------------------------+
 |                                                                                  |
 |  v [Folder] Apparel                 [ + Add Sub ] [ Edit ] [ Del ]               |
@@ -108,7 +108,7 @@ This document visualizes the UI layout and interaction for the Basic Data module
 
 ```text
 +----------------------------------------------------------------------------------+
-|  [ Search Brand... ]                                              [ + Add Brand ]|
+|  [ Search Brand... ]                                 [ Import ]   [ + Add Brand ]|
 +----------------------------------------------------------------------------------+
 |                                                                                  |
 |  +----------------------------------------------------------------------------+  |
@@ -122,7 +122,7 @@ This document visualizes the UI layout and interaction for the Basic Data module
 *(:: Drag handle for reordering)*
 ```
 
-### 2.4 Add/Edit Product Page
+### 2.5 Add/Edit Product Page
 
 ```text
 +----------------------------------------------------------------------------------+
@@ -157,7 +157,7 @@ This document visualizes the UI layout and interaction for the Basic Data module
 +----------------------------------------------------------------------------------+
 ```
 
-### 2.5 Add/Edit Category Modal
+### 2.6 Add/Edit Category Modal
 
 ```text
 +-------------------------------------------------------+
@@ -180,7 +180,7 @@ This document visualizes the UI layout and interaction for the Basic Data module
 +-------------------------------------------------------+
 ```
 
-### 2.6 Add/Edit Brand Modal
+### 2.7 Add/Edit Brand Modal
 
 ```text
 +-------------------------------------------------------+

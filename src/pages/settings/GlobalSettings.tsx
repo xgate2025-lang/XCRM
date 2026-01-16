@@ -173,45 +173,41 @@ const GlobalSettings: React.FC = () => {
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-20">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-100 pb-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="flex items-center gap-4">
-          <div className="bg-primary-100 p-3 rounded-2xl">
-            <Globe size={28} className="text-primary-500" />
+          <div className="bg-primary-50 p-3 rounded-xl">
+            <Globe size={28} className="text-primary-600" />
           </div>
           <div>
-            <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Global Settings</h1>
-            <p className="text-slate-500 mt-1 text-lg">Manage currencies and customer attributes</p>
+            <h1 className="text-2xl font-bold text-slate-900">Global Settings</h1>
+            <p className="text-slate-500 text-sm mt-1">Manage currencies and customer attributes</p>
           </div>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-2xl w-fit">
+      <div className="flex items-center gap-8 border-b border-slate-200 px-2">
         <button
           onClick={() => setActiveTab('currency')}
-          className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+          className={`pb-4 px-1 text-sm font-bold transition-all border-b-2 whitespace-nowrap flex items-center gap-2 ${
             activeTab === 'currency'
-              ? 'bg-white text-slate-900 shadow-sm'
-              : 'text-slate-500 hover:text-slate-700'
+              ? 'text-primary-600 border-primary-500'
+              : 'text-slate-400 border-transparent hover:text-slate-600'
           }`}
         >
-          <div className="flex items-center gap-2">
-            <DollarSign size={16} />
-            Currency
-          </div>
+          <DollarSign size={16} />
+          Currency
         </button>
         <button
           onClick={() => setActiveTab('attributes')}
-          className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+          className={`pb-4 px-1 text-sm font-bold transition-all border-b-2 whitespace-nowrap flex items-center gap-2 ${
             activeTab === 'attributes'
-              ? 'bg-white text-slate-900 shadow-sm'
-              : 'text-slate-500 hover:text-slate-700'
+              ? 'text-primary-600 border-primary-500'
+              : 'text-slate-400 border-transparent hover:text-slate-600'
           }`}
         >
-          <div className="flex items-center gap-2">
-            <Users size={16} />
-            Customer Attributes
-          </div>
+          <Users size={16} />
+          Customer Attributes
         </button>
       </div>
 
@@ -271,15 +267,15 @@ const GlobalSettings: React.FC = () => {
             <button
               onClick={handleAddClick}
               disabled={availableCurrencies.length === 0}
-              className="px-6 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+              className="px-4 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
-              <Plus size={20} className="text-primary-300" />
+              <Plus size={18} />
               Add Currency
             </button>
           </div>
 
           {/* Currency Table */}
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="bg-white rounded-4xl shadow-sm border border-slate-200 overflow-hidden">
             {isLoading ? (
               <div className="p-12 text-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500 mx-auto"></div>
@@ -301,12 +297,12 @@ const GlobalSettings: React.FC = () => {
             ) : (
               <table className="w-full">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100">
-                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Currency</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Code</th>
-                    <th className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Exchange Rate</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Last Updated</th>
-                    <th className="px-6 py-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider">Actions</th>
+                  <tr className="bg-slate-50/50 border-b border-slate-100">
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Currency</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Code</th>
+                    <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Exchange Rate</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Last Updated</th>
+                    <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">

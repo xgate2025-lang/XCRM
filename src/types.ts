@@ -634,6 +634,34 @@ export interface IOnboardingService {
   resetOnboarding(): Promise<OnboardingState>;
 }
 
+// --- Integration Settings Types (017-integration-settings) ---
+
+/** API Token entity for third-party integrations */
+export interface APIToken {
+  id: string;                // Unique identifier
+  name: string;              // User-defined descriptive name
+  tokenValue: string;        // Full token value (stored for mock; would be hashed in production)
+  maskedToken: string;       // Masked display version (e.g., "sk_live_...aB1c")
+  createdAt: string;         // ISO 8601 DateTime of generation
+  createdBy: string;         // User ID of the creator (audit trail)
+}
+
+/** Context type for Integration Settings */
+export interface IntegrationContextType {
+  // State
+  tokens: APIToken[];
+  isLoading: boolean;
+  error: string | null;
+
+  // Actions
+  generateToken: (name: string) => Promise<{ token: APIToken; fullToken: string }>;
+  revokeToken: (id: string) => Promise<void>;
+  updateTokenName: (id: string, newName: string) => Promise<void>;
+
+  // Validation
+  isNameUnique: (name: string, excludeId?: string) => boolean;
+}
+
 // --- Global Settings Types (016-global-settings) ---
 
 /** Currency configuration for exchange rates (FR-001 to FR-004) */
@@ -685,4 +713,105 @@ export interface IGlobalSettingsService {
   deleteAttribute(code: string): Promise<void>;
 }
 
+// --- Basic Data Settings Types (018-basic-data-settings) ---
+
+export enum StoreType {
+  DIRECT = 'DIRECT',
+  FRANCHISE = 'FRANCHISE',
+  PARTNER = 'PARTNER',
+}
+
+export enum StoreStatus {
+  ACTIVE = 'ACTIVE',
+  DISABLED = 'DISABLED',
+}
+
+export interface Coordinates {
+  lat: number;
+  lng: number;
+}
+
+export interface StoreConfig {
+  code: string;
+  name: string;
+  type: StoreType;
+  address?: string;
+  contact?: string;
+  businessHours?: string;
+  coordinates?: Coordinates;
+  status: StoreStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export enum ProductStatus {
+  ON_SHELF = 'ON_SHELF',
+  OFF_SHELF = 'OFF_SHELF',
+}
+
+export interface ProductConfig {
+  sku: string;
+  name: string;
+  price: number;
+  categoryId: string;
+  brandId: string;
+  images?: string[];
+  description?: string;
+  status: ProductStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CategoryConfig {
+  id: string;
+  code: string;
+  name: string;
+  parentId?: string | null;
+  icon?: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface BrandConfig {
+  id: string;
+  code: string;
+  name: string;
+  logo?: string;
+  sortOrder: number;
+  createdAt: string;
+}
+
+export interface IBasicDataService {
+  // Store
+  getStores(): Promise<StoreConfig[]>;
+  addStore(store: Omit<StoreConfig, 'createdAt' | 'updatedAt'>): Promise<StoreConfig>;
+  updateStore(code: string, updates: Partial<StoreConfig>): Promise<StoreConfig>;
+  deleteStore(code: string): Promise<void>;
+
+  // Product
+  getProducts(): Promise<ProductConfig[]>;
+  addProduct(product: Omit<ProductConfig, 'createdAt' | 'updatedAt'>): Promise<ProductConfig>;
+  updateProduct(sku: string, updates: Partial<ProductConfig>): Promise<ProductConfig>;
+  deleteProduct(sku: string): Promise<void>;
+
+  // Category
+  getCategories(): Promise<CategoryConfig[]>;
+  addCategory(category: Omit<CategoryConfig, 'id' | 'createdAt'>): Promise<CategoryConfig>;
+  updateCategory(id: string, updates: Partial<CategoryConfig>): Promise<CategoryConfig>;
+  deleteCategory(id: string): Promise<void>;
+
+  // Brand
+  getBrands(): Promise<BrandConfig[]>;
+  addBrand(brand: Omit<BrandConfig, 'id' | 'createdAt'>): Promise<BrandConfig>;
+  updateBrand(id: string, updates: Partial<BrandConfig>): Promise<BrandConfig>;
+  deleteBrand(id: string): Promise<void>;
+
+  // Import
+  importData(data: {
+    stores?: StoreConfig[];
+    products?: ProductConfig[];
+    categories?: CategoryConfig[];
+    brands?: BrandConfig[];
+  }): Promise<{ success: number; failed: number; errors: string[] }>;
+}
 

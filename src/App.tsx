@@ -23,6 +23,7 @@ import { CampaignProvider } from './context/CampaignContext';
 import { CouponProvider } from './context/CouponContext';
 import { OnboardingProvider, useOnboarding } from './context/OnboardingContext';
 import { GlobalSettingsProvider } from './context/GlobalSettingsContext';
+import { IntegrationProvider } from './context/IntegrationContext';
 import { OPERATIONAL_NAV, CONFIG_NAV } from './constants';
 import { NavItemId } from './types';
 
@@ -116,24 +117,26 @@ function AppContent() {
 
   return (
     <GlobalSettingsProvider>
-      <ProgramProvider>
-        <MemberProvider>
-          <CampaignProvider>
-            <CouponProvider>
-              <Layout
-                navItemsOperational={OPERATIONAL_NAV}
-                navItemsConfig={CONFIG_NAV}
-                currentPage={currentPage}
-                onNavigate={setCurrentPage}
-                isCollapsed={isCollapsed}
-                setIsCollapsed={setIsCollapsed}
-              >
-                {renderContent()}
-              </Layout>
-            </CouponProvider>
-          </CampaignProvider>
-        </MemberProvider>
-      </ProgramProvider>
+      <IntegrationProvider>
+        <ProgramProvider>
+          <MemberProvider>
+            <CampaignProvider>
+              <CouponProvider>
+                <Layout
+                  navItemsOperational={OPERATIONAL_NAV}
+                  navItemsConfig={CONFIG_NAV}
+                  currentPage={currentPage}
+                  onNavigate={setCurrentPage}
+                  isCollapsed={isCollapsed}
+                  setIsCollapsed={setIsCollapsed}
+                >
+                  {renderContent()}
+                </Layout>
+              </CouponProvider>
+            </CampaignProvider>
+          </MemberProvider>
+        </ProgramProvider>
+      </IntegrationProvider>
     </GlobalSettingsProvider>
   );
 }
