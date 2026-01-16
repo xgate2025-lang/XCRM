@@ -1,12 +1,73 @@
 import React from 'react';
 import { Ticket, Percent, Package, Truck, Info, Users } from 'lucide-react';
-import { CouponType, Coupon } from '../../types';
+import { CouponType, Coupon, CouponTemplate } from '../../types';
 
-interface LivePreviewProps {
-  coupon: Partial<Coupon>;
+/**
+ * Unified preview data that works with both Coupon and CouponTemplate.
+ * This allows the LivePreview to be used by both the legacy wizard and new template wizard.
+ */
+interface PreviewData {
+  name?: string;
+  type?: CouponType;
+  value?: number;
+  productText?: string;
+  validityMode?: 'dynamic' | 'fixed' | 'template';
+  validityType?: 'dynamic' | 'fixed';
+  validityDays?: number;
+  validityDelay?: number;
+  startDate?: string;
+  endDate?: string;
+  minSpend?: number;
+  isStackable?: boolean;
+  totalQuota?: number;
+  userQuota?: number;
+  personalQuota?: { maxCount?: number; timeWindow?: string; windowValue?: number };
+  channels?: string[];
+  codeStrategy?: 'random' | 'custom' | 'unique';
+  customCode?: string;
 }
 
-const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
+interface LivePreviewProps {
+  /** Legacy coupon data from existing wizard */
+  coupon?: Partial<Coupon>;
+  /** New template data from accordion wizard */
+  template?: Partial<CouponTemplate>;
+}
+
+const LivePreview: React.FC<LivePreviewProps> = ({ coupon, template }) => {
+  // Normalize data from either coupon or template into unified format
+  const data: PreviewData = React.useMemo(() => {
+    if (template) {
+      // Map CouponTemplate to PreviewData
+      return {
+        name: template.name,
+        type: template.type,
+        value: template.value,
+        productText: template.productText,
+        validityMode: template.validityMode,
+        validityDays: template.validityDays,
+        validityDelay: template.validityDelay,
+        startDate: template.startDate,
+        endDate: template.endDate,
+        minSpend: template.minSpend,
+        isStackable: template.isStackable,
+        totalQuota: template.totalQuota,
+        userQuota: template.userQuota,
+        personalQuota: template.userQuota
+          ? {
+              maxCount: template.userQuota,
+              timeWindow: template.userQuotaTimeframe || 'lifetime',
+            }
+          : undefined,
+        channels: template.channels,
+        codeStrategy: template.codeStrategy,
+        customCode: template.customCode,
+      };
+    }
+    // Default to coupon data (backward compatibility)
+    return coupon || {};
+  }, [coupon, template]);
+
   const getTypeIcon = (type?: CouponType) => {
     switch (type) {
       case 'cash':
@@ -38,56 +99,56 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
   };
 
   const getFormattedValue = () => {
-    if (coupon.type === 'shipping') return 'FREE';
-    if (coupon.type === 'sku') {
+    if (data.type === 'shipping') return 'FREE';
+    if (data.type === 'sku') {
       // Show product text if available, otherwise show GIFT
-      return coupon.productText?.trim() ? coupon.productText : 'GIFT';
+      return data.productText?.trim() ? data.productText : 'GIFT';
     }
-    if (coupon.type === 'cash') return `$${coupon.value || 0}`;
-    if (coupon.type === 'percentage') return `${coupon.value || 0}%`;
-    return `$${coupon.value || 0}`;
+    if (data.type === 'cash') return `$${data.value || 0}`;
+    if (data.type === 'percentage') return `${data.value || 0}%`;
+    return `$${data.value || 0}`;
   };
 
   const getExpiryDisplay = () => {
     // Handle dynamic validity mode with delay
-    if (coupon.validityMode === 'dynamic' || coupon.validityType === 'dynamic') {
-      const delay = coupon.validityDelay || 0;
-      const duration = coupon.validityDays || 30;
+    if (data.validityMode === 'dynamic' || data.validityType === 'dynamic') {
+      const delay = data.validityDelay || 0;
+      const duration = data.validityDays || 30;
       if (delay > 0) {
         return `+${delay}d → ${duration}d`;
       }
       return `${duration} Days`;
     }
     // Handle template/fixed mode
-    if (coupon.validityMode === 'template' || coupon.validityType === 'fixed') {
-      if (coupon.endDate) {
-        return coupon.endDate;
+    if (data.validityMode === 'template' || data.validityMode === 'fixed' || data.validityType === 'fixed') {
+      if (data.endDate) {
+        return data.endDate;
       }
     }
     return 'TBD';
   };
 
   const getActivationText = () => {
-    if (coupon.validityMode === 'dynamic' && (coupon.validityDelay || 0) > 0) {
-      return `Active after ${coupon.validityDelay} days`;
+    if (data.validityMode === 'dynamic' && (data.validityDelay || 0) > 0) {
+      return `Active after ${data.validityDelay} days`;
     }
     return null;
   };
 
   const getChannelLabels = () => {
-    if (!coupon.channels || coupon.channels.length === 0) return 'Not set';
+    if (!data.channels || data.channels.length === 0) return 'Not set';
     const labels: Record<string, string> = {
       public_app: 'App',
       points_mall: 'Points',
       manual_issue: 'Manual',
     };
-    return coupon.channels.map((c) => labels[c] || c).join(', ');
+    return data.channels.map((c) => labels[c] || c).join(', ');
   };
 
   const getRedemptionLimitText = () => {
-    const quota = coupon.personalQuota;
+    const quota = data.personalQuota;
     if (!quota) {
-      return `Limited to ${coupon.userQuota || 1} use(s) per member`;
+      return `Limited to ${data.userQuota || 1} use(s) per member`;
     }
     const count = quota.maxCount || 1;
     const window = quota.timeWindow || 'lifetime';
@@ -127,7 +188,7 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
           {/* The Voucher Card */}
           <div
             className={`relative aspect-[1.8] rounded-2xl p-5 text-white overflow-hidden shadow-xl transition-all duration-700 bg-gradient-to-br ${getTypeColor(
-              coupon.type
+              data.type
             )}`}
           >
             <div className="absolute top-0 right-0 w-24 h-24 bg-white opacity-10 rounded-full blur-3xl -mr-12 -mt-12"></div>
@@ -136,11 +197,11 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
             <div className="flex justify-between items-start relative z-10">
               <div className="min-w-0">
                 <h4 className="text-sm font-black tracking-tight leading-tight truncate drop-shadow-md">
-                  {coupon.name || 'Untitled Coupon'}
+                  {data.name || 'Untitled Coupon'}
                 </h4>
-                {coupon.codeStrategy === 'custom' && coupon.customCode && (
+                {data.codeStrategy === 'custom' && data.customCode && (
                   <span className="text-[8px] font-mono font-bold opacity-75 mt-1 border border-white/30 px-1 rounded bg-white/10 uppercase tracking-widest">
-                    {coupon.customCode}
+                    {data.customCode}
                   </span>
                 )}
                 {/* Dynamic Validity Activation Badge */}
@@ -153,24 +214,24 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
                 )}
               </div>
               <div className="w-8 h-8 bg-white/20 backdrop-blur-md rounded-xl flex items-center justify-center shrink-0 shadow-inner">
-                {getTypeIcon(coupon.type)}
+                {getTypeIcon(data.type)}
               </div>
             </div>
 
             <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between z-10">
               <div>
                 <div className="text-[8px] font-black uppercase tracking-widest opacity-80 mb-0.5">
-                  {coupon.type === 'sku' ? 'Reward' : 'Value'}
+                  {data.type === 'sku' ? 'Reward' : 'Value'}
                 </div>
                 <div className={`font-black tracking-tighter drop-shadow-lg leading-none ${
-                  coupon.type === 'sku' && coupon.productText ? 'text-sm' : 'text-2xl'
+                  data.type === 'sku' && data.productText ? 'text-sm' : 'text-2xl'
                 }`}>
                   {getFormattedValue()}
                 </div>
               </div>
               <div className="text-right">
                 <div className="text-[7px] font-black uppercase tracking-widest opacity-80 mb-0.5">
-                  {coupon.validityMode === 'dynamic' && (coupon.validityDelay || 0) > 0 ? 'Duration' : 'Expires'}
+                  {data.validityMode === 'dynamic' && (data.validityDelay || 0) > 0 ? 'Duration' : 'Expires'}
                 </div>
                 <div className="text-[10px] font-bold whitespace-nowrap">{getExpiryDisplay()}</div>
               </div>
@@ -186,8 +247,8 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
               <div>
                 <div className="text-[10px] font-bold uppercase text-slate-400">Usage Rule</div>
                 <div className="text-xs font-bold text-slate-700 leading-snug">
-                  {coupon.minSpend && coupon.minSpend > 0
-                    ? `Valid on orders over $${coupon.minSpend}`
+                  {data.minSpend && data.minSpend > 0
+                    ? `Valid on orders over $${data.minSpend}`
                     : 'No minimum spend'}
                 </div>
               </div>
@@ -210,7 +271,7 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
             <div className="bg-slate-50 rounded-xl p-3">
               <div className="text-[9px] font-bold uppercase text-slate-400">Quota</div>
               <div className="text-sm font-black text-slate-800">
-                {(coupon.totalQuota || 0).toLocaleString()}
+                {(data.totalQuota || 0).toLocaleString()}
               </div>
             </div>
             <div className="bg-slate-50 rounded-xl p-3">
@@ -223,14 +284,14 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
           <div className="flex items-center gap-2">
             <span
               className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${
-                coupon.isStackable
+                data.isStackable
                   ? 'bg-green-100 text-green-700'
                   : 'bg-amber-100 text-amber-700'
               }`}
             >
-              {coupon.isStackable ? 'Stackable' : 'Exclusive'}
+              {data.isStackable ? 'Stackable' : 'Exclusive'}
             </span>
-            {coupon.codeStrategy === 'unique' && (
+            {data.codeStrategy === 'unique' && (
               <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-purple-100 text-purple-700">
                 Unique Codes
               </span>
@@ -248,14 +309,14 @@ const LivePreview: React.FC<LivePreviewProps> = ({ coupon }) => {
               <div className="flex items-center gap-3">
                 <div
                   className={`w-8 h-8 rounded-lg bg-gradient-to-br ${getTypeColor(
-                    coupon.type
+                    data.type
                   )} flex items-center justify-center text-white shadow-sm`}
                 >
-                  {getTypeIcon(coupon.type)}
+                  {getTypeIcon(data.type)}
                 </div>
                 <div>
                   <div className="text-xs font-bold text-slate-900 truncate max-w-[120px]">
-                    {coupon.name || 'Untitled'}
+                    {data.name || 'Untitled'}
                   </div>
                   <div className="text-[9px] text-slate-400 font-medium">
                     Valid for {getExpiryDisplay()}

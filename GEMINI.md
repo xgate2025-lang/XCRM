@@ -34,6 +34,7 @@ tests/
 - 019-settings-ui-refinement: Added TypeScript, React 19 + Tailwind CSS, Lucide React, react-router-dom, framer-motion
 - 018-basic-data-settings: Added TypeScript (React 19) + Tailwind CSS, Lucide React, `react-router-dom`, `framer-motion` (for transitions)
 - 003-coupon-refinement: Added TypeScript, React 19 + `lucide-react`, `react-router-dom`, `framer-motion` (optional for accordion animations, or Vanilla Tailwind transitions as per Journal).
+- 020-coupon-ia-update: Added CouponTemplate model, Vertical Accordion Wizard, Unique Code generation.
 
 
 <!-- MANUAL ADDITIONS START -->

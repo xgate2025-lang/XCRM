@@ -410,6 +410,66 @@ export interface AnalyticsSummary {
 export type CouponType = 'cash' | 'percentage' | 'sku' | 'shipping';
 export type CouponStatus = 'Live' | 'Scheduled' | 'Ended' | 'Paused' | 'Draft';
 
+// --- Coupon Template Types (020-coupon-ia-update) ---
+
+/** Template-based coupon definition for the accordion wizard */
+export interface CouponTemplate {
+  id: string;
+
+  // Essentials
+  name: string;
+  identifier: string;
+  description?: string;
+  type: CouponType;
+  value: number;
+  productText?: string;
+  imageUrl?: string;
+  termsConditions?: string;
+
+  // Lifecycle
+  validityMode: 'dynamic' | 'fixed';
+  validityDays?: number;
+  validityDelay?: number;
+  startDate?: string;
+  endDate?: string;
+
+  // Restrictions
+  minSpend?: number;
+  isStackable: boolean;
+  maxPerTransaction?: number;
+  storeScope: 'all' | 'specific';
+  storeIds?: string[];
+
+  // Inventory
+  totalQuotaType: 'unlimited' | 'capped';
+  totalQuota?: number;
+  codeStrategy: 'random' | 'custom' | 'unique';
+  customCode?: string;
+
+  // Distribution
+  userQuotaType: 'unlimited' | 'capped';
+  userQuota?: number;
+  userQuotaTimeframe?: 'lifetime' | 'year' | 'month';
+  channels: ('public_app' | 'points_mall' | 'manual_issue')[];
+
+  status: 'draft' | 'active' | 'inactive';
+  createdAt: string;
+  updatedAt: string;
+}
+
+/** Wizard state for managing the accordion form */
+export interface CouponWizardFormState {
+  currentStep: number;
+  template: Partial<CouponTemplate>;
+  validationErrors: Record<string, string>;
+  steps: {
+    [key: number]: {
+      isComplete: boolean;
+      hasError: boolean;
+    };
+  };
+}
+
 export interface CouponData {
   id: string;
   code: string;

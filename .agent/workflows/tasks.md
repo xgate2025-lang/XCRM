@@ -1,128 +1,140 @@
-# Tasks: Settings UI Refinement
-
-**Feature Branch**: `019-settings-ui-refinement`
-**Created**: 2026-01-16
-**Implementation Plan**: [plan.md](file:///Users/elroyelroy/XCRM/specs/019-settings-ui-refinement/plan.md)
-
-## Phase 1: Setup (Shared Infrastructure)
-
-**Purpose**: Project initialization and design system alignment
-
-- [ ] T001 Review existing visual baseline in `src/pages/MemberDetail.tsx` and `src/components/member/detail/MemberHeader.tsx`
-- [ ] T002 Identify shared Tailwind utility strings for standard headers, inputs, and cards from `research.md`
-- [ ] T003 [P] Verify `lucide-react` is correctly configured for settings iconography
-
+---
+description: Generate an actionable, dependency-ordered tasks.md for the feature based on available design artifacts.
+handoffs: 
+  - label: Analyze For Consistency
+    agent: speckit.analyze
+    prompt: Run a project analysis for consistency
+    send: true
+  - label: Implement Project
+    agent: speckit.implement
+    prompt: Start the implementation in phases
+    send: true
+scripts:
+  sh: scripts/bash/check-prerequisites.sh --json
+  ps: scripts/powershell/check-prerequisites.ps1 -Json
 ---
 
-## Phase 2: Foundational (Blocking Prerequisites)
+## User Input
 
-**Purpose**: Establishing shared UI patterns for all settings pages
+```text
+$ARGUMENTS
+```
 
-**⚠️ CRITICAL**: These patterns MUST be established before refining specific pages
+You **MUST** consider the user input before proceeding (if not empty).
 
-- [ ] T004 Create or update shared UI constants for standard setting layout in `src/constants.tsx` (e.g., standard padding, rounding)
-- [ ] T005 [P] Audit `GlobalSettings.tsx` for any hardcoded hex values and replace with Tailwind tokens
-- [ ] T006 [P] Audit `IntegrationSettings.tsx` for hardcoded styling and align with tokens
-- [ ] T007 [P] Audit `BasicData.tsx` and its sub-components for layout consistency
+## Outline
 
-**Checkpoint**: Foundation ready - visual tokens and layouts are standardized
+1. **Setup**: Run `{SCRIPT}` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
----
+2. **Load design documents**: Read from FEATURE_DIR:
+   - **Required**: plan.md (tech stack, libraries, structure), spec.md (user stories with priorities)
+   - **Optional**: data-model.md (entities), contracts/ (API endpoints), research.md (decisions), quickstart.md (test scenarios)
+   - Note: Not all projects have all documents. Generate tasks based on what's available.
 
-## Phase 3: User Story 1 - Refine Global Settings UI (Priority: P1) 🎯 MVP
+3. **Execute task generation workflow**:
+   - Load plan.md and extract tech stack, libraries, project structure
+   - Load spec.md and extract user stories with their priorities (P1, P2, P3, etc.)
+   - If data-model.md exists: Extract entities and map to user stories
+   - If contracts/ exists: Map endpoints to user stories
+   - If research.md exists: Extract decisions for setup tasks
+   - Generate tasks organized by user story (see Task Generation Rules below)
+   - Generate dependency graph showing user story completion order
+   - Create parallel execution examples per user story
+   - Validate task completeness (each user story has all needed tasks, independently testable)
 
-**Goal**: Update Global Settings to match the premium brand guidelines
+4. **Generate tasks.md**: Use `templates/tasks-template.md` as structure, fill with:
+   - Correct feature name from plan.md
+   - Phase 1: Setup tasks (project initialization)
+   - Phase 2: Foundational tasks (blocking prerequisites for all user stories)
+   - Phase 3+: One phase per user story (in priority order from spec.md)
+   - Each phase includes: story goal, independent test criteria, tests (if requested), implementation tasks
+   - Final Phase: Polish & cross-cutting concerns
+   - All tasks must follow the strict checklist format (see Task Generation Rules below)
+   - Clear file paths for each task
+   - Dependencies section showing story completion order
+   - Parallel execution examples per story
+   - Implementation strategy section (MVP first, incremental delivery)
 
-**Independent Test**: Navigate to /settings/global and verify the header, tabs, and modals match the Member Detail design (rounded-4xl cards, black uppercase labels).
+5. **Report**: Output path to generated tasks.md and summary:
+   - Total task count
+   - Task count per user story
+   - Parallel opportunities identified
+   - Independent test criteria for each story
+   - Suggested MVP scope (typically just User Story 1)
+   - Format validation: Confirm ALL tasks follow the checklist format (checkbox, ID, labels, file paths)
 
-### Implementation for User Story 1
+Context for task generation: {ARGS}
 
-- [ ] T008 [US1] Update `GlobalSettings.tsx` header to use `text-2xl font-bold` and standard icon container (bg-primary-50)
-- [ ] T009 [US1] Refactor `GlobalSettings.tsx` main card to use `rounded-4xl shadow-sm border-slate-200`
-- [ ] T010 [US1] Update Typography in `CustomerAttributes.tsx` using `font-black text-sm uppercase tracking-wider` for labels
-- [ ] T011 [US1] Style forms in `GlobalSettings.tsx` (Currency modals) to use `rounded-2xl` inputs and `bg-slate-50`
-- [ ] T012 [US1] Align Tab navigation in `GlobalSettings.tsx` with the standardized sidebar/tab pattern
+The tasks.md should be immediately executable - each task must be specific enough that an LLM can complete it without additional context.
 
-**Checkpoint**: User Story 1 (Global Settings) is fully polished and visually consistent
+## Task Generation Rules
 
----
+**CRITICAL**: Tasks MUST be organized by user story to enable independent implementation and testing.
 
-## Phase 4: User Story 2 - Refine Integration Settings UI (Priority: P1)
+**Tests are OPTIONAL**: Only generate test tasks if explicitly requested in the feature specification or if user requests TDD approach.
 
-**Goal**: Update Integration Settings to be visually cohesive with the new design system
+### Checklist Format (REQUIRED)
 
-**Independent Test**: Navigate to /settings/integration and check card styles, button interactive states, and table typography.
+Every task MUST strictly follow this format:
 
-### Implementation for User Story 2
+```text
+- [ ] [TaskID] [P?] [Story?] Description with file path
+```
 
-- [ ] T013 [US2] Refactor `IntegrationSettings.tsx` header and toolbar to use standard card rounding (`rounded-4xl`) and padding
-- [ ] T014 [P] [US2] Update primary button in `IntegrationSettings.tsx` to match the application's standard button class string
-- [ ] T015 [US2] Refine token table in `src/pages/settings/components/TokenList.tsx` headers with `font-black uppercase tracking-widest`
-- [ ] T016 [US2] Align token modals (`NewTokenModal.tsx`, `EditTokenModal.tsx`) with the standardized modal styling from US1
+**Format Components**:
 
-**Checkpoint**: User Story 2 (Integration Settings) matches the brand guideline
+1. **Checkbox**: ALWAYS start with `- [ ]` (markdown checkbox)
+2. **Task ID**: Sequential number (T001, T002, T003...) in execution order
+3. **[P] marker**: Include ONLY if task is parallelizable (different files, no dependencies on incomplete tasks)
+4. **[Story] label**: REQUIRED for user story phase tasks only
+   - Format: [US1], [US2], [US3], etc. (maps to user stories from spec.md)
+   - Setup phase: NO story label
+   - Foundational phase: NO story label  
+   - User Story phases: MUST have story label
+   - Polish phase: NO story label
+5. **Description**: Clear action with exact file path
 
----
+**Examples**:
 
-## Phase 5: User Story 3 - Refine Basic Data Settings UI (Priority: P1)
+- ✅ CORRECT: `- [ ] T001 Create project structure per implementation plan`
+- ✅ CORRECT: `- [ ] T005 [P] Implement authentication middleware in src/middleware/auth.py`
+- ✅ CORRECT: `- [ ] T012 [P] [US1] Create User model in src/models/user.py`
+- ✅ CORRECT: `- [ ] T014 [US1] Implement UserService in src/services/user_service.py`
+- ❌ WRONG: `- [ ] Create User model` (missing ID and Story label)
+- ❌ WRONG: `T001 [US1] Create model` (missing checkbox)
+- ❌ WRONG: `- [ ] [US1] Create User model` (missing Task ID)
+- ❌ WRONG: `- [ ] T001 [US1] Create model` (missing file path)
 
-**Goal**: Standardize the complex data views in Basic Data settings
+### Task Organization
 
-**Independent Test**: Navigate to /settings/basic-data and verify table density, header styles, and tab consistency across Stores, Products, Categories, and Brands.
+1. **From User Stories (spec.md)** - PRIMARY ORGANIZATION:
+   - Each user story (P1, P2, P3...) gets its own phase
+   - Map all related components to their story:
+     - Models needed for that story
+     - Services needed for that story
+     - Endpoints/UI needed for that story
+     - If tests requested: Tests specific to that story
+   - Mark story dependencies (most stories should be independent)
 
-### Implementation for User Story 3
+2. **From Contracts**:
+   - Map each contract/endpoint → to the user story it serves
+   - If tests requested: Each contract → contract test task [P] before implementation in that story's phase
 
-- [ ] T017 [US3] Remove redundant outer padding in `BasicData.tsx` to align with the global dashboard layout
-- [ ] T018 [US3] Refactor `BasicData.tsx` header to use the standard icon-accent pattern (`bg-primary-50`)
-- [ ] T019 [US3] Align `BasicData.tsx` tab navigation with `GlobalSettings.tsx` (identical border-b and active highlights)
-- [ ] T020 [US3] Update `StoreList.tsx`, `ProductList.tsx`, `BrandList.tsx` table headers and row padding to match `MemberList` standards
-- [ ] T021 [P] [US3] Refine `CategoryTree.tsx` cards/nodes to use consistent `rounded-xl` or `rounded-2xl` styling
+3. **From Data Model**:
+   - Map each entity to the user story(ies) that need it
+   - If entity serves multiple stories: Put in earliest story or Setup phase
+   - Relationships → service layer tasks in appropriate story phase
 
-**Checkpoint**: All settings pages (Global, Integration, Basic Data) exhibit full visual consistency
+4. **From Setup/Infrastructure**:
+   - Shared infrastructure → Setup phase (Phase 1)
+   - Foundational/blocking tasks → Foundational phase (Phase 2)
+   - Story-specific setup → within that story's phase
 
----
+### Phase Structure
 
-## Phase N: Polish & Cross-Cutting Concerns
-
-**Purpose**: Final verification and documentation
-
-- [ ] T022 Perform full walkthrough of all three settings pages on mobile and tablet viewports
-- [ ] T023 [P] Update `Journal.md` with lessons learned about cross-component CSS standardization
-- [ ] T024 Run `quickstart.md` validation steps one last time
-- [ ] T025 [P] Documentation updates summarizing the new UI patterns for Settings
-- [ ] T026 [P] Verify and implement standard loading skeletons for all settings pages (FR-007)
-
----
-
-## Dependencies & Execution Order
-
-### Phase Dependencies
-
-- **Setup (Phase 1)**: Can start immediately. Defines the target "look and feel".
-- **Foundational (Phase 2)**: Depends on Phase 1. Blocks all UI work (MUST standardize tokens first).
-- **User Stories (Phase 3-5)**: All depend on Phase 2 completion.
-  - US1, US2, and US3 can proceed in parallel as they touch different files.
-- **Polish (Final Phase)**: Depends on at least one User Story being completed.
-
-### Parallel Opportunities
-
-- T003, T005, T006, T007 (Audit tasks) can run in parallel.
-- All User Story phases (Phase 3, 4, 5) can run in parallel.
-- T014, T016, T021, T023, T025 (Refinement and Documentation) can run in parallel.
-
----
-
-## Implementation Strategy
-
-### MVP First (User Story 1 Only)
-
-1. Complete Phase 1 and 2 to set the foundation.
-2. Complete Phase 3 (Global Settings) to establish the first fully refined settings page.
-3. Validate US1 against the Member Detail page.
-
-### Incremental Delivery
-
-1. Refine Global Settings (US1).
-2. Refine Integration Settings (US2).
-3. Refine Basic Data (US3).
-4. Each step brings a major settings module into brand alignment.
+- **Phase 1**: Setup (project initialization)
+- **Phase 2**: Foundational (blocking prerequisites - MUST complete before user stories)
+- **Phase 3+**: User Stories in priority order (P1, P2, P3...)
+  - Within each story: Tests (if requested) → Models → Services → Endpoints → Integration
+  - Each phase should be a complete, independently testable increment
+- **Final Phase**: Polish & Cross-Cutting Concerns
