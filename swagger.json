@@ -1,0 +1,3302 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "XCRM 忠诚度系统 API",
+    "description": "XCRM 忠诚度管理系统的后端 API 接口文档。所有接口统一返回格式：`{ code: string, msg: string, data: T }`，其中 `code: \"OK\"` 表示处理成功。",
+    "version": "1.0.0",
+    "contact": {
+      "name": "XCRM Team"
+    }
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "API 服务器"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Members",
+      "description": "会员管理相关接口"
+    },
+    {
+      "name": "Coupons",
+      "description": "优惠券管理相关接口"
+    },
+    {
+      "name": "Campaigns",
+      "description": "营销活动管理相关接口"
+    },
+    {
+      "name": "Dashboard",
+      "description": "仪表盘和分析相关接口"
+    },
+    {
+      "name": "Settings",
+      "description": "系统设置相关接口"
+    },
+    {
+      "name": "BasicData",
+      "description": "基础数据管理（门店、商品、分类、品牌）"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ApiResponse": {
+        "type": "object",
+        "required": ["code", "msg", "data"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "响应状态码，OK 表示成功",
+            "example": "OK"
+          },
+          "msg": {
+            "type": "string",
+            "description": "响应消息",
+            "example": "操作成功"
+          },
+          "data": {
+            "description": "响应数据"
+          }
+        }
+      },
+      "PaginatedData": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "description": "数据列表"
+          },
+          "total": {
+            "type": "integer",
+            "description": "总记录数",
+            "example": 100
+          },
+          "page": {
+            "type": "integer",
+            "description": "当前页码",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "integer",
+            "description": "每页记录数",
+            "example": 20
+          },
+          "totalPages": {
+            "type": "integer",
+            "description": "总页数",
+            "example": 5
+          }
+        }
+      },
+      "Member": {
+        "type": "object",
+        "required": ["id", "firstName", "lastName", "email", "phone", "tier", "points", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "会员ID",
+            "example": "MEM-001"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "名",
+            "example": "张"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "姓",
+            "example": "三"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "邮箱",
+            "example": "zhangsan@example.com"
+          },
+          "phone": {
+            "type": "string",
+            "description": "电话",
+            "example": "+86 138 0000 0000"
+          },
+          "cardNo": {
+            "type": "string",
+            "description": "会员卡号",
+            "example": "8839 2930 1234"
+          },
+          "tier": {
+            "type": "string",
+            "description": "会员等级",
+            "example": "Gold"
+          },
+          "points": {
+            "type": "integer",
+            "description": "当前积分",
+            "example": 12500
+          },
+          "joinDate": {
+            "type": "string",
+            "description": "加入日期",
+            "example": "2024-01-12"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Active", "Inactive"],
+            "description": "会员状态"
+          },
+          "avatar": {
+            "type": "string",
+            "description": "头像URL"
+          },
+          "lifetimeSpend": {
+            "type": "string",
+            "description": "累计消费金额",
+            "example": "$4,250.00"
+          },
+          "memberCode": {
+            "type": "string",
+            "description": "会员编码"
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "description": "首选语言"
+          }
+        }
+      },
+      "PointsSummary": {
+        "type": "object",
+        "properties": {
+          "availableBalance": {
+            "type": "integer",
+            "description": "可用积分余额",
+            "example": 12500
+          },
+          "lifetimeEarned": {
+            "type": "integer",
+            "description": "历史累计获得积分",
+            "example": 50000
+          },
+          "used": {
+            "type": "integer",
+            "description": "已使用积分",
+            "example": 35000
+          },
+          "expired": {
+            "type": "integer",
+            "description": "已过期积分",
+            "example": 2500
+          }
+        }
+      },
+      "PointPacket": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "积分包ID"
+          },
+          "memberId": {
+            "type": "string",
+            "description": "会员ID"
+          },
+          "totalPoints": {
+            "type": "integer",
+            "description": "积分包总积分"
+          },
+          "remainingPoints": {
+            "type": "integer",
+            "description": "剩余积分"
+          },
+          "receivedDate": {
+            "type": "string",
+            "format": "date",
+            "description": "获得日期"
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date",
+            "description": "过期日期"
+          },
+          "source": {
+            "type": "string",
+            "description": "来源"
+          },
+          "remark": {
+            "type": "string",
+            "description": "备注"
+          }
+        }
+      },
+      "AssetLog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "日志ID"
+          },
+          "memberId": {
+            "type": "string",
+            "description": "会员ID"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["point", "tier"],
+            "description": "日志类型"
+          },
+          "changeType": {
+            "type": "string",
+            "description": "变更类型",
+            "example": "Earn"
+          },
+          "changeValue": {
+            "description": "变更值"
+          },
+          "balanceBefore": {
+            "description": "变更前余额"
+          },
+          "balanceAfter": {
+            "description": "变更后余额"
+          },
+          "source": {
+            "type": "string",
+            "description": "来源"
+          },
+          "reasonType": {
+            "type": "string",
+            "description": "原因类型"
+          },
+          "remark": {
+            "type": "string",
+            "description": "备注"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "时间戳"
+          }
+        }
+      },
+      "MemberCoupon": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "优惠券实例ID"
+          },
+          "memberId": {
+            "type": "string",
+            "description": "会员ID"
+          },
+          "couponTemplateId": {
+            "type": "string",
+            "description": "优惠券模板ID"
+          },
+          "code": {
+            "type": "string",
+            "description": "优惠券码"
+          },
+          "name": {
+            "type": "string",
+            "description": "优惠券名称"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "唯一标识"
+          },
+          "earnTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "获得时间"
+          },
+          "expiryTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "过期时间"
+          },
+          "source": {
+            "type": "string",
+            "description": "来源"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["available", "used", "expired", "voided"],
+            "description": "状态"
+          }
+        }
+      },
+      "Coupon": {
+        "type": "object",
+        "required": ["id", "code", "name", "type", "value", "status"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "优惠券ID"
+          },
+          "code": {
+            "type": "string",
+            "description": "优惠券码",
+            "example": "WELCOME10"
+          },
+          "name": {
+            "type": "string",
+            "description": "优惠券名称",
+            "example": "新会员欢迎券"
+          },
+          "identifier": {
+            "type": "string",
+            "description": "唯一标识"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["cash", "percentage", "sku", "shipping"],
+            "description": "优惠券类型"
+          },
+          "value": {
+            "type": "number",
+            "description": "优惠值"
+          },
+          "minSpend": {
+            "type": "number",
+            "description": "最低消费"
+          },
+          "isStackable": {
+            "type": "boolean",
+            "description": "是否可叠加"
+          },
+          "totalQuota": {
+            "type": "integer",
+            "description": "总发放量"
+          },
+          "userQuota": {
+            "type": "integer",
+            "description": "每人限领数量"
+          },
+          "validityType": {
+            "type": "string",
+            "enum": ["dynamic", "fixed"],
+            "description": "有效期类型"
+          },
+          "validityDays": {
+            "type": "integer",
+            "description": "有效天数（动态有效期）"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date",
+            "description": "开始日期"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date",
+            "description": "结束日期"
+          },
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["public_app", "points_mall", "manual_issue"]
+            },
+            "description": "发放渠道"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["Live", "Scheduled", "Ended", "Paused", "Draft"],
+            "description": "优惠券状态"
+          }
+        }
+      },
+      "Campaign": {
+        "type": "object",
+        "required": ["id", "name", "type", "status", "startDate"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "活动ID",
+            "example": "cmp_001"
+          },
+          "name": {
+            "type": "string",
+            "description": "活动名称",
+            "example": "夏季双倍积分"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["boost_sales", "referral", "birthday", "custom", "accumulated", "spending", "coupon", "accumulation"],
+            "description": "活动类型"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "draft", "scheduled", "ended", "paused", "running", "finish", "stop"],
+            "description": "活动状态"
+          },
+          "stackable": {
+            "type": "boolean",
+            "description": "是否可叠加"
+          },
+          "targetStores": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "目标门店"
+          },
+          "targetTiers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "目标会员等级"
+          },
+          "attributionRevenue": {
+            "type": "number",
+            "description": "归因收入"
+          },
+          "reachCount": {
+            "type": "integer",
+            "description": "触达人数"
+          },
+          "totalParticipants": {
+            "type": "integer",
+            "description": "参与人数"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "开始日期"
+          },
+          "endDate": {
+            "type": "string",
+            "nullable": true,
+            "description": "结束日期"
+          },
+          "lastEdited": {
+            "type": "string",
+            "description": "最后编辑时间"
+          }
+        }
+      },
+      "CampaignLog": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "日志ID"
+          },
+          "campaignId": {
+            "type": "string",
+            "description": "活动ID"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "时间戳"
+          },
+          "memberId": {
+            "type": "string",
+            "description": "会员ID"
+          },
+          "memberName": {
+            "type": "string",
+            "description": "会员姓名"
+          },
+          "actionType": {
+            "type": "string",
+            "enum": ["purchase", "referral", "join"],
+            "description": "行为类型"
+          },
+          "rewardContent": {
+            "type": "string",
+            "description": "奖励内容"
+          },
+          "attributedValue": {
+            "type": "number",
+            "description": "归因价值"
+          },
+          "cost": {
+            "type": "number",
+            "description": "成本"
+          },
+          "participationCount": {
+            "type": "integer",
+            "description": "参与次数"
+          }
+        }
+      },
+      "AnalyticsSummary": {
+        "type": "object",
+        "properties": {
+          "roi": {
+            "type": "number",
+            "description": "投资回报率"
+          },
+          "totalRevenue": {
+            "type": "number",
+            "description": "总收入"
+          },
+          "totalCost": {
+            "type": "number",
+            "description": "总成本"
+          },
+          "conversionRate": {
+            "type": "number",
+            "description": "转化率"
+          },
+          "cpa": {
+            "type": "number",
+            "description": "获客成本"
+          },
+          "newMembers": {
+            "type": "integer",
+            "description": "新会员数"
+          },
+          "participationCount": {
+            "type": "integer",
+            "description": "参与次数"
+          },
+          "chartData": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "date": {
+                  "type": "string"
+                },
+                "revenue": {
+                  "type": "number"
+                },
+                "cost": {
+                  "type": "number"
+                },
+                "signups": {
+                  "type": "integer"
+                }
+              }
+            },
+            "description": "图表数据"
+          }
+        }
+      },
+      "DashboardMetrics": {
+        "type": "object",
+        "properties": {
+          "newMembers": {
+            "$ref": "#/components/schemas/MetricData"
+          },
+          "firstPurchaseConversion": {
+            "$ref": "#/components/schemas/MetricData"
+          },
+          "repurchaseRate": {
+            "$ref": "#/components/schemas/MetricData"
+          },
+          "memberSalesGMV": {
+            "$ref": "#/components/schemas/MetricData"
+          },
+          "memberAOV": {
+            "$ref": "#/components/schemas/MetricData"
+          },
+          "totalMembers": {
+            "type": "integer",
+            "description": "总会员数"
+          },
+          "activeMembers": {
+            "type": "integer",
+            "description": "活跃会员数"
+          },
+          "activeCampaigns": {
+            "type": "integer",
+            "description": "活跃活动数"
+          },
+          "campaignParticipation": {
+            "type": "integer",
+            "description": "活动参与数"
+          },
+          "pointsRedemptionRate": {
+            "type": "number",
+            "description": "积分兑换率"
+          },
+          "couponsUsageRate": {
+            "type": "number",
+            "description": "优惠券使用率"
+          },
+          "tierDistribution": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TierMetric"
+            },
+            "description": "等级分布"
+          }
+        }
+      },
+      "MetricData": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "description": "指标值"
+          },
+          "trend": {
+            "type": "number",
+            "description": "趋势（百分比变化）"
+          },
+          "label": {
+            "type": "string",
+            "description": "标签"
+          },
+          "unit": {
+            "type": "string",
+            "description": "单位"
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "description": "历史数据（用于迷你图）"
+          }
+        }
+      },
+      "TierMetric": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "等级名称"
+          },
+          "count": {
+            "type": "integer",
+            "description": "会员数量"
+          },
+          "activeCount": {
+            "type": "integer",
+            "description": "活跃会员数"
+          },
+          "totalSales": {
+            "type": "number",
+            "description": "总销售额"
+          },
+          "salesPercent": {
+            "type": "number",
+            "description": "销售占比"
+          },
+          "color": {
+            "type": "string",
+            "description": "等级颜色"
+          }
+        }
+      },
+      "CurrencyConfig": {
+        "type": "object",
+        "required": ["code", "name", "rate", "isDefault"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "货币代码（ISO 4217）",
+            "example": "USD"
+          },
+          "name": {
+            "type": "string",
+            "description": "货币名称",
+            "example": "美元"
+          },
+          "rate": {
+            "type": "number",
+            "description": "汇率",
+            "example": 1.0
+          },
+          "isDefault": {
+            "type": "boolean",
+            "description": "是否默认货币"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "创建时间"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "更新时间"
+          }
+        }
+      },
+      "CustomerAttribute": {
+        "type": "object",
+        "required": ["code", "displayName", "type", "format", "status"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "属性代码",
+            "example": "email"
+          },
+          "displayName": {
+            "type": "string",
+            "description": "显示名称",
+            "example": "电子邮箱"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["STANDARD", "CUSTOM"],
+            "description": "属性类型"
+          },
+          "format": {
+            "type": "string",
+            "enum": ["TEXT", "DATE", "DATETIME", "NUMBER", "BOOLEAN", "SELECT", "MULTISELECT"],
+            "description": "数据格式"
+          },
+          "isRequired": {
+            "type": "boolean",
+            "description": "是否必填"
+          },
+          "isUnique": {
+            "type": "boolean",
+            "description": "是否唯一"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ACTIVE", "DISABLED"],
+            "description": "状态"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "选项（用于SELECT/MULTISELECT类型）"
+          }
+        }
+      },
+      "APIToken": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Token ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "Token 名称"
+          },
+          "tokenValue": {
+            "type": "string",
+            "description": "Token 值（完整）"
+          },
+          "maskedToken": {
+            "type": "string",
+            "description": "脱敏 Token"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "创建时间"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "创建人"
+          }
+        }
+      },
+      "StoreConfig": {
+        "type": "object",
+        "required": ["code", "name", "type", "status"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "门店代码",
+            "example": "SH001"
+          },
+          "name": {
+            "type": "string",
+            "description": "门店名称",
+            "example": "上海旗舰店"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["DIRECT", "FRANCHISE", "PARTNER"],
+            "description": "门店类型"
+          },
+          "address": {
+            "type": "string",
+            "description": "地址"
+          },
+          "contact": {
+            "type": "string",
+            "description": "联系方式"
+          },
+          "businessHours": {
+            "type": "string",
+            "description": "营业时间"
+          },
+          "coordinates": {
+            "type": "object",
+            "properties": {
+              "lat": {
+                "type": "number"
+              },
+              "lng": {
+                "type": "number"
+              }
+            },
+            "description": "坐标"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ACTIVE", "DISABLED"],
+            "description": "状态"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ProductConfig": {
+        "type": "object",
+        "required": ["sku", "name", "price", "categoryId", "brandId", "status"],
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "商品SKU"
+          },
+          "name": {
+            "type": "string",
+            "description": "商品名称"
+          },
+          "price": {
+            "type": "number",
+            "description": "价格"
+          },
+          "categoryId": {
+            "type": "string",
+            "description": "分类ID"
+          },
+          "brandId": {
+            "type": "string",
+            "description": "品牌ID"
+          },
+          "images": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "图片URL列表"
+          },
+          "description": {
+            "type": "string",
+            "description": "描述"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["ON_SHELF", "OFF_SHELF"],
+            "description": "状态"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CategoryConfig": {
+        "type": "object",
+        "required": ["id", "code", "name", "sortOrder"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "分类ID"
+          },
+          "code": {
+            "type": "string",
+            "description": "分类代码"
+          },
+          "name": {
+            "type": "string",
+            "description": "分类名称"
+          },
+          "parentId": {
+            "type": "string",
+            "nullable": true,
+            "description": "父分类ID"
+          },
+          "icon": {
+            "type": "string",
+            "description": "图标"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "排序"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "BrandConfig": {
+        "type": "object",
+        "required": ["id", "code", "name", "sortOrder"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "品牌ID"
+          },
+          "code": {
+            "type": "string",
+            "description": "品牌代码"
+          },
+          "name": {
+            "type": "string",
+            "description": "品牌名称"
+          },
+          "logo": {
+            "type": "string",
+            "description": "Logo URL"
+          },
+          "sortOrder": {
+            "type": "integer",
+            "description": "排序"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "OnboardingState": {
+        "type": "object",
+        "properties": {
+          "completionPercentage": {
+            "type": "number",
+            "description": "完成百分比"
+          },
+          "currentStepIndex": {
+            "type": "integer",
+            "description": "当前步骤索引"
+          },
+          "isDismissed": {
+            "type": "boolean",
+            "description": "是否已关闭"
+          },
+          "missions": {
+            "type": "object",
+            "description": "任务列表"
+          }
+        }
+      },
+      "ManualRedemptionForm": {
+        "type": "object",
+        "required": ["storeId", "redemptionTime", "reasonCategory"],
+        "properties": {
+          "storeId": {
+            "type": "string",
+            "description": "门店ID"
+          },
+          "redemptionTime": {
+            "type": "string",
+            "format": "date-time",
+            "description": "核销时间"
+          },
+          "reasonCategory": {
+            "type": "string",
+            "description": "原因分类"
+          },
+          "notes": {
+            "type": "string",
+            "description": "备注"
+          }
+        }
+      },
+      "ManualVoidForm": {
+        "type": "object",
+        "required": ["reasonCategory"],
+        "properties": {
+          "reasonCategory": {
+            "type": "string",
+            "description": "原因分类"
+          },
+          "notes": {
+            "type": "string",
+            "description": "备注"
+          }
+        }
+      }
+    },
+    "parameters": {
+      "PageParam": {
+        "name": "page",
+        "in": "query",
+        "description": "页码",
+        "schema": {
+          "type": "integer",
+          "default": 1
+        }
+      },
+      "PageSizeParam": {
+        "name": "pageSize",
+        "in": "query",
+        "description": "每页记录数",
+        "schema": {
+          "type": "integer",
+          "default": 20
+        }
+      },
+      "SearchParam": {
+        "name": "search",
+        "in": "query",
+        "description": "搜索关键词",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "StartDateParam": {
+        "name": "startDate",
+        "in": "query",
+        "description": "开始日期",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "EndDateParam": {
+        "name": "endDate",
+        "in": "query",
+        "description": "结束日期",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Token 认证"
+      }
+    }
+  },
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/members": {
+      "get": {
+        "tags": ["Members"],
+        "summary": "获取会员列表",
+        "description": "分页获取会员列表，支持搜索和状态筛选",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PageSizeParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "会员状态筛选",
+            "schema": {
+              "type": "string",
+              "enum": ["Active", "Inactive"]
+            }
+          },
+          {
+            "name": "tier",
+            "in": "query",
+            "description": "会员等级筛选",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "allOf": [
+                            { "$ref": "#/components/schemas/PaginatedData" },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "items": {
+                                  "type": "array",
+                                  "items": { "$ref": "#/components/schemas/Member" }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Members"],
+        "summary": "创建会员",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Member" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Member" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{id}": {
+      "get": {
+        "tags": ["Members"],
+        "summary": "获取会员详情",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Member" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Members"],
+        "summary": "更新会员信息",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Member" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Member" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Members"],
+        "summary": "删除会员",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ApiResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{id}/points/summary": {
+      "get": {
+        "tags": ["Members"],
+        "summary": "获取会员积分汇总",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/PointsSummary" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{id}/points/packets": {
+      "get": {
+        "tags": ["Members"],
+        "summary": "获取会员积分包列表",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/PointPacket" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{id}/points/adjust": {
+      "post": {
+        "tags": ["Members"],
+        "summary": "调整会员积分",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["amount", "reasonType", "remark"],
+                "properties": {
+                  "amount": {
+                    "type": "integer",
+                    "description": "调整数量（正数加积分，负数减积分）"
+                  },
+                  "reasonType": {
+                    "type": "string",
+                    "description": "原因类型"
+                  },
+                  "remark": {
+                    "type": "string",
+                    "description": "备注"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Member" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{id}/tier/change": {
+      "post": {
+        "tags": ["Members"],
+        "summary": "变更会员等级",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["newTier", "reasonType", "remark"],
+                "properties": {
+                  "newTier": {
+                    "type": "string",
+                    "description": "新等级"
+                  },
+                  "reasonType": {
+                    "type": "string",
+                    "description": "原因类型"
+                  },
+                  "remark": {
+                    "type": "string",
+                    "description": "备注"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Member" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{id}/asset-logs": {
+      "get": {
+        "tags": ["Members"],
+        "summary": "获取会员资产变动日志",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "日志类型",
+            "schema": {
+              "type": "string",
+              "enum": ["point", "tier"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/AssetLog" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{id}/coupons": {
+      "get": {
+        "tags": ["Members"],
+        "summary": "获取会员优惠券列表",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "优惠券状态筛选",
+            "schema": {
+              "type": "string",
+              "enum": ["available", "used", "expired", "voided"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/MemberCoupon" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{memberId}/coupons/{couponId}/redeem": {
+      "post": {
+        "tags": ["Members"],
+        "summary": "手动核销会员优惠券",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "couponId",
+            "in": "path",
+            "required": true,
+            "description": "优惠券ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ManualRedemptionForm" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/MemberCoupon" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{memberId}/coupons/{couponId}/void": {
+      "post": {
+        "tags": ["Members"],
+        "summary": "手动作废会员优惠券",
+        "parameters": [
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "couponId",
+            "in": "path",
+            "required": true,
+            "description": "优惠券ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ManualVoidForm" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/MemberCoupon" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/members/{id}/coupons/issue": {
+      "post": {
+        "tags": ["Members"],
+        "summary": "手动发放优惠券",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会员ID",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["couponTemplateId"],
+                "properties": {
+                  "couponTemplateId": {
+                    "type": "string",
+                    "description": "优惠券模板ID"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/MemberCoupon" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/coupons": {
+      "get": {
+        "tags": ["Coupons"],
+        "summary": "获取优惠券列表",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PageSizeParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "状态筛选",
+            "schema": {
+              "type": "string",
+              "enum": ["Live", "Scheduled", "Ended", "Paused", "Draft"]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "类型筛选",
+            "schema": {
+              "type": "string",
+              "enum": ["cash", "percentage", "sku", "shipping"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Coupons"],
+        "summary": "创建优惠券",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Coupon" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/coupons/all": {
+      "get": {
+        "tags": ["Coupons"],
+        "summary": "获取所有优惠券（不分页）",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/Coupon" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/coupons/{id}": {
+      "get": {
+        "tags": ["Coupons"],
+        "summary": "获取优惠券详情",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Coupons"],
+        "summary": "更新优惠券",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Coupon" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Coupons"],
+        "summary": "删除优惠券",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/coupons/{id}/publish": {
+      "post": {
+        "tags": ["Coupons"],
+        "summary": "发布优惠券",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/coupons/{id}/status": {
+      "patch": {
+        "tags": ["Coupons"],
+        "summary": "更新优惠券状态",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["Live", "Scheduled", "Ended", "Paused", "Draft"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/coupons/{id}/duplicate": {
+      "post": {
+        "tags": ["Coupons"],
+        "summary": "复制优惠券",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/coupons/{id}/codes/generate": {
+      "post": {
+        "tags": ["Coupons"],
+        "summary": "批量生成唯一码",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "type": "integer",
+                    "description": "生成数量"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "type": "string" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/coupons/{id}/stats": {
+      "get": {
+        "tags": ["Coupons"],
+        "summary": "获取优惠券使用统计",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/campaigns": {
+      "get": {
+        "tags": ["Campaigns"],
+        "summary": "获取营销活动列表",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PageSizeParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "状态筛选",
+            "schema": {
+              "type": "string",
+              "enum": ["active", "draft", "scheduled", "ended", "paused", "running", "finish", "stop"]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "类型筛选",
+            "schema": {
+              "type": "string",
+              "enum": ["boost_sales", "referral", "birthday", "custom", "accumulated", "spending", "coupon", "accumulation"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Campaigns"],
+        "summary": "创建营销活动",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Campaign" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/campaigns/all": {
+      "get": {
+        "tags": ["Campaigns"],
+        "summary": "获取所有营销活动（不分页）",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/campaigns/{id}": {
+      "get": {
+        "tags": ["Campaigns"],
+        "summary": "获取营销活动详情",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Campaigns"],
+        "summary": "更新营销活动",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Campaign" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Campaigns"],
+        "summary": "删除营销活动",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/campaigns/{id}/status": {
+      "patch": {
+        "tags": ["Campaigns"],
+        "summary": "更新营销活动状态",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["active", "draft", "scheduled", "ended", "paused", "running", "finish", "stop"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/campaigns/{id}/start": {
+      "post": {
+        "tags": ["Campaigns"],
+        "summary": "启动营销活动",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/campaigns/{id}/pause": {
+      "post": {
+        "tags": ["Campaigns"],
+        "summary": "暂停营销活动",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/campaigns/{id}/end": {
+      "post": {
+        "tags": ["Campaigns"],
+        "summary": "结束营销活动",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/campaigns/{id}/logs": {
+      "get": {
+        "tags": ["Campaigns"],
+        "summary": "获取活动参与日志",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          },
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PageSizeParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/campaigns/{id}/analytics/summary": {
+      "get": {
+        "tags": ["Campaigns"],
+        "summary": "获取活动分析汇总",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/AnalyticsSummary" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/metrics": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "获取仪表盘指标数据",
+        "parameters": [
+          { "$ref": "#/components/parameters/StartDateParam" },
+          { "$ref": "#/components/parameters/EndDateParam" },
+          {
+            "name": "storeIds",
+            "in": "query",
+            "description": "门店ID列表",
+            "schema": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/DashboardMetrics" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/configuration": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "获取仪表盘配置",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Dashboard"],
+        "summary": "保存仪表盘配置",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "quickActions": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "widgets": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/dashboard/insights/tier-distribution": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "获取等级分布数据",
+        "parameters": [
+          { "$ref": "#/components/parameters/StartDateParam" },
+          { "$ref": "#/components/parameters/EndDateParam" }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/TierMetric" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/currencies": {
+      "get": {
+        "tags": ["Settings"],
+        "summary": "获取货币配置列表",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/CurrencyConfig" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Settings"],
+        "summary": "添加货币",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CurrencyConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/settings/currencies/{code}": {
+      "patch": {
+        "tags": ["Settings"],
+        "summary": "更新货币汇率",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "description": "货币代码",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "rate": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Settings"],
+        "summary": "删除货币",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "description": "货币代码",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/settings/attributes": {
+      "get": {
+        "tags": ["Settings"],
+        "summary": "获取客户属性列表",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/CustomerAttribute" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Settings"],
+        "summary": "添加自定义属性",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CustomerAttribute" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/settings/attributes/{code}": {
+      "patch": {
+        "tags": ["Settings"],
+        "summary": "更新属性",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "description": "属性代码",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CustomerAttribute" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Settings"],
+        "summary": "删除属性",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "description": "属性代码",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/settings/integration/tokens": {
+      "get": {
+        "tags": ["Settings"],
+        "summary": "获取 API Token 列表",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/APIToken" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Settings"],
+        "summary": "生成新的 API Token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Token 名称"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/settings/integration/tokens/{id}": {
+      "patch": {
+        "tags": ["Settings"],
+        "summary": "更新 Token 名称",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Settings"],
+        "summary": "吊销 Token",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/settings/onboarding": {
+      "get": {
+        "tags": ["Settings"],
+        "summary": "获取引导状态",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/OnboardingState" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/settings/onboarding/dismiss": {
+      "post": {
+        "tags": ["Settings"],
+        "summary": "关闭引导",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/settings/onboarding/reset": {
+      "post": {
+        "tags": ["Settings"],
+        "summary": "重置引导状态",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/basic-data/stores": {
+      "get": {
+        "tags": ["BasicData"],
+        "summary": "获取门店列表",
+        "parameters": [
+          { "$ref": "#/components/parameters/SearchParam" },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "状态筛选",
+            "schema": {
+              "type": "string",
+              "enum": ["ACTIVE", "DISABLED"]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "类型筛选",
+            "schema": {
+              "type": "string",
+              "enum": ["DIRECT", "FRANCHISE", "PARTNER"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/StoreConfig" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["BasicData"],
+        "summary": "添加门店",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StoreConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/basic-data/stores/{code}": {
+      "get": {
+        "tags": ["BasicData"],
+        "summary": "获取门店详情",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["BasicData"],
+        "summary": "更新门店",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StoreConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["BasicData"],
+        "summary": "删除门店",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/basic-data/products": {
+      "get": {
+        "tags": ["BasicData"],
+        "summary": "获取商品列表",
+        "parameters": [
+          { "$ref": "#/components/parameters/PageParam" },
+          { "$ref": "#/components/parameters/PageSizeParam" },
+          { "$ref": "#/components/parameters/SearchParam" },
+          {
+            "name": "categoryId",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "brandId",
+            "in": "query",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["ON_SHELF", "OFF_SHELF"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "post": {
+        "tags": ["BasicData"],
+        "summary": "添加商品",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProductConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/basic-data/products/{sku}": {
+      "get": {
+        "tags": ["BasicData"],
+        "summary": "获取商品详情",
+        "parameters": [
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["BasicData"],
+        "summary": "更新商品",
+        "parameters": [
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProductConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["BasicData"],
+        "summary": "删除商品",
+        "parameters": [
+          {
+            "name": "sku",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/basic-data/categories": {
+      "get": {
+        "tags": ["BasicData"],
+        "summary": "获取分类列表",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/CategoryConfig" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["BasicData"],
+        "summary": "添加分类",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/basic-data/categories/tree": {
+      "get": {
+        "tags": ["BasicData"],
+        "summary": "获取分类树形结构",
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/basic-data/categories/{id}": {
+      "get": {
+        "tags": ["BasicData"],
+        "summary": "获取分类详情",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["BasicData"],
+        "summary": "更新分类",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CategoryConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["BasicData"],
+        "summary": "删除分类",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/basic-data/brands": {
+      "get": {
+        "tags": ["BasicData"],
+        "summary": "获取品牌列表",
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/BrandConfig" }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["BasicData"],
+        "summary": "添加品牌",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BrandConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/basic-data/brands/{id}": {
+      "get": {
+        "tags": ["BasicData"],
+        "summary": "获取品牌详情",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["BasicData"],
+        "summary": "更新品牌",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BrandConfig" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["BasicData"],
+        "summary": "删除品牌",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功"
+          }
+        }
+      }
+    },
+    "/basic-data/import": {
+      "post": {
+        "tags": ["BasicData"],
+        "summary": "批量导入基础数据",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "stores": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/StoreConfig" }
+                  },
+                  "products": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/ProductConfig" }
+                  },
+                  "categories": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/CategoryConfig" }
+                  },
+                  "brands": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/BrandConfig" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "success": { "type": "integer" },
+                            "failed": { "type": "integer" },
+                            "errors": {
+                              "type": "array",
+                              "items": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/basic-data/export": {
+      "get": {
+        "tags": ["BasicData"],
+        "summary": "导出基础数据",
+        "parameters": [
+          {
+            "name": "types",
+            "in": "query",
+            "description": "导出数据类型（逗号分隔）",
+            "schema": {
+              "type": "string",
+              "example": "stores,products,categories,brands"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "成功",
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
