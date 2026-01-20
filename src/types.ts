@@ -411,51 +411,11 @@ export type CouponType = 'cash' | 'percentage' | 'sku' | 'shipping';
 export type CouponStatus = 'Live' | 'Scheduled' | 'Ended' | 'Paused' | 'Draft';
 
 // --- Coupon Template Types (020-coupon-ia-update) ---
+// NOTE: CouponTemplate is now an alias for Coupon (consolidated in 023-coupon-refinement-v3)
+// Kept for backward compatibility with existing wizard components
 
-/** Template-based coupon definition for the accordion wizard */
-export interface CouponTemplate {
-  id: string;
-
-  // Essentials
-  name: string;
-  identifier: string;
-  description?: string;
-  type: CouponType;
-  value: number;
-  productText?: string;
-  imageUrl?: string;
-  termsConditions?: string;
-
-  // Lifecycle
-  validityMode: 'dynamic' | 'fixed';
-  validityDays?: number;
-  validityDelay?: number;
-  startDate?: string;
-  endDate?: string;
-
-  // Restrictions
-  minSpend?: number;
-  isStackable: boolean;
-  maxPerTransaction?: number;
-  storeScope: 'all' | 'specific';
-  storeIds?: string[];
-
-  // Inventory
-  totalQuotaType: 'unlimited' | 'capped';
-  totalQuota?: number;
-  codeStrategy: 'random' | 'custom' | 'unique';
-  customCode?: string;
-
-  // Distribution
-  userQuotaType: 'unlimited' | 'capped';
-  userQuota?: number;
-  userQuotaTimeframe?: 'lifetime' | 'year' | 'month';
-  channels: ('public_app' | 'points_mall' | 'manual_issue')[];
-
-  status: 'draft' | 'active' | 'inactive';
-  createdAt: string;
-  updatedAt: string;
-}
+/** @deprecated Use Coupon instead. This alias will be removed in a future version. */
+export type CouponTemplate = Coupon;
 
 /** Wizard state for managing the accordion form */
 export interface CouponWizardFormState {
@@ -530,45 +490,76 @@ export interface PersonalQuota {
   windowValue?: number; // [NEW] Multiplier for window (e.g., 2 for "Every 2 Weeks")
 }
 
-/** Complete Coupon entity for the wizard (based on data-model.md) */
+/**
+ * Consolidated Coupon entity (023-coupon-refinement-v3)
+ * Combines legacy CouponTemplate and Coupon into a single interface based on data-model.md
+ */
 export interface Coupon {
   id: string;
-  code: string;
   name: string;
-  // FR-COUPON-02: Identifier with auto/manual mode
+
+  // Section A: Basic Information
   identifier: string;
   identifierMode: IdentifierMode;
   type: CouponType;
   value: number;
-  // [NEW] Text description for Product/Service value (FR-001)
-  productText?: string;
-  minSpend: number;
-  isStackable: boolean;
-  cartLimit: number;
-  exceptions?: CouponExceptions;
-  codeStrategy: CodeStrategy;
+  productText?: string;  // Text description for Product/Service type (FR-001)
+  imageUrl?: string;
+  description?: string;
+  termsConditions?: string;
+
+  // Template Validity (Section A)
+  validityType: ValidityType;  // 'fixed' | 'dynamic' - Fixed range or All Time
+  startDate?: string;  // Required if validityType is 'fixed'
+  endDate?: string;    // Required if validityType is 'fixed'
+
+  // Section B: Union Code Validity
+  validityMode: ValidityMode;  // 'template' | 'dynamic' - Follow template vs Dynamic issuance
+  validityDays?: number;       // Rolling duration in days (for dynamic mode)
+  validityDelay?: number;      // Days to wait after issuance before active
+
+  // Section C: Distribution Limits
+  totalQuotaType: 'unlimited' | 'capped';
+  totalQuota?: number;  // Total number of coupons available
+  userQuotaType: 'unlimited' | 'capped';
+  userQuota?: number;   // Max coupons per person
+  quotaTimeframe?: QuotaTimeUnit;  // day, week, month, year, lifetime
+  windowValue?: number;  // Multiplier for timeframe (e.g., 2 weeks)
+
+  // Section D: Redemption Limits
+  storeScope: 'all' | 'specific';
+  storeIds?: string[];  // List of store IDs (when storeScope is 'specific')
+
+  // Status & Timestamps
+  status: CouponStatus | 'draft' | 'active' | 'inactive';
+  createdAt?: string;
+  updatedAt?: string;
+
+  // --- Legacy fields (backward compatibility) ---
+  code?: string;  // Generated display code
+  minSpend?: number;
+  isStackable?: boolean;
+  maxPerTransaction?: number;
+  cartLimit?: number;
+  codeStrategy?: CodeStrategy;
   customCode?: string;
-  totalQuota: number;
-  // FR-COUPON-02: Per-person quota with time window
-  userQuota: number;
+  channels?: DistributionChannel[];
+  exceptions?: CouponExceptions;
   personalQuota?: PersonalQuota;
-  validityType: ValidityType;
-  // [NEW] Validity mode for coupon instance validity (FR-002)
-  validityMode: ValidityMode;
-  // [NEW] Days to wait before coupon becomes active (for Dynamic mode)
-  validityDelay?: number;
-  validityDays?: number;
-  startDate?: string;
-  endDate?: string;
-  extendToEndOfMonth: boolean;
-  channels: DistributionChannel[];
-  // FR-COUPON-02: Store restrictions
+  extendToEndOfMonth?: boolean;
   storeRestriction?: StoreRestriction;
-  status: CouponStatus;
+  userQuotaTimeframe?: 'lifetime' | 'year' | 'month';  // Legacy alias for quotaTimeframe
 }
 
-/** Section identifiers for the accordion wizard */
+/** Section identifiers for the accordion wizard (v3: 4-section structure) */
 export type CouponWizardSection =
+  | 'basicInfo'          // Section A: Basic Information
+  | 'unionValidity'      // Section B: Union Code Validity
+  | 'distributionLimits' // Section C: Distribution Limits
+  | 'redemptionLimits';  // Section D: Redemption Limits
+
+/** @deprecated Legacy section names - kept for backward compatibility */
+export type LegacyCouponWizardSection =
   | 'essentials'
   | 'lifecycle'
   | 'guardrails'

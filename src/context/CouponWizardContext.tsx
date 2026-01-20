@@ -4,9 +4,17 @@ import {
   CouponWizardSection,
   CouponWizardState,
   SectionValidation,
-  DistributionChannel,
-  ValidityMode,
 } from '../types';
+import { MockCouponService } from '../lib/services/mock/MockCouponService';
+
+// --- Section Order (v3: 4-section structure) ---
+
+const SECTION_ORDER: CouponWizardSection[] = [
+  'basicInfo',          // A. Basic Information
+  'unionValidity',      // B. Union Code Validity
+  'distributionLimits', // C. Distribution Limits
+  'redemptionLimits',   // D. Redemption Limits
+];
 
 // --- Initial State ---
 
@@ -17,54 +25,56 @@ const createInitialValidation = (): SectionValidation => ({
 });
 
 const initialSectionValidation: Record<CouponWizardSection, SectionValidation> = {
-  essentials: createInitialValidation(),
-  lifecycle: createInitialValidation(),
-  guardrails: createInitialValidation(),
-  inventory: createInitialValidation(),
-  distribution: createInitialValidation(),
+  basicInfo: createInitialValidation(),
+  unionValidity: createInitialValidation(),
+  distributionLimits: createInitialValidation(),
+  redemptionLimits: createInitialValidation(),
 };
 
 const createDefaultCoupon = (): Partial<Coupon> => ({
+  // Section A: Basic Information
   name: '',
-  code: '',
+  identifier: '',
+  identifierMode: 'auto',
   type: 'cash',
   value: 10,
   productText: '',
-  minSpend: 0,
-  isStackable: false,
-  cartLimit: 1,
-  codeStrategy: 'random',
-  totalQuota: 1000,
-  userQuota: 1,
-  validityType: 'dynamic',
-  validityMode: 'template',
+  imageUrl: '',
+  description: '',
+  termsConditions: '',
+  validityType: 'fixed',  // Template validity: 'fixed' (date range) or 'dynamic' (all time)
+  startDate: '',
+  endDate: '',
+
+  // Section B: Union Code Validity
+  validityMode: 'template',  // 'template' (follow template) or 'dynamic' (dynamic duration)
   validityDelay: 0,
   validityDays: 30,
-  extendToEndOfMonth: false,
-  personalQuota: { maxCount: 1, timeWindow: 'lifetime', windowValue: 1 },
-  storeRestriction: { mode: 'all', storeIds: [] },
-  channels: ['public_app'],
+
+  // Section C: Distribution Limits
+  totalQuotaType: 'unlimited',
+  totalQuota: 1000,
+  userQuotaType: 'unlimited',
+  userQuota: 1,
+  quotaTimeframe: 'lifetime',
+  windowValue: 1,
+
+  // Section D: Redemption Limits
+  storeScope: 'all',
+  storeIds: [],
+
+  // Status
   status: 'Draft',
 });
 
 const initialState: CouponWizardState = {
   coupon: createDefaultCoupon(),
-  activeSection: 'essentials',
+  activeSection: 'basicInfo',
   sectionValidation: initialSectionValidation,
   isDirty: false,
-  furthestSection: 'essentials',
+  furthestSection: 'basicInfo',
   previousSection: null,
 };
-
-// --- Section Order ---
-
-const SECTION_ORDER: CouponWizardSection[] = [
-  'essentials',
-  'lifecycle',
-  'guardrails',
-  'inventory',
-  'distribution',
-];
 
 // --- Helper Functions ---
 
@@ -159,6 +169,133 @@ function couponWizardReducer(state: CouponWizardState, action: CouponWizardActio
   }
 }
 
+// --- Validation Functions (v3: 4-section structure) ---
+
+/**
+ * Section A: Basic Information Validation
+ * - Name (required)
+ * - Identifier (required if manual mode, must be unique)
+ * - Type (required)
+ * - Value (required for cash/percentage)
+ * - Template Validity (dates required if fixed mode)
+ */
+function validateBasicInfo(coupon: Partial<Coupon>): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  // Name validation
+  if (!coupon.name?.trim()) {
+    errors.push('Coupon name is required');
+  }
+
+  // Identifier validation
+  if (coupon.identifierMode === 'manual') {
+    if (!coupon.identifier?.trim()) {
+      errors.push('Custom identifier is required');
+    } else {
+      // Check for uniqueness (exclude current coupon ID when editing)
+      const isTaken = MockCouponService.isIdentifierTaken(coupon.identifier, coupon.id);
+      if (isTaken) {
+        errors.push('This identifier is already in use');
+      }
+    }
+  } else if (coupon.identifierMode === 'auto' && coupon.identifier) {
+    // Also check auto-generated identifiers for uniqueness
+    const isTaken = MockCouponService.isIdentifierTaken(coupon.identifier, coupon.id);
+    if (isTaken) {
+      errors.push('Generated identifier conflicts with existing coupon');
+    }
+  }
+
+  // Type validation
+  if (!coupon.type) {
+    errors.push('Coupon type is required');
+  }
+
+  // Value validation based on type
+  if (coupon.type === 'sku') {
+    if (!coupon.productText?.trim()) {
+      errors.push('Product/service description is required');
+    }
+  } else if (coupon.type !== 'shipping') {
+    if (coupon.value === undefined || coupon.value <= 0) {
+      errors.push('Value must be greater than 0');
+    }
+  }
+
+  // Template Validity validation (only if not "All Time")
+  if (coupon.validityType === 'fixed') {
+    if (!coupon.startDate) {
+      errors.push('Start date is required');
+    }
+    if (!coupon.endDate) {
+      errors.push('End date is required');
+    }
+    if (coupon.startDate && coupon.endDate && new Date(coupon.startDate) > new Date(coupon.endDate)) {
+      errors.push('End date must be after start date');
+    }
+  }
+
+  return { isValid: errors.length === 0, errors };
+}
+
+/**
+ * Section B: Union Code Validity Validation
+ * - If Dynamic Duration: validityDays required
+ */
+function validateUnionValidity(coupon: Partial<Coupon>): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (coupon.validityMode === 'dynamic') {
+    if (!coupon.validityDays || coupon.validityDays <= 0) {
+      errors.push('Duration must be greater than 0');
+    }
+    if (coupon.validityDelay !== undefined && coupon.validityDelay < 0) {
+      errors.push('Effective delay cannot be negative');
+    }
+  }
+
+  return { isValid: errors.length === 0, errors };
+}
+
+/**
+ * Section C: Distribution Limits Validation
+ * - Total Quota (required if capped)
+ * - Per Person Quota (required if capped)
+ */
+function validateDistributionLimits(coupon: Partial<Coupon>): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (coupon.totalQuotaType === 'capped') {
+    if (!coupon.totalQuota || coupon.totalQuota < 1) {
+      errors.push('Total quota must be at least 1');
+    }
+  }
+
+  if (coupon.userQuotaType === 'capped') {
+    if (!coupon.userQuota || coupon.userQuota < 1) {
+      errors.push('Per person quota must be at least 1');
+    }
+  }
+
+  return { isValid: errors.length === 0, errors };
+}
+
+/**
+ * Section D: Redemption Limits Validation
+ * - Store IDs required if specific stores selected
+ */
+function validateRedemptionLimits(coupon: Partial<Coupon>): { isValid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (coupon.storeScope === 'specific') {
+    if (!coupon.storeIds || coupon.storeIds.length === 0) {
+      errors.push('At least one store must be selected');
+    }
+  }
+
+  return { isValid: errors.length === 0, errors };
+}
+
 // --- Context Interface ---
 
 interface CouponWizardContextType {
@@ -167,7 +304,6 @@ interface CouponWizardContextType {
   setActiveSection: (section: CouponWizardSection) => void;
   goToNextSection: () => void;
   goToPreviousSection: () => void;
-  /** Smart continue: goes to next section OR returns to furthest section if editing earlier section */
   continueFromCurrentSection: () => void;
   validateSection: (section: CouponWizardSection) => boolean;
   markSectionTouched: (section: CouponWizardSection) => void;
@@ -176,104 +312,12 @@ interface CouponWizardContextType {
   getFirstInvalidSection: () => CouponWizardSection | null;
   isSectionComplete: (section: CouponWizardSection) => boolean;
   getSectionSummary: (section: CouponWizardSection) => string;
-  /** Get the next uncompleted section after current, or null if all complete */
   getNextUncompletedSection: () => CouponWizardSection | null;
-  /** Check if user is editing a previously completed section */
   isEditingPreviousSection: () => boolean;
-  /** Get section errors for display */
   getSectionErrors: (section: CouponWizardSection) => string[];
 }
 
 const CouponWizardContext = createContext<CouponWizardContextType | undefined>(undefined);
-
-// --- Validation Logic ---
-
-function validateEssentials(coupon: Partial<Coupon>): { isValid: boolean; errors: string[] } {
-  const errors: string[] = [];
-  if (!coupon.name?.trim()) errors.push('Name is required');
-  if (!coupon.type) errors.push('Discount type is required');
-
-  // For 'sku' (Product/Service) type: productText is required when value is 0
-  if (coupon.type === 'sku') {
-    if ((coupon.value === undefined || coupon.value === 0) && !coupon.productText?.trim()) {
-      errors.push('Product description is required for Product/Service type');
-    }
-  } else {
-    // For other types, value must be > 0
-    if (coupon.value === undefined || coupon.value <= 0) errors.push('Value must be greater than 0');
-  }
-
-  return { isValid: errors.length === 0, errors };
-}
-
-function validateLifecycle(coupon: Partial<Coupon>): { isValid: boolean; errors: string[] } {
-  const errors: string[] = [];
-  if (!coupon.validityType) errors.push('Validity type is required');
-
-  // Template mode: must have fixed dates
-  if (coupon.validityMode === 'template' || coupon.validityType === 'fixed') {
-    if (!coupon.startDate) errors.push('Start date is required');
-    if (!coupon.endDate) errors.push('End date is required');
-    if (coupon.startDate && coupon.endDate && new Date(coupon.startDate) > new Date(coupon.endDate)) {
-      errors.push('End date must be after start date');
-    }
-  }
-
-  // Dynamic mode: must have duration (validityDays)
-  if (coupon.validityMode === 'dynamic' || coupon.validityType === 'dynamic') {
-    if (!coupon.validityDays || coupon.validityDays <= 0) {
-      errors.push('Validity duration must be greater than 0');
-    }
-    // validityDelay is optional but must be non-negative if provided
-    if (coupon.validityDelay !== undefined && coupon.validityDelay < 0) {
-      errors.push('Validity delay cannot be negative');
-    }
-  }
-
-  return { isValid: errors.length === 0, errors };
-}
-
-function validateGuardrails(coupon: Partial<Coupon>): { isValid: boolean; errors: string[] } {
-  const errors: string[] = [];
-  if (coupon.minSpend !== undefined && coupon.minSpend < 0) errors.push('Min spend cannot be negative');
-  if (coupon.cartLimit !== undefined && coupon.cartLimit < 1) errors.push('Cart limit must be at least 1');
-  if (coupon.totalQuota === undefined || coupon.totalQuota < 1) errors.push('Total quota must be at least 1');
-
-  // Personal quota validation
-  if (coupon.personalQuota) {
-    if (coupon.personalQuota.maxCount < 1) {
-      errors.push('Personal limit must be at least 1');
-    }
-    // windowValue validation: must be >= 1 when specified
-    if (coupon.personalQuota.windowValue !== undefined && coupon.personalQuota.windowValue < 1) {
-      errors.push('Quota window value must be at least 1');
-    }
-  } else {
-    errors.push('Personal limit must be at least 1');
-  }
-
-  return { isValid: errors.length === 0, errors };
-}
-
-function validateInventory(coupon: Partial<Coupon>): { isValid: boolean; errors: string[] } {
-  const errors: string[] = [];
-  if (!coupon.codeStrategy) errors.push('Code strategy is required');
-  if (coupon.codeStrategy === 'custom' && !coupon.customCode?.trim()) {
-    errors.push('Custom code is required');
-  }
-  return { isValid: errors.length === 0, errors };
-}
-
-function validateDistribution(coupon: Partial<Coupon>): { isValid: boolean; errors: string[] } {
-  const errors: string[] = [];
-  if (!coupon.channels || coupon.channels.length === 0) {
-    errors.push('At least one distribution channel is required');
-  }
-  if (coupon.storeRestriction?.mode !== 'all' && (!coupon.storeRestriction?.storeIds || coupon.storeRestriction.storeIds.length === 0)) {
-    errors.push('At least one store must be selected for restricted coupons');
-  }
-  return { isValid: errors.length === 0, errors };
-}
 
 // --- Provider ---
 
@@ -312,20 +356,17 @@ export const CouponWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
     let result: { isValid: boolean; errors: string[] };
 
     switch (section) {
-      case 'essentials':
-        result = validateEssentials(state.coupon);
+      case 'basicInfo':
+        result = validateBasicInfo(state.coupon);
         break;
-      case 'lifecycle':
-        result = validateLifecycle(state.coupon);
+      case 'unionValidity':
+        result = validateUnionValidity(state.coupon);
         break;
-      case 'guardrails':
-        result = validateGuardrails(state.coupon);
+      case 'distributionLimits':
+        result = validateDistributionLimits(state.coupon);
         break;
-      case 'inventory':
-        result = validateInventory(state.coupon);
-        break;
-      case 'distribution':
-        result = validateDistribution(state.coupon);
+      case 'redemptionLimits':
+        result = validateRedemptionLimits(state.coupon);
         break;
       default:
         result = { isValid: true, errors: [] };
@@ -368,7 +409,6 @@ export const CouponWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
   const getNextUncompletedSection = useCallback((): CouponWizardSection | null => {
     const currentIndex = getSectionIndex(state.activeSection);
 
-    // First check sections after current
     for (let i = currentIndex + 1; i < SECTION_ORDER.length; i++) {
       const section = SECTION_ORDER[i];
       if (!state.sectionValidation[section].isValid || !state.sectionValidation[section].isTouched) {
@@ -376,7 +416,6 @@ export const CouponWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
       }
     }
 
-    // Then check sections before current (in case user skipped)
     for (let i = 0; i < currentIndex; i++) {
       const section = SECTION_ORDER[i];
       if (!state.sectionValidation[section].isValid) {
@@ -393,18 +432,11 @@ export const CouponWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
     return currentIndex < furthestIndex;
   }, [state.activeSection, state.furthestSection]);
 
-  /**
-   * Smart continue behavior per US2:
-   * - If editing an earlier section, return to the furthest reached section (or first uncompleted)
-   * - Otherwise, just go to next section
-   */
   const continueFromCurrentSection = useCallback(() => {
     const currentIndex = getSectionIndex(state.activeSection);
     const furthestIndex = getSectionIndex(state.furthestSection);
 
     if (currentIndex < furthestIndex) {
-      // User is editing an earlier section - find where to go back to
-      // Priority: first uncompleted section after current, or furthest section
       let targetSection: CouponWizardSection = state.furthestSection;
 
       for (let i = currentIndex + 1; i <= furthestIndex; i++) {
@@ -420,7 +452,6 @@ export const CouponWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
         payload: { section: targetSection, updateFurthest: false },
       });
     } else {
-      // Normal forward progression
       if (currentIndex < SECTION_ORDER.length - 1) {
         dispatch({
           type: 'SET_ACTIVE_SECTION',
@@ -438,55 +469,52 @@ export const CouponWizardProvider: React.FC<{ children: ReactNode }> = ({ childr
     const { coupon } = state;
     const validation = state.sectionValidation[section];
 
-    // If section has errors and is touched, show error indicator
     if (validation.isTouched && !validation.isValid && validation.errors.length > 0) {
       return `⚠ ${validation.errors[0]}`;
     }
 
     switch (section) {
-      case 'essentials': {
-        if (!coupon.name) return 'Not configured';
-        // Handle Product/Service type with productText
-        if (coupon.type === 'sku' && coupon.productText) {
-          return `${coupon.name} • ${coupon.productText}`;
-        }
-        const typeLabel = coupon.type === 'cash' ? '$' : coupon.type === 'percentage' ? '%' : coupon.type?.toUpperCase();
-        return `${coupon.name} • ${typeLabel}${coupon.value || 0}`;
-      }
-      case 'lifecycle': {
-        // Show validityMode-aware summary
-        if (coupon.validityMode === 'dynamic' || coupon.validityType === 'dynamic') {
-          const delayText = coupon.validityDelay && coupon.validityDelay > 0
-            ? `After ${coupon.validityDelay}d, `
-            : '';
-          return `${delayText}${coupon.validityDays || 0} Days Rolling`;
-        }
-        if (coupon.validityMode === 'template' || coupon.validityType === 'fixed') {
-          if (coupon.startDate && coupon.endDate) {
-            return `${coupon.startDate} → ${coupon.endDate}`;
-          }
-        }
-        return 'Not configured';
-      }
-      case 'guardrails': {
-        const parts: string[] = [];
-        if (coupon.minSpend) parts.push(`Min $${coupon.minSpend}`);
-        parts.push(coupon.isStackable ? 'Stackable' : 'Exclusive');
-        return parts.join(' • ') || 'Not configured';
-      }
-      case 'inventory': {
-        const strategy = coupon.codeStrategy?.charAt(0).toUpperCase() + (coupon.codeStrategy?.slice(1) || '');
-        return `${strategy} • ${coupon.totalQuota?.toLocaleString() || 0} Quota`;
-      }
-      case 'distribution': {
-        if (!coupon.channels || coupon.channels.length === 0) return 'Not configured';
-        const channelLabels: Record<DistributionChannel, string> = {
-          public_app: 'App',
-          points_mall: 'Points Mall',
-          manual_issue: 'Manual',
+      case 'basicInfo': {
+        if (!coupon.name) return 'Configure coupon details';
+        const typeLabels: Record<string, string> = {
+          cash: `$${coupon.value || 0} Off`,
+          percentage: `${coupon.value || 0}% Off`,
+          sku: coupon.productText || 'Product/Service',
+          shipping: 'Free Shipping',
         };
-        return coupon.channels.map(c => channelLabels[c]).join(', ');
+        const validityText = coupon.validityType === 'dynamic' ? '• All Time' :
+          (coupon.startDate && coupon.endDate ? `• ${coupon.startDate} → ${coupon.endDate}` : '');
+        return `${coupon.name} • ${typeLabels[coupon.type || 'cash']} ${validityText}`;
       }
+
+      case 'unionValidity': {
+        if (coupon.validityMode === 'template') {
+          return 'Follow Template Validity';
+        }
+        const delayText = coupon.validityDelay && coupon.validityDelay > 0
+          ? `+${coupon.validityDelay}d delay, `
+          : '';
+        return `Dynamic: ${delayText}${coupon.validityDays || 30} days`;
+      }
+
+      case 'distributionLimits': {
+        const totalText = coupon.totalQuotaType === 'unlimited'
+          ? '∞ Total'
+          : `${coupon.totalQuota?.toLocaleString() || 0} Total`;
+        const userText = coupon.userQuotaType === 'unlimited'
+          ? '∞ Per Person'
+          : `${coupon.userQuota || 0}/${coupon.quotaTimeframe || 'lifetime'}`;
+        return `${totalText} • ${userText}`;
+      }
+
+      case 'redemptionLimits': {
+        if (coupon.storeScope === 'all') {
+          return 'All Stores';
+        }
+        const storeCount = coupon.storeIds?.length || 0;
+        return `${storeCount} Store${storeCount !== 1 ? 's' : ''} Selected`;
+      }
+
       default:
         return 'Not configured';
     }

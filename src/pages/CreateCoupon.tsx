@@ -15,16 +15,15 @@ import { NavigationPayload } from '../App';
 import { CouponWizardProvider, useCouponWizard, SECTION_ORDER } from '../context/CouponWizardContext';
 import { useCoupon } from '../context/CouponContext';
 import { useOnboarding } from '../context/OnboardingContext';
-import MockCouponService from '../services/MockCouponService';
+import { MockCouponService } from '../lib/services/mock/MockCouponService';
 import { generateAndDownloadCodes } from '../utils/csv_utils';
 
-// Section Components
+// Section Components (v3: 4-section structure)
 import AccordionSection from '../components/coupon/AccordionSection';
-import EssentialsSection from '../components/coupon/sections/EssentialsSection';
-import LifecycleSection from '../components/coupon/sections/LifecycleSection';
-import GuardrailsSection from '../components/coupon/sections/GuardrailsSection';
-import InventorySection from '../components/coupon/sections/InventorySection';
-import DistributionSection from '../components/coupon/sections/DistributionSection';
+import BasicInfoSection from '../components/coupon/sections/BasicInfoSection';
+import UnionValiditySection from '../components/coupon/sections/UnionValiditySection';
+import DistributionLimitsSection from '../components/coupon/sections/DistributionLimitsSection';
+import RedemptionLimitsSection from '../components/coupon/sections/RedemptionLimitsSection';
 import LivePreview from '../components/coupon/LivePreview';
 
 interface CreateCouponProps {
@@ -32,19 +31,18 @@ interface CreateCouponProps {
   couponId?: string;
 }
 
-// Section configuration
+// Section configuration (v3: 4-section structure)
 const SECTION_CONFIG: {
   section: CouponWizardSection;
   stepNumber: number;
   title: string;
   Component: React.FC;
 }[] = [
-    { section: 'essentials', stepNumber: 1, title: 'Essentials & Value', Component: EssentialsSection },
-    { section: 'lifecycle', stepNumber: 2, title: 'Lifecycle', Component: LifecycleSection },
-    { section: 'guardrails', stepNumber: 3, title: 'Guardrails', Component: GuardrailsSection },
-    { section: 'inventory', stepNumber: 4, title: 'Inventory & Codes', Component: InventorySection },
-    { section: 'distribution', stepNumber: 5, title: 'Distribution', Component: DistributionSection },
-  ];
+  { section: 'basicInfo', stepNumber: 1, title: 'Basic Information', Component: BasicInfoSection },
+  { section: 'unionValidity', stepNumber: 2, title: 'Union Code Validity', Component: UnionValiditySection },
+  { section: 'distributionLimits', stepNumber: 3, title: 'Distribution Limits', Component: DistributionLimitsSection },
+  { section: 'redemptionLimits', stepNumber: 4, title: 'Redemption Limits', Component: RedemptionLimitsSection },
+];
 
 // Inner component that uses the wizard context
 const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }) => {
@@ -95,7 +93,7 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
     }
   }, [couponId, loadCoupon]);
 
-  // T020: Lock body scroll when wizard is open to prevent background jumping
+  // Lock body scroll when wizard is open
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     return () => {
@@ -138,13 +136,13 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
       // Convert to legacy CouponData format for CouponContext
       const couponData = {
         id: saved.id,
-        code: saved.code,
+        code: saved.code || saved.identifier,
         name: saved.name,
         displayName: getFormattedValue(),
         type: saved.type,
         value: getFormattedValue(),
         audience: ['All Tiers'],
-        inventory: { total: saved.totalQuota, used: 0 },
+        inventory: { total: saved.totalQuota || 0, used: 0 },
         validity: {
           start: saved.startDate || new Date().toISOString().split('T')[0],
           end: saved.endDate || null,
@@ -200,13 +198,13 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
       // Convert to legacy CouponData format
       const couponData = {
         id: published.id,
-        code: published.code,
+        code: published.code || published.identifier,
         name: published.name,
         displayName: getFormattedValue(),
         type: published.type,
         value: getFormattedValue(),
         audience: ['All Tiers'],
-        inventory: { total: published.totalQuota, used: 0 },
+        inventory: { total: published.totalQuota || 0, used: 0 },
         validity: {
           start: published.startDate || new Date().toISOString().split('T')[0],
           end: published.endDate || null,

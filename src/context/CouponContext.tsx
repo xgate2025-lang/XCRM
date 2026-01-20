@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { CouponData, CouponStatus } from '../types';
-import MockCouponService from '../services/MockCouponService';
+import { MockCouponService } from '../lib/services/mock/MockCouponService';
 
 interface CouponContextType {
   coupons: CouponData[];
@@ -89,21 +89,36 @@ export const CouponProvider: React.FC<{ children: ReactNode }> = ({ children }) 
   useEffect(() => {
     const refreshCoupons = () => {
       const loaded = MockCouponService.getAllCoupons();
+      // Map status from consolidated Coupon to CouponData status
+      const mapStatus = (status: string): CouponStatus => {
+        const statusMap: Record<string, CouponStatus> = {
+          'active': 'Live',
+          'draft': 'Draft',
+          'inactive': 'Paused',
+          'Live': 'Live',
+          'Draft': 'Draft',
+          'Scheduled': 'Scheduled',
+          'Ended': 'Ended',
+          'Paused': 'Paused',
+        };
+        return statusMap[status] || 'Draft';
+      };
+
       const contextData: CouponData[] = loaded.map(c => ({
         id: c.id,
-        code: c.code,
+        code: c.code || c.identifier,
         name: c.name,
         displayName: c.type === 'shipping' ? 'FREE' : c.type === 'sku' ? 'GIFT' : c.type === 'cash' ? `$${c.value}` : `${c.value}%`,
         type: c.type,
         value: c.type === 'shipping' ? 'FREE' : c.type === 'sku' ? 'GIFT' : c.type === 'cash' ? `$${c.value}` : `${c.value}%`,
         audience: c.channels || ['All Tiers'],
-        inventory: { total: c.totalQuota, used: 0 },
+        inventory: { total: c.totalQuota || 0, used: 0 },
         validity: {
           start: c.startDate || new Date().toISOString().split('T')[0],
           end: c.endDate || null,
           isRolling: c.validityType === 'dynamic'
         },
-        status: c.status,
+        status: mapStatus(c.status as string),
         revenue: 0
       }));
       setCoupons(contextData);
