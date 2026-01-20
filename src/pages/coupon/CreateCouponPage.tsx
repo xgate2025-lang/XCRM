@@ -49,35 +49,35 @@ const SECTION_CONFIG: {
   subtitle: string;
   Component: React.FC;
 }[] = [
-  {
-    section: 'basicInfo',
-    stepNumber: 1,
-    title: 'Basic Information',
-    subtitle: 'Name, Type, Value & Template Validity',
-    Component: BasicInfoSection,
-  },
-  {
-    section: 'unionValidity',
-    stepNumber: 2,
-    title: 'Union Code Validity',
-    subtitle: 'Individual code expiration rules',
-    Component: UnionValiditySection,
-  },
-  {
-    section: 'distributionLimits',
-    stepNumber: 3,
-    title: 'Distribution Limits',
-    subtitle: 'Total and per-person quotas',
-    Component: DistributionLimitsSection,
-  },
-  {
-    section: 'redemptionLimits',
-    stepNumber: 4,
-    title: 'Redemption Limits',
-    subtitle: 'Store scope restrictions',
-    Component: RedemptionLimitsSection,
-  },
-];
+    {
+      section: 'basicInfo',
+      stepNumber: 1,
+      title: 'Basic Information',
+      subtitle: 'Name, Type, Value & Template Validity',
+      Component: BasicInfoSection,
+    },
+    {
+      section: 'unionValidity',
+      stepNumber: 2,
+      title: 'Union Code Validity',
+      subtitle: 'Individual code expiration rules',
+      Component: UnionValiditySection,
+    },
+    {
+      section: 'distributionLimits',
+      stepNumber: 3,
+      title: 'Distribution Limits',
+      subtitle: 'Total and per-person quotas',
+      Component: DistributionLimitsSection,
+    },
+    {
+      section: 'redemptionLimits',
+      stepNumber: 4,
+      title: 'Redemption Limits',
+      subtitle: 'Store scope restrictions',
+      Component: RedemptionLimitsSection,
+    },
+  ];
 
 // --- Component Props ---
 
@@ -296,9 +296,8 @@ const CreateCouponPageInner: React.FC<CreateCouponPageProps> = ({ onNavigate, co
           <div className="text-sm font-bold text-slate-900">
             {isEditMode ? 'Edit Coupon' : 'Create Coupon'}{' '}
             <span
-              className={`ml-2 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                isEditMode ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-500'
-              }`}
+              className={`ml-2 text-[10px] px-2 py-0.5 rounded-full uppercase tracking-wider ${isEditMode ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-500'
+                }`}
             >
               {isEditMode ? 'Editing' : 'Draft'}
             </span>
@@ -338,15 +337,14 @@ const CreateCouponPageInner: React.FC<CreateCouponPageProps> = ({ onNavigate, co
                   initial="initial"
                   animate={sectionIsActive ? 'active' : 'initial'}
                   whileHover={!sectionIsActive ? 'hover' : undefined}
-                  className={`bg-white rounded-2xl border transition-colors duration-200 ${
-                    sectionIsActive
+                  className={`bg-white rounded-[32px] sm:rounded-[40px] lg:rounded-4xl border transition-colors duration-200 ${sectionIsActive
                       ? 'border-slate-300 shadow-lg'
                       : sectionIsComplete
                         ? 'border-slate-200 shadow-sm'
                         : sectionHasError
                           ? 'border-red-300 shadow-sm'
                           : 'border-slate-100'
-                  }`}
+                    }`}
                 >
                   {/* Accordion Header */}
                   <button
@@ -366,11 +364,10 @@ const CreateCouponPageInner: React.FC<CreateCouponPageProps> = ({ onNavigate, co
                                 : '#f1f5f9',
                         }}
                         transition={{ duration: 0.2, ease: 'easeOut' }}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-                          sectionIsComplete || sectionHasError || sectionIsActive
+                        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${sectionIsComplete || sectionHasError || sectionIsActive
                             ? 'text-white'
                             : 'text-slate-400'
-                        }`}
+                          }`}
                       >
                         {sectionIsComplete ? '✓' : stepNumber}
                       </motion.div>
@@ -476,11 +473,10 @@ const CreateCouponPageInner: React.FC<CreateCouponPageProps> = ({ onNavigate, co
                             >
                               <button
                                 onClick={handleContinue}
-                                className={`px-8 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] ${
-                                  sectionIsEditing
+                                className={`px-8 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] ${sectionIsEditing
                                     ? 'bg-amber-500 text-white hover:bg-amber-600'
                                     : 'bg-slate-900 text-white hover:bg-slate-800'
-                                }`}
+                                  }`}
                               >
                                 {getContinueButtonContent()}
                               </button>
@@ -537,7 +533,7 @@ const CreateCouponPageInner: React.FC<CreateCouponPageProps> = ({ onNavigate, co
           <button
             onClick={handlePublish}
             disabled={isProcessing || isLoading}
-            className="px-8 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 hover:shadow-slate-300 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 disabled:opacity-70"
+            className="px-8 py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 hover:shadow-slate-300 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 disabled:opacity-70"
           >
             {isProcessing ? (
               <Loader2 size={18} className="animate-spin text-primary-400" />
