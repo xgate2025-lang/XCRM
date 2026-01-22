@@ -11,6 +11,8 @@ Auto-generated from all feature plans. Last updated: 2026-01-05
 - Mock Service with LocalStorage persistence (Pattern: `src/lib/mock/`) (018-basic-data-settings)
 - TypeScript, React 19 + Tailwind CSS, Lucide React, react-router-dom, framer-motion (019-settings-ui-refinement)
 - Mock Service with LocalStorage persistence (`src/lib/services/mock/`) (019-settings-ui-refinement)
+- TypeScript (React 19) + Tailwind CSS, Lucide React, `framer-motion` (Accordion transitions) (023-coupon-refinement-v3)
+- Mock Service with LocalStorage persistence (`src/lib/services/mock/MockCouponService.ts`) (023-coupon-refinement-v3)
 
 - (002-member-page-ui-refinement)
 
@@ -31,6 +33,7 @@ tests/
 : Follow standard conventions
 
 ## Recent Changes
+- 023-coupon-refinement-v3: Implemented 4nd generation coupon wizard with unified data model and Rule 9 refinements.
 - 019-settings-ui-refinement: Added TypeScript, React 19 + Tailwind CSS, Lucide React, react-router-dom, framer-motion
 - 018-basic-data-settings: Added TypeScript (React 19) + Tailwind CSS, Lucide React, `react-router-dom`, `framer-motion` (for transitions)
 
