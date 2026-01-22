@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Globe, Plus, Search, Edit3, Trash2, X, Check, AlertCircle,
-  DollarSign, ChevronDown, Users
+  DollarSign, ChevronDown, Users, ArrowLeft, Info
 } from 'lucide-react';
 import { useGlobalSettings } from '../../context/GlobalSettingsContext';
-import { CurrencyConfig } from '../../types';
+import { CurrencyConfig, NavItemId } from '../../types';
+import { NavigationPayload } from '../../App';
 import CustomerAttributes from '../../components/settings/CustomerAttributes';
 
 // ISO 4217 Currency list for the dropdown
@@ -31,7 +32,12 @@ const ISO_CURRENCIES = [
 
 type TabId = 'currency' | 'attributes';
 
-const GlobalSettings: React.FC = () => {
+interface GlobalSettingsProps {
+  navigationPayload?: NavigationPayload;
+  onNavigate?: (id: NavItemId, payload?: NavigationPayload) => void;
+}
+
+const GlobalSettings: React.FC<GlobalSettingsProps> = ({ navigationPayload, onNavigate }) => {
   const {
     currencies,
     isLoading,
@@ -44,6 +50,13 @@ const GlobalSettings: React.FC = () => {
 
   // Tab state
   const [activeTab, setActiveTab] = useState<TabId>('currency');
+
+  // T008: Set active tab from navigation payload (onboarding flow)
+  useEffect(() => {
+    if (navigationPayload?.tab === 'currency') {
+      setActiveTab('currency');
+    }
+  }, [navigationPayload?.tab]);
 
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -183,7 +196,34 @@ const GlobalSettings: React.FC = () => {
             <p className="text-slate-500 text-sm mt-1">Manage currencies and customer attributes</p>
           </div>
         </div>
+
+        {/* T009: Return to Dashboard button (visible when navigating from onboarding) */}
+        {navigationPayload?.source === 'onboarding' && onNavigate && (
+          <button
+            onClick={() => onNavigate('dashboard')}
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary-50 text-primary-700 font-bold rounded-xl hover:bg-primary-100 transition-all"
+          >
+            <ArrowLeft size={18} />
+            Return to Dashboard
+          </button>
+        )}
       </div>
+
+      {/* T016: Onboarding guidance banner */}
+      {navigationPayload?.source === 'onboarding' && (
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3">
+          <div className="bg-blue-100 p-2 rounded-lg">
+            <Info size={20} className="text-blue-600" />
+          </div>
+          <div>
+            <p className="font-bold text-blue-900">Step 1: Set Your Timezone & Currency</p>
+            <p className="text-blue-700 text-sm mt-1">
+              Configure your default currency and exchange rates below. This ensures all transactions
+              and reports display values correctly for your business.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Tab Navigation */}
       <div className="flex items-center gap-8 border-b border-slate-200 px-2">

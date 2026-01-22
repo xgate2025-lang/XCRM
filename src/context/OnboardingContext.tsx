@@ -7,6 +7,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
 import type { MissionId, OnboardingState, NavItemId } from '../types';
+import type { NavigationPayload } from '../App';
 import { MockOnboardingService } from '../lib/services/mock/MockOnboardingService';
 import { LocalStorageClient } from '../lib/storage/LocalStorageClient';
 
@@ -28,7 +29,7 @@ interface OnboardingContextValue {
     dismissOnboarding: () => Promise<void>;
     resetOnboarding: () => Promise<void>;
     navigateToMission: (missionId: MissionId) => void;
-    setNavigateFunction: (fn: (id: NavItemId) => void) => void;
+    setNavigateFunction: (fn: (id: NavItemId, payload?: NavigationPayload) => void) => void;
 
     // Navigation
     currentMissionIndex: number;
@@ -150,9 +151,9 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
     }, [setCurrentMissionIndex]);
 
     // Navigation function holder (set by App/Dashboard)
-    const [navigateFn, setNavigateFn] = useState<((id: NavItemId) => void) | null>(null);
+    const [navigateFn, setNavigateFn] = useState<((id: NavItemId, payload?: NavigationPayload) => void) | null>(null);
 
-    const setNavigateFunction = useCallback((fn: (id: NavItemId) => void) => {
+    const setNavigateFunction = useCallback((fn: (id: NavItemId, payload?: NavigationPayload) => void) => {
         setNavigateFn(() => fn);
     }, []);
 
@@ -165,13 +166,23 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
         const mission = state.missions[missionId];
         if (mission) {
             const targetPage = mission.actionRoute as NavItemId;
+
+            // Build navigation payload based on mission
+            const payload: NavigationPayload = { source: 'onboarding' };
+            if (missionId === 'identity') {
+                payload.tab = 'currency';
+            } else if (missionId === 'tier_method') {
+                payload.tab = 'stores';
+            }
+
             console.log('[OnboardingContext] 🚀 Navigation Triggered:', {
                 missionId,
                 title: mission.title,
                 route: targetPage,
+                payload,
                 hasNavigateFn: !!navigateFn
             });
-            navigateFn(targetPage);
+            navigateFn(targetPage, payload);
         } else {
             console.warn('[OnboardingContext] ❌ Mission not found for navigation:', missionId);
         }

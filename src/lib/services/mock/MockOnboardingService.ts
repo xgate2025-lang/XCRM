@@ -27,7 +27,7 @@ const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
         tag: 'Step 1',
         timeEstimate: '⏱️ 2 mins',
         actionLabel: 'Go to Settings',
-        actionRoute: 'setting', // NavItemId
+        actionRoute: 'settings-global', // NavItemId - routes to Global Settings
         isSkipped: false,
         isComplete: false,
         subtasks: [
@@ -42,7 +42,7 @@ const DEFAULT_MISSIONS: Record<MissionId, MissionData> = {
         tag: 'Step 2',
         timeEstimate: '⏱️ 3 mins',
         actionLabel: 'Import Data',
-        actionRoute: 'setting', // NavItemId
+        actionRoute: 'settings-basic', // NavItemId - routes to Basic Data Settings
         isSkipped: false,
         isComplete: false,
         subtasks: [

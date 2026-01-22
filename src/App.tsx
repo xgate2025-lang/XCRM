@@ -30,6 +30,8 @@ import { NavItemId } from './types';
 /** Navigation payload for passing data between pages (e.g., coupon ID for edit) */
 export interface NavigationPayload {
   id?: string;
+  source?: 'onboarding' | 'normal';
+  tab?: string;
 }
 
 // Inner component that has access to OnboardingContext
@@ -92,11 +94,11 @@ function AppContent() {
         console.log('[App] 🎯 Rendering ProgramPoint page');
         return <ProgramPoint onNavigate={setCurrentPage} />;
       case 'settings-global':
-        return <GlobalSettings />;
+        return <GlobalSettings navigationPayload={navigationPayload} onNavigate={setCurrentPage} />;
       case 'settings-integration':
         return <IntegrationSettings />;
       case 'settings-basic':
-        return <BasicData />;
+        return <BasicData navigationPayload={navigationPayload} onNavigate={setCurrentPage} />;
       default:
         return <PlaceholderPage title={getPageLabel(currentPage)} id={currentPage} onNavigate={setCurrentPage} />;
     }

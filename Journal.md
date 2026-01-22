@@ -345,3 +345,24 @@ INPUTS:
     - `src/pages/settings/GlobalSettings.tsx` - Currency management with tabs
     - `src/components/settings/CustomerAttributes.tsx` - Attribute management component
 - **Rule**: For settings pages with multiple related entities, use internal tabs + extracted components rather than separate routes to maintain context cohesion.
+
+## 2026-01-22: Wizard-Settings Integration - Navigation Payload Pattern
+
+- **Pattern**: Successfully implemented deep-link navigation from onboarding wizard to settings pages with contextual UI.
+- **Architecture Decisions**:
+    1. **Extended NavigationPayload**: Added `source?: 'onboarding' | 'normal'` and `tab?: string` to existing interface rather than creating new navigation mechanism.
+    2. **Mission-Based Tab Mapping**: `navigateToMission()` in OnboardingContext determines target tab based on `missionId` (identity → currency, tier_method → stores).
+    3. **Conditional UI Rendering**: Settings pages check `navigationPayload?.source === 'onboarding'` to show/hide contextual elements (Return button, guidance banner).
+    4. **Type Signature Update**: Updated `navigateFn` type in OnboardingContext to accept optional `NavigationPayload` parameter, maintaining backward compatibility.
+- **Key Lessons**:
+    1. **Extend Don't Replace**: The existing `NavigationPayload` interface was already used for coupon ID passing. Adding optional fields preserved existing functionality while enabling new features.
+    2. **Phased Implementation**: Breaking into Setup (review) → Foundational (types/routes) → User Stories (feature) → Polish (verification) ensured clean dependency chain.
+    3. **Parallel-Safe Design**: T006/T011 (OnboardingContext changes) had to be sequential, but T007-T009 and T012-T014 (different files) could run in parallel.
+    4. **useEffect for Tab Sync**: Using `useEffect` with `navigationPayload?.tab` dependency ensures tab is set correctly even on initial render.
+- **Components Modified**:
+    - `src/App.tsx` - Extended NavigationPayload interface, passed props to settings pages
+    - `src/context/OnboardingContext.tsx` - Updated navigateToMission() to pass payload with source/tab
+    - `src/lib/services/mock/MockOnboardingService.ts` - Updated actionRoutes to correct NavItemIds
+    - `src/pages/settings/GlobalSettings.tsx` - Added props, useEffect, Return button, guidance banner
+    - `src/pages/settings/BasicData.tsx` - Added props, useEffect, Return button, guidance banner
+- **Rule**: When adding navigation context (like "coming from onboarding"), extend the existing payload interface rather than creating parallel mechanisms. This keeps navigation logic centralized and type-safe.
