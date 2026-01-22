@@ -7,8 +7,12 @@ interface GlobalSettingsContextType {
   // State
   currencies: CurrencyConfig[];
   attributes: CustomerAttribute[];
+  timezone: string;
   isLoading: boolean;
   error: string | null;
+
+  // Timezone actions
+  setTimezone: (timezone: string) => Promise<void>;
 
   // Currency actions
   addCurrency: (currency: Omit<CurrencyConfig, 'createdAt' | 'updatedAt'>) => Promise<void>;
@@ -34,6 +38,7 @@ const GlobalSettingsContext = createContext<GlobalSettingsContextType | undefine
 export const GlobalSettingsProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currencies, setCurrencies] = useState<CurrencyConfig[]>([]);
   const [attributes, setAttributes] = useState<CustomerAttribute[]>([]);
+  const [timezone, setTimezoneState] = useState<string>('Asia/Bangkok');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -42,12 +47,14 @@ export const GlobalSettingsProvider: React.FC<{ children: ReactNode }> = ({ chil
     setIsLoading(true);
     setError(null);
     try {
-      const [currencyData, attributeData] = await Promise.all([
+      const [currencyData, attributeData, timezoneData] = await Promise.all([
         globalSettingsService.getCurrencies(),
         globalSettingsService.getAttributes(),
+        globalSettingsService.getTimezone(),
       ]);
       setCurrencies(currencyData);
       setAttributes(attributeData);
+      setTimezoneState(timezoneData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load settings');
     } finally {
@@ -59,6 +66,18 @@ export const GlobalSettingsProvider: React.FC<{ children: ReactNode }> = ({ chil
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // Timezone action
+  const setTimezone = useCallback(async (tz: string) => {
+    try {
+      await globalSettingsService.setTimezone(tz);
+      setTimezoneState(tz);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to set timezone';
+      setError(message);
+      throw err;
+    }
+  }, []);
 
   // Currency actions
   const addCurrency = useCallback(async (currency: Omit<CurrencyConfig, 'createdAt' | 'updatedAt'>) => {
@@ -144,8 +163,10 @@ export const GlobalSettingsProvider: React.FC<{ children: ReactNode }> = ({ chil
   const value: GlobalSettingsContextType = {
     currencies,
     attributes,
+    timezone,
     isLoading,
     error,
+    setTimezone,
     addCurrency,
     updateCurrency,
     deleteCurrency,

@@ -3,6 +3,30 @@ import { CurrencyConfig, CustomerAttribute, IGlobalSettingsService } from '../..
 // LocalStorage keys
 const CURRENCIES_KEY = 'xcrm_currencies';
 const ATTRIBUTES_KEY = 'xcrm_customer_attributes';
+const TIMEZONE_KEY = 'xcrm_timezone';
+
+// Common timezones for selection
+export const TIMEZONES = [
+  { value: 'Asia/Bangkok', label: 'Bangkok (GMT+7)', offset: '+07:00' },
+  { value: 'Asia/Hong_Kong', label: 'Hong Kong (GMT+8)', offset: '+08:00' },
+  { value: 'Asia/Singapore', label: 'Singapore (GMT+8)', offset: '+08:00' },
+  { value: 'Asia/Tokyo', label: 'Tokyo (GMT+9)', offset: '+09:00' },
+  { value: 'Asia/Seoul', label: 'Seoul (GMT+9)', offset: '+09:00' },
+  { value: 'Asia/Shanghai', label: 'Shanghai (GMT+8)', offset: '+08:00' },
+  { value: 'Asia/Kuala_Lumpur', label: 'Kuala Lumpur (GMT+8)', offset: '+08:00' },
+  { value: 'Asia/Jakarta', label: 'Jakarta (GMT+7)', offset: '+07:00' },
+  { value: 'Asia/Manila', label: 'Manila (GMT+8)', offset: '+08:00' },
+  { value: 'Asia/Ho_Chi_Minh', label: 'Ho Chi Minh (GMT+7)', offset: '+07:00' },
+  { value: 'Asia/Kolkata', label: 'Mumbai/Kolkata (GMT+5:30)', offset: '+05:30' },
+  { value: 'Europe/London', label: 'London (GMT+0)', offset: '+00:00' },
+  { value: 'Europe/Paris', label: 'Paris (GMT+1)', offset: '+01:00' },
+  { value: 'America/New_York', label: 'New York (GMT-5)', offset: '-05:00' },
+  { value: 'America/Los_Angeles', label: 'Los Angeles (GMT-8)', offset: '-08:00' },
+  { value: 'Australia/Sydney', label: 'Sydney (GMT+11)', offset: '+11:00' },
+  { value: 'Pacific/Auckland', label: 'Auckland (GMT+13)', offset: '+13:00' },
+];
+
+const DEFAULT_TIMEZONE = 'Asia/Bangkok';
 
 // --- Initial Mock Data ---
 
@@ -140,6 +164,29 @@ const saveToStorage = <T>(key: string, data: T[]): void => {
 // --- Service Implementation ---
 
 class MockGlobalSettingsService implements IGlobalSettingsService {
+  // Timezone Methods
+
+  async getTimezone(): Promise<string> {
+    try {
+      const stored = localStorage.getItem(TIMEZONE_KEY);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+    } catch (error) {
+      console.error('Error loading timezone from localStorage:', error);
+    }
+    return DEFAULT_TIMEZONE;
+  }
+
+  async setTimezone(timezone: string): Promise<string> {
+    try {
+      localStorage.setItem(TIMEZONE_KEY, JSON.stringify(timezone));
+    } catch (error) {
+      console.error('Error saving timezone to localStorage:', error);
+    }
+    return timezone;
+  }
+
   // Currency Methods
 
   async getCurrencies(): Promise<CurrencyConfig[]> {
@@ -282,6 +329,7 @@ class MockGlobalSettingsService implements IGlobalSettingsService {
   async reset(): Promise<void> {
     localStorage.removeItem(CURRENCIES_KEY);
     localStorage.removeItem(ATTRIBUTES_KEY);
+    localStorage.removeItem(TIMEZONE_KEY);
   }
 }
 

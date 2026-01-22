@@ -1,12 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import {
   Globe, Plus, Search, Edit3, Trash2, X, Check, AlertCircle,
-  DollarSign, ChevronDown, Users, ArrowLeft, Info
+  DollarSign, ChevronDown, Users, ArrowLeft, Info, Clock
 } from 'lucide-react';
 import { useGlobalSettings } from '../../context/GlobalSettingsContext';
+import { useOnboarding } from '../../context/OnboardingContext';
 import { CurrencyConfig, NavItemId } from '../../types';
 import { NavigationPayload } from '../../App';
 import CustomerAttributes from '../../components/settings/CustomerAttributes';
+import { TIMEZONES } from '../../lib/services/mock/MockGlobalSettingsService';
 
 // ISO 4217 Currency list for the dropdown
 const ISO_CURRENCIES = [
@@ -40,13 +42,17 @@ interface GlobalSettingsProps {
 const GlobalSettings: React.FC<GlobalSettingsProps> = ({ navigationPayload, onNavigate }) => {
   const {
     currencies,
+    timezone,
     isLoading,
     error,
+    setTimezone,
     addCurrency,
     updateCurrency,
     deleteCurrency,
     getDefaultCurrency,
   } = useGlobalSettings();
+
+  const { toggleSubtask, state: onboardingState } = useOnboarding();
 
   // Tab state
   const [activeTab, setActiveTab] = useState<TabId>('currency');
@@ -72,6 +78,35 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ navigationPayload, onNa
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Timezone state
+  const [selectedTimezone, setSelectedTimezone] = useState(timezone);
+  const [isTimezoneChanged, setIsTimezoneChanged] = useState(false);
+
+  // Sync timezone from context
+  useEffect(() => {
+    setSelectedTimezone(timezone);
+  }, [timezone]);
+
+  // Handle timezone change
+  const handleTimezoneChange = (newTimezone: string) => {
+    setSelectedTimezone(newTimezone);
+    setIsTimezoneChanged(newTimezone !== timezone);
+  };
+
+  // Save timezone
+  const handleSaveTimezone = async () => {
+    try {
+      await setTimezone(selectedTimezone);
+      setIsTimezoneChanged(false);
+      // Mark onboarding Step 1 subtask as complete
+      if (onboardingState && !onboardingState.missions.identity.subtasks[0].isDone) {
+        await toggleSubtask('identity', 'set_timezone', true);
+      }
+    } catch (err) {
+      // Error handled by context
+    }
+  };
 
   // Get default currency
   const defaultCurrency = getDefaultCurrency();
@@ -262,6 +297,50 @@ const GlobalSettings: React.FC<GlobalSettingsProps> = ({ navigationPayload, onNa
       {/* Currency Tab Content */}
       {activeTab === 'currency' && (
         <div className="space-y-6">
+          {/* Timezone Setting */}
+          <div className="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="bg-blue-50 p-2 rounded-lg">
+                <Clock size={20} className="text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900">Timezone</h3>
+                <p className="text-sm text-slate-500">Set your business timezone for reports and scheduling</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="relative flex-1 max-w-md">
+                <select
+                  value={selectedTimezone}
+                  onChange={(e) => handleTimezoneChange(e.target.value)}
+                  className="w-full appearance-none bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 pr-10 text-sm font-bold focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
+                >
+                  {TIMEZONES.map((tz) => (
+                    <option key={tz.value} value={tz.value}>
+                      {tz.label}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+              </div>
+              {isTimezoneChanged && (
+                <button
+                  onClick={handleSaveTimezone}
+                  className="px-5 py-2.5 bg-primary-600 text-white font-bold rounded-xl hover:bg-primary-700 transition-all flex items-center gap-2"
+                >
+                  <Check size={18} />
+                  Save Timezone
+                </button>
+              )}
+              {!isTimezoneChanged && (
+                <span className="text-sm text-green-600 font-medium flex items-center gap-1">
+                  <Check size={16} />
+                  Saved
+                </span>
+              )}
+            </div>
+          </div>
+
           {/* Default Currency Info */}
           {defaultCurrency && (
             <div className="bg-gradient-to-r from-primary-50 to-blue-50 border border-primary-100 rounded-3xl p-6">

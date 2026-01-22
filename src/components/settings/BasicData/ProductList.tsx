@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Search, Package, Loader2, Upload, ChevronDown } from 'lucide-react';
 import { ProductConfig, ProductStatus, CategoryConfig, BrandConfig } from '../../../types';
 import { basicDataService } from '../../../lib/services/mock/MockBasicDataService';
+import { useOnboarding } from '../../../context/OnboardingContext';
 import ProductForm from './ProductForm';
 import ImportWizard from './ImportWizard';
 
@@ -16,6 +17,9 @@ const ProductList: React.FC = () => {
     const [brands, setBrands] = useState<BrandConfig[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    // Onboarding context for marking Step 2 subtask complete
+    const { toggleSubtask, state: onboardingState } = useOnboarding();
 
     // Filters
     const [searchQuery, setSearchQuery] = useState('');
@@ -74,6 +78,7 @@ const ProductList: React.FC = () => {
     };
 
     const handleSave = async (productData: Omit<ProductConfig, 'createdAt' | 'updatedAt'>) => {
+        const isAdding = !editingProduct;
         if (editingProduct) {
             await basicDataService.updateProduct(editingProduct.sku, productData);
         } else {
@@ -82,6 +87,11 @@ const ProductList: React.FC = () => {
         setShowForm(false);
         setEditingProduct(null);
         await loadData();
+
+        // Mark onboarding Step 2 "Import Product Catalog" subtask as complete when adding a product
+        if (isAdding && onboardingState && !onboardingState.missions.tier_method.subtasks[1].isDone) {
+            await toggleSubtask('tier_method', 'import_products', true);
+        }
     };
 
     // Filtered data
@@ -265,9 +275,13 @@ const ProductList: React.FC = () => {
                 <ImportWizard
                     type="products"
                     onClose={() => setShowImport(false)}
-                    onComplete={() => {
+                    onComplete={async () => {
                         setShowImport(false);
-                        loadData();
+                        await loadData();
+                        // Mark onboarding Step 2 "Import Product Catalog" subtask as complete
+                        if (onboardingState && !onboardingState.missions.tier_method.subtasks[1].isDone) {
+                            await toggleSubtask('tier_method', 'import_products', true);
+                        }
                     }}
                 />
             )}

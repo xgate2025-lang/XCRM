@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, Search, Filter, Store as StoreIcon, Loader2, Upload, ChevronDown } from 'lucide-react';
 import { StoreConfig, StoreType, StoreStatus } from '../../../types';
 import { basicDataService } from '../../../lib/services/mock/MockBasicDataService';
+import { useOnboarding } from '../../../context/OnboardingContext';
 import StoreForm from './StoreForm';
 import ImportWizard from './ImportWizard';
 
@@ -20,6 +21,9 @@ const StoreList: React.FC = () => {
     const [stores, setStores] = useState<StoreConfig[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+
+    // Onboarding context for marking Step 2 subtask complete
+    const { toggleSubtask, state: onboardingState } = useOnboarding();
 
     // Filters
     const [searchQuery, setSearchQuery] = useState('');
@@ -69,6 +73,7 @@ const StoreList: React.FC = () => {
     };
 
     const handleSave = async (storeData: Omit<StoreConfig, 'createdAt' | 'updatedAt'>) => {
+        const isAdding = !editingStore;
         if (editingStore) {
             await basicDataService.updateStore(editingStore.code, storeData);
         } else {
@@ -77,6 +82,11 @@ const StoreList: React.FC = () => {
         setShowForm(false);
         setEditingStore(null);
         await loadStores();
+
+        // Mark onboarding Step 2 "Import Store List" subtask as complete when adding a store
+        if (isAdding && onboardingState && !onboardingState.missions.tier_method.subtasks[0].isDone) {
+            await toggleSubtask('tier_method', 'import_stores', true);
+        }
     };
 
     // Filtered data
@@ -247,9 +257,13 @@ const StoreList: React.FC = () => {
                 <ImportWizard
                     type="stores"
                     onClose={() => setShowImport(false)}
-                    onComplete={() => {
+                    onComplete={async () => {
                         setShowImport(false);
-                        loadStores();
+                        await loadStores();
+                        // Mark onboarding Step 2 "Import Store List" subtask as complete
+                        if (onboardingState && !onboardingState.missions.tier_method.subtasks[0].isDone) {
+                            await toggleSubtask('tier_method', 'import_stores', true);
+                        }
                     }}
                 />
             )}
