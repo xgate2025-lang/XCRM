@@ -7,6 +7,7 @@ import {
   Clock
 } from 'lucide-react';
 import { NavItemId, CouponType, CouponStatus } from '../types';
+import { SETTINGS_BUTTON_STYLES } from '../constants';
 import { NavigationPayload } from '../App';
 import { useCoupon } from '../context/CouponContext';
 
@@ -91,7 +92,7 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => onNavigate('coupon-create')}
-            className="px-6 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
+            className={`${SETTINGS_BUTTON_STYLES.primary} px-6 py-3 shadow-lg shadow-slate-200 flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]`}
           >
             <Plus size={20} className="text-primary-300" />
             Create Coupon
@@ -148,7 +149,7 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
           {/* Filter Toggle Button */}
           <button
             onClick={() => setIsTypeFilterOpen(!isTypeFilterOpen)}
-            className={`px-5 py-3 rounded-2xl font-bold text-sm flex items-center gap-2 transition-all ${isTypeFilterOpen ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
+            className={`px-5 py-3 rounded-xl font-bold text-sm flex items-center gap-2 transition-all ${isTypeFilterOpen ? 'bg-slate-900 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'}`}
           >
             <Filter size={18} />
             Type
@@ -336,7 +337,7 @@ const CouponList: React.FC<CouponListProps> = ({ onNavigate }) => {
             <p className="text-slate-500 max-w-xs mt-2 font-medium">We couldn't find any coupons that match your current search and filter settings.</p>
             <button
               onClick={resetFilters}
-              className="mt-8 px-6 py-3 bg-slate-900 text-white font-bold rounded-2xl shadow-lg hover:bg-slate-800 transition-all flex items-center gap-2"
+              className={`${SETTINGS_BUTTON_STYLES.primary} mt-8 px-6 py-3 shadow-lg flex items-center gap-2`}
             >
               <RotateCcw size={18} /> Clear all filters
             </button>

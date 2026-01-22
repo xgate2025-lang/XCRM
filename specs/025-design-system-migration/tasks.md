@@ -5,62 +5,62 @@
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing.
 
-## Phase 1: Setup
+## Phase 1: Setup ✅
 
-- [ ] T001 Verify all prerequisites validation commands from quickstart.md work
-- [ ] T002 Ensure `constants.tsx` contains all required design tokens
+- [x] T001 Verify all prerequisites validation commands from quickstart.md work
+- [x] T002 Ensure `constants.tsx` contains all required design tokens
 
 ---
 
-## Phase 2: User Story 2 - Eliminate Gray vs Slate Inconsistency (P1)
+## Phase 2: User Story 2 - Eliminate Gray vs Slate Inconsistency (P1) ✅
 
 **Goal**: Migrate all onboarding components from `gray-*` to `slate-*` colors.
-**Independent Test**: Grep for `gray-*` in `src/components/dashboard/onboarding/` returns zero results.
+**Independent Test**: Grep for `gray-*` in `src/components/dashboard/onboarding/` returns zero results. ✅
 
-- [ ] T003 [US2] Migrate `ProgressHeader.tsx` to use slate colors
-- [ ] T004 [US2] Migrate `MissionCarousel.tsx` to use slate colors
-- [ ] T005 [US2] Migrate `ReturnModal.tsx` to use slate colors
-- [ ] T006 [US2] Migrate `OnboardingHero.tsx` to use slate colors
-- [ ] T007 [US2] Migrate `MissionCard.tsx` to use slate colors
+- [x] T003 [US2] Migrate `ProgressHeader.tsx` to use slate colors
+- [x] T004 [US2] Migrate `MissionCarousel.tsx` to use slate colors
+- [x] T005 [US2] Migrate `ReturnModal.tsx` to use slate colors
+- [x] T006 [US2] Migrate `OnboardingHero.tsx` to use slate colors
+- [x] T007 [US2] Migrate `MissionCard.tsx` to use slate colors
 
 ---
 
-## Phase 3: User Story 3 - Focus Ring Standardization (P2)
+## Phase 3: User Story 3 - Focus Ring Standardization (P2) ✅
 
 **Goal**: Standardize text inputs to use `ring-primary-100` (subtle) instead of `ring-primary-500`.
-**Independent Test**: Verify text inputs in BasicData forms use `ring-primary-100`.
+**Independent Test**: Verify text inputs in BasicData forms use `ring-primary-100`. ✅
 
-- [ ] T008 [P] [US3] Update StoreList.tsx inputs to `ring-primary-100`
-- [ ] T009 [P] [US3] Update StoreForm.tsx inputs to `ring-primary-100`
-- [ ] T010 [P] [US3] Update ProductList.tsx inputs to `ring-primary-100`
-- [ ] T011 [P] [US3] Update ProductForm.tsx inputs to `ring-primary-100`
-- [ ] T012 [P] [US3] Update BrandForm.tsx inputs to `ring-primary-100`
+- [x] T008 [P] [US3] Update StoreList.tsx inputs to `ring-primary-100`
+- [x] T009 [P] [US3] Update StoreForm.tsx inputs to `ring-primary-100`
+- [x] T010 [P] [US3] Update ProductList.tsx inputs to `ring-primary-100`
+- [x] T011 [P] [US3] Update ProductForm.tsx inputs to `ring-primary-100`
+- [x] T012 [P] [US3] Update BrandForm.tsx inputs to `ring-primary-100`
 
 ---
 
-## Phase 4: User Story 4 - Button Radius Standardization (P2)
+## Phase 4: User Story 4 - Button Radius Standardization (P2) ✅
 
 **Goal**: Standardize buttons to `rounded-xl`.
-**Independent Test**: Buttons in affected files use `rounded-xl` instead of `rounded-2xl`.
+**Independent Test**: Buttons in affected files use `rounded-xl` instead of `rounded-2xl`. ✅
 
-- [ ] T013 [P] [US4] Update CampaignDashboard.tsx buttons to partial `rounded-xl`
-- [ ] T014 [P] [US4] Update CreateCoupon.tsx buttons to `rounded-xl`
-- [ ] T015 [P] [US4] Update CouponList.tsx buttons to `rounded-xl`
-- [ ] T016 [P] [US4] Update ProgramTier.tsx buttons to `rounded-xl`
-- [ ] T017 [P] [US4] Update ProgramPoint.tsx buttons to `rounded-xl`
-- [ ] T018 [P] [US4] Update CreateCouponPage.tsx buttons to `rounded-xl`
-- [ ] T019 [P] [US4] Update CampaignDetail.tsx buttons to `rounded-xl`
+- [x] T013 [P] [US4] Update CampaignDashboard.tsx buttons to partial `rounded-xl`
+- [x] T014 [P] [US4] Update CreateCoupon.tsx buttons to `rounded-xl`
+- [x] T015 [P] [US4] Update CouponList.tsx buttons to `rounded-xl`
+- [x] T016 [P] [US4] Update ProgramTier.tsx buttons to `rounded-xl`
+- [x] T017 [P] [US4] Update ProgramPoint.tsx buttons to `rounded-xl`
+- [x] T018 [P] [US4] Update CreateCouponPage.tsx buttons to `rounded-xl`
+- [x] T019 [P] [US4] Update CampaignDetail.tsx buttons to `rounded-xl`
 
 ---
 
-## Phase 5: User Story 7 - Style Constants Adoption (P1)
+## Phase 5: User Story 7 - Style Constants Adoption (P1) ✅
 
 **Goal**: Adopt `SETTINGS_BUTTON_STYLES` constants for consistency.
-**Independent Test**: Grep for hardcoded button classes replaced by constants.
+**Independent Test**: Grep for hardcoded button classes replaced by constants. ✅
 
-- [ ] T020 [P] [US7] Refactor CampaignDashboard buttons to use `SETTINGS_BUTTON_STYLES`
-- [ ] T021 [P] [US7] Refactor CouponList buttons to use `SETTINGS_BUTTON_STYLES`
-- [ ] T022 [P] [US7] Refactor CreateCouponPage buttons to use `SETTINGS_BUTTON_STYLES`
+- [x] T020 [P] [US7] Refactor CampaignDashboard buttons to use `SETTINGS_BUTTON_STYLES`
+- [x] T021 [P] [US7] Refactor CouponList buttons to use `SETTINGS_BUTTON_STYLES`
+- [x] T022 [P] [US7] Refactor CreateCouponPage buttons to use `SETTINGS_BUTTON_STYLES`
 
 ---
 

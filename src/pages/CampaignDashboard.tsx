@@ -5,6 +5,7 @@ import {
   Calendar, Copy, Trash2, Users, Gift, Filter
 } from 'lucide-react';
 import { Campaign, CampaignStatus, NavItemId, CampaignType, CampaignKPI } from '../types';
+import { SETTINGS_BUTTON_STYLES } from '../constants';
 import TemplateDrawer from '../components/campaign/TemplateDrawer';
 import QuickLookDrawer from '../components/campaign/QuickLookDrawer';
 import StopConfirmationModal from '../components/shared/StopConfirmationModal';
@@ -180,7 +181,7 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({ onNavigate }) => 
         </div>
         <button
           onClick={handleCreateClick}
-          className="group flex items-center gap-2 px-6 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 hover:shadow-xl hover:scale-[1.02]"
+          className={`${SETTINGS_BUTTON_STYLES.primary} group flex items-center gap-2 px-6 py-3 shadow-lg shadow-slate-200 hover:shadow-xl hover:scale-[1.02]`}
         >
           <Plus size={20} className="text-primary-300 group-hover:text-white transition-colors" />
           Create Campaign
@@ -428,14 +429,14 @@ const CampaignDashboard: React.FC<CampaignDashboardProps> = ({ onNavigate }) => 
                         {(campaign.status === 'draft' || campaign.status === 'scheduled' || campaign.status === 'paused') ? (
                           <button
                             onClick={(e) => { e.stopPropagation(); handleEdit(campaign); }}
-                            className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 active:scale-95"
+                            className={`${SETTINGS_BUTTON_STYLES.primary} px-5 py-2.5 text-xs shadow-lg shadow-slate-200 active:scale-95`}
                           >
                             Edit
                           </button>
                         ) : (
                           <button
                             onClick={(e) => { e.stopPropagation(); onNavigate('campaign-analytics', { id: campaign.id }); }}
-                            className="px-5 py-2.5 bg-white border border-slate-200 text-slate-900 text-xs font-bold rounded-2xl hover:bg-slate-50 transition-all shadow-sm active:scale-95 flex items-center gap-2"
+                            className={`${SETTINGS_BUTTON_STYLES.secondary} px-5 py-2.5 text-xs text-slate-900 shadow-sm active:scale-95 flex items-center gap-2`}
                           >
                             <BarChart2 size={14} /> Analytics
                           </button>

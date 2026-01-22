@@ -125,7 +125,7 @@ const BrandForm: React.FC<BrandFormProps> = ({ brand, onSave, onCancel }) => {
                             onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                             disabled={isEditMode}
                             className={`w-full px-3 py-2 border rounded-lg text-sm ${errors.code ? 'border-red-300' : 'border-slate-300'
-                                } ${isEditMode ? 'bg-slate-100 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                                } ${isEditMode ? 'bg-slate-100 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-primary-100`}
                             placeholder="e.g., NIKE"
                         />
                         {errors.code && <p className="text-red-500 text-xs mt-1">{errors.code}</p>}
@@ -141,7 +141,7 @@ const BrandForm: React.FC<BrandFormProps> = ({ brand, onSave, onCancel }) => {
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                             className={`w-full px-3 py-2 border rounded-lg text-sm ${errors.name ? 'border-red-300' : 'border-slate-300'
-                                } focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                                } focus:outline-none focus:ring-2 focus:ring-primary-100`}
                             placeholder="e.g., Nike"
                         />
                         {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}

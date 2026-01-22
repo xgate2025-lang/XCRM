@@ -258,7 +258,7 @@ const ProgramPoint: React.FC<ProgramPointProps> = ({ onNavigate }) => {
 
             <button
               onClick={handleSetupStart}
-              className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
+              className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
             >
               <Coins size={20} className="text-green-400 fill-green-400" />
               Configure Points Economy

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, Search, Filter, Store as StoreIcon, Loader2, Upload } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Filter, Store as StoreIcon, Loader2, Upload, ChevronDown } from 'lucide-react';
 import { StoreConfig, StoreType, StoreStatus } from '../../../types';
 import { basicDataService } from '../../../lib/services/mock/MockBasicDataService';
 import StoreForm from './StoreForm';
@@ -121,32 +121,38 @@ const StoreList: React.FC = () => {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search stores..."
-                            className="pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-primary-100"
                         />
                     </div>
 
                     {/* Type Filter */}
-                    <select
-                        value={typeFilter}
-                        onChange={(e) => setTypeFilter(e.target.value as StoreType | 'all')}
-                        className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    >
-                        <option value="all">All Types</option>
-                        {Object.entries(STORE_TYPE_LABELS).map(([value, label]) => (
-                            <option key={value} value={value}>{label}</option>
-                        ))}
-                    </select>
+                    <div className="relative">
+                        <select
+                            value={typeFilter}
+                            onChange={(e) => setTypeFilter(e.target.value as StoreType | 'all')}
+                            className="appearance-none pl-3 pr-10 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
+                        >
+                            <option value="all">All Types</option>
+                            {Object.entries(STORE_TYPE_LABELS).map(([value, label]) => (
+                                <option key={value} value={value}>{label}</option>
+                            ))}
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                    </div>
 
                     {/* Status Filter */}
-                    <select
-                        value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value as StoreStatus | 'all')}
-                        className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    >
-                        <option value="all">All Status</option>
-                        <option value={StoreStatus.ACTIVE}>Active</option>
-                        <option value={StoreStatus.DISABLED}>Disabled</option>
-                    </select>
+                    <div className="relative">
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value as StoreStatus | 'all')}
+                            className="appearance-none pl-3 pr-10 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
+                        >
+                            <option value="all">All Status</option>
+                            <option value={StoreStatus.ACTIVE}>Active</option>
+                            <option value={StoreStatus.DISABLED}>Disabled</option>
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                    </div>
                 </div>
 
                 <div className="flex items-center gap-2">

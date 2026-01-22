@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Save, Rocket, Loader2, CheckCircle2, CornerUpRight } from 'lucide-react';
 import { NavItemId, CouponWizardSection } from '../../types';
+import { SETTINGS_BUTTON_STYLES } from '../../constants';
 import { NavigationPayload } from '../../App';
 import { CouponWizardProvider, useCouponWizard, SECTION_ORDER } from '../../context/CouponWizardContext';
 import { MockCouponService } from '../../lib/services/mock/MockCouponService';
@@ -263,7 +264,7 @@ const CreateCouponPageInner: React.FC<CreateCouponPageProps> = ({ onNavigate, co
             <span className="text-lg font-bold text-slate-900">{loadError}</span>
             <button
               onClick={() => onNavigate('assets-coupon')}
-              className="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all"
+              className={`${SETTINGS_BUTTON_STYLES.primary} px-6 py-3`}
             >
               Back to Library
             </button>
@@ -525,7 +526,7 @@ const CreateCouponPageInner: React.FC<CreateCouponPageProps> = ({ onNavigate, co
           <button
             onClick={handleSave}
             disabled={isProcessing || isLoading}
-            className="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-50 transition-all flex items-center gap-2 disabled:opacity-50"
+            className={`${SETTINGS_BUTTON_STYLES.secondary} px-6 py-3 text-slate-600 flex items-center gap-2 disabled:opacity-50`}
           >
             {isProcessing ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
             {isEditMode ? 'Save Changes' : 'Save for later'}
@@ -533,7 +534,7 @@ const CreateCouponPageInner: React.FC<CreateCouponPageProps> = ({ onNavigate, co
           <button
             onClick={handlePublish}
             disabled={isProcessing || isLoading}
-            className="px-8 py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 hover:shadow-slate-300 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 disabled:opacity-70"
+            className={`${SETTINGS_BUTTON_STYLES.primary} px-8 py-4 shadow-xl shadow-slate-200 hover:shadow-slate-300 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 disabled:opacity-70`}
           >
             {isProcessing ? (
               <Loader2 size={18} className="animate-spin text-primary-400" />

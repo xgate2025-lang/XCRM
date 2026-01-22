@@ -415,7 +415,7 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
           <button
             onClick={handleSave}
             disabled={isProcessing || isLoading}
-            className="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-2xl hover:bg-slate-50 transition-all flex items-center gap-2 disabled:opacity-50"
+            className="px-6 py-3 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all flex items-center gap-2 disabled:opacity-50"
           >
             {isProcessing ? <Loader2 size={18} className="animate-spin" /> : <Save size={18} />}
             {isEditMode ? 'Save Changes' : 'Save for later'}
@@ -423,7 +423,7 @@ const CreateCouponInner: React.FC<CreateCouponProps> = ({ onNavigate, couponId }
           <button
             onClick={handlePublish}
             disabled={isProcessing || isLoading}
-            className="px-8 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 hover:shadow-slate-300 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 disabled:opacity-70"
+            className="px-8 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 hover:shadow-slate-300 hover:scale-[1.02] active:scale-[0.98] flex items-center gap-2 disabled:opacity-70"
           >
             {isProcessing ? (
               <Loader2 size={18} className="animate-spin text-primary-400" />

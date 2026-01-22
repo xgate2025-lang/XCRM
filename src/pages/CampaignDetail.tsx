@@ -48,7 +48,7 @@ const CampaignDetail: React.FC<CampaignDetailProps> = ({ onNavigate, campaignId 
                 <p className="text-slate-500 mb-8 max-w-sm mx-auto">The campaign analytics you're looking for might have been deleted or moved.</p>
                 <button
                     onClick={() => onNavigate('campaign')}
-                    className="px-6 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-lg"
+                    className="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 transition-all shadow-lg"
                 >
                     Back to Campaigns
                 </button>

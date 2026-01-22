@@ -26,7 +26,7 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
     // Dynamic styles based on state
     const cardClasses = `
     relative rounded-2xl bg-white p-6 shadow-sm border transition-all duration-300
-    ${isActive ? 'border-primary-200 shadow-lg' : 'border-gray-100'}
+    ${isActive ? 'border-primary-200 shadow-lg' : 'border-slate-100'}
     ${isComplete ? 'border-green-300 bg-green-50/30' : ''}
     ${isSkipped ? 'border-yellow-300 bg-yellow-50/30' : ''}
     ${!isActive ? 'hover:border-primary-200 cursor-pointer' : ''}
@@ -54,28 +54,28 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
                 <span className="rounded-full bg-primary-100 px-2.5 py-0.5 text-xs font-semibold text-primary-700">
                     {mission.tag}
                 </span>
-                <span className="flex items-center gap-1 text-xs text-gray-500">
+                <span className="flex items-center gap-1 text-xs text-slate-500">
                     <Clock className="h-3 w-3" />
                     {mission.timeEstimate}
                 </span>
             </div>
 
             {/* Title & Description */}
-            <h3 className="mb-1 text-lg font-semibold text-gray-900">{mission.title}</h3>
-            <p className="mb-4 text-sm text-gray-600">{mission.description}</p>
+            <h3 className="mb-1 text-lg font-semibold text-slate-900">{mission.title}</h3>
+            <p className="mb-4 text-sm text-slate-600">{mission.description}</p>
 
             {/* Subtask Checklist */}
             <div className="mb-4 space-y-2">
                 {mission.subtasks.map((subtask) => (
                     <div
                         key={subtask.id}
-                        className={`flex items-center gap-2 text-sm ${subtask.isDone ? 'text-gray-400 line-through' : 'text-gray-700'
+                        className={`flex items-center gap-2 text-sm ${subtask.isDone ? 'text-slate-400 line-through' : 'text-slate-700'
                             }`}
                     >
                         <div
                             className={`h-4 w-4 rounded border flex items-center justify-center ${subtask.isDone
                                 ? 'border-green-500 bg-green-500 text-white'
-                                : 'border-gray-300'
+                                : 'border-slate-300'
                                 }`}
                         >
                             {subtask.isDone && <Check className="h-3 w-3" />}
@@ -86,7 +86,7 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
             </div>
 
             {/* Progress indicator */}
-            <div className="mb-4 text-xs text-gray-500">
+            <div className="mb-4 text-xs text-slate-500">
                 {completedCount} of {totalCount} tasks complete
             </div>
 
@@ -103,7 +103,7 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
                             disabled={!isActive}
                             className={`flex items-center gap-1 rounded-lg px-4 py-2 text-sm font-medium transition-colors ${isActive
                                 ? 'bg-primary-500 text-white hover:bg-primary-600'
-                                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
                                 }`}
                         >
                             {mission.actionLabel}
@@ -117,7 +117,7 @@ export function MissionCard({ mission, isActive, onAction, onSkip }: MissionCard
                                     console.log(`[MissionCard] Skip button clicked for mission: ${mission.title}`);
                                 }}
                                 disabled={!isActive}
-                                className={`text-sm text-gray-500 hover:text-gray-700 ${!isActive ? 'opacity-50 cursor-not-allowed' : ''
+                                className={`text-sm text-slate-500 hover:text-slate-700 ${!isActive ? 'opacity-50 cursor-not-allowed' : ''
                                     }`}
                             >
                                 Skip for now

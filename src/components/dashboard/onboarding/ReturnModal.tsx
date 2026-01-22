@@ -30,7 +30,7 @@ export function ReturnModal({ isOpen, onReturn, onStay, stepName = 'Step' }: Ret
                 {/* Close button */}
                 <button
                     onClick={onStay}
-                    className="absolute right-4 top-4 text-gray-400 hover:text-gray-600 transition-colors"
+                    className="absolute right-4 top-4 text-slate-400 hover:text-slate-600 transition-colors"
                 >
                     <X className="h-5 w-5" />
                 </button>
@@ -44,10 +44,10 @@ export function ReturnModal({ isOpen, onReturn, onStay, stepName = 'Step' }: Ret
 
                 {/* Content */}
                 <div className="text-center">
-                    <h3 className="mb-2 text-xl font-bold text-gray-900">
+                    <h3 className="mb-2 text-xl font-bold text-slate-900">
                         {stepName} Complete! 🎉
                     </h3>
-                    <p className="mb-6 text-gray-600">
+                    <p className="mb-6 text-slate-600">
                         Great progress! Ready to continue your setup journey?
                     </p>
                 </div>
@@ -63,7 +63,7 @@ export function ReturnModal({ isOpen, onReturn, onStay, stepName = 'Step' }: Ret
                     </button>
                     <button
                         onClick={onStay}
-                        className="w-full rounded-xl border border-gray-200 px-4 py-3 font-medium text-gray-600 transition-colors hover:bg-gray-50"
+                        className="w-full rounded-xl border border-slate-200 px-4 py-3 font-medium text-slate-600 transition-colors hover:bg-slate-50"
                     >
                         Stay Here
                     </button>

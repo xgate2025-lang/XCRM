@@ -334,7 +334,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
 
               <button
                 onClick={handleLogicSetupStart}
-                className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
+                className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
               >
                 <Zap size={20} className="text-yellow-400 fill-yellow-400" />
                 Setup Tier Upgrade method
@@ -363,7 +363,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
 
               <button
                 onClick={handleGoToPoints}
-                className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
+                className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
               >
                 <Coins size={20} className="text-yellow-400 fill-yellow-400" />
                 Configure Points & Currency
@@ -393,7 +393,7 @@ const ProgramTier: React.FC<ProgramTierProps> = ({ onNavigate }) => {
 
               <button
                 onClick={() => handleOpenTierWizard()}
-                className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
+                className="group flex items-center gap-3 px-8 py-4 bg-slate-900 text-white rounded-xl font-bold text-lg hover:bg-slate-800 hover:scale-[1.01] transition-all"
               >
                 <Layers size={20} className="text-primary-300" />
                 Create Your First Tier

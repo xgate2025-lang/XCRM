@@ -129,19 +129,19 @@ export function MissionCarousel({
             <button
                 onClick={handlePrev}
                 disabled={currentIndex === 0}
-                className={`absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-lg transition-all opacity-0 group-hover/carousel:opacity-100 ${currentIndex === 0 ? 'hidden' : 'hover:bg-gray-50'
+                className={`absolute left-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-lg transition-all opacity-0 group-hover/carousel:opacity-100 ${currentIndex === 0 ? 'hidden' : 'hover:bg-slate-50'
                     }`}
             >
-                <ChevronLeft className="h-5 w-5 text-gray-600" />
+                <ChevronLeft className="h-5 w-5 text-slate-600" />
             </button>
 
             <button
                 onClick={handleNext}
                 disabled={currentIndex === MISSION_ORDER.length - 1}
-                className={`absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-lg transition-all opacity-0 group-hover/carousel:opacity-100 ${currentIndex === MISSION_ORDER.length - 1 ? 'hidden' : 'hover:bg-gray-50'
+                className={`absolute right-0 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-2 shadow-lg transition-all opacity-0 group-hover/carousel:opacity-100 ${currentIndex === MISSION_ORDER.length - 1 ? 'hidden' : 'hover:bg-slate-50'
                     }`}
             >
-                <ChevronRight className="h-5 w-5 text-gray-600" />
+                <ChevronRight className="h-5 w-5 text-slate-600" />
             </button>
 
             {/* Scrollable Container */}
@@ -200,7 +200,7 @@ export function MissionCarousel({
                                     ? 'bg-green-400'
                                     : mission.isSkipped
                                         ? 'bg-yellow-400'
-                                        : 'bg-gray-300'
+                                        : 'bg-slate-300'
                                 }`}
                         />
                     );

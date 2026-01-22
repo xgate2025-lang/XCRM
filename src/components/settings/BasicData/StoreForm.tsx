@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save } from 'lucide-react';
+import { X, Save, ChevronDown } from 'lucide-react';
 import { StoreConfig, StoreType, StoreStatus } from '../../../types';
 
 interface StoreFormProps {
@@ -133,7 +133,7 @@ const StoreForm: React.FC<StoreFormProps> = ({ store, onSave, onCancel }) => {
                                 onChange={(e) => handleChange('code', e.target.value)}
                                 disabled={isEditMode}
                                 className={`w-full px-3 py-2 border rounded-lg text-sm ${errors.code ? 'border-red-300' : 'border-slate-300'
-                                    } ${isEditMode ? 'bg-slate-100 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                                    } ${isEditMode ? 'bg-slate-100 cursor-not-allowed' : ''} focus:outline-none focus:ring-2 focus:ring-primary-100`}
                                 placeholder="e.g., STR-001"
                             />
                             {errors.code && <p className="text-red-500 text-xs mt-1">{errors.code}</p>}
@@ -149,7 +149,7 @@ const StoreForm: React.FC<StoreFormProps> = ({ store, onSave, onCancel }) => {
                                 value={formData.name}
                                 onChange={(e) => handleChange('name', e.target.value)}
                                 className={`w-full px-3 py-2 border rounded-lg text-sm ${errors.name ? 'border-red-300' : 'border-slate-300'
-                                    } focus:outline-none focus:ring-2 focus:ring-primary-500`}
+                                    } focus:outline-none focus:ring-2 focus:ring-primary-100`}
                                 placeholder="e.g., Central Mall"
                             />
                             {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
@@ -160,29 +160,35 @@ const StoreForm: React.FC<StoreFormProps> = ({ store, onSave, onCancel }) => {
                         {/* Type */}
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Type</label>
-                            <select
-                                value={formData.type}
-                                onChange={(e) => handleChange('type', e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                            >
-                                {STORE_TYPES.map((t) => (
-                                    <option key={t.value} value={t.value}>{t.label}</option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    value={formData.type}
+                                    onChange={(e) => handleChange('type', e.target.value)}
+                                    className="w-full appearance-none pl-3 pr-10 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
+                                >
+                                    {STORE_TYPES.map((t) => (
+                                        <option key={t.value} value={t.value}>{t.label}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                            </div>
                         </div>
 
                         {/* Status */}
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Status</label>
-                            <select
-                                value={formData.status}
-                                onChange={(e) => handleChange('status', e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                            >
-                                {STORE_STATUSES.map((s) => (
-                                    <option key={s.value} value={s.value}>{s.label}</option>
-                                ))}
-                            </select>
+                            <div className="relative">
+                                <select
+                                    value={formData.status}
+                                    onChange={(e) => handleChange('status', e.target.value)}
+                                    className="w-full appearance-none pl-3 pr-10 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
+                                >
+                                    {STORE_STATUSES.map((s) => (
+                                        <option key={s.value} value={s.value}>{s.label}</option>
+                                    ))}
+                                </select>
+                                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                            </div>
                         </div>
                     </div>
 
@@ -193,7 +199,7 @@ const StoreForm: React.FC<StoreFormProps> = ({ store, onSave, onCancel }) => {
                             type="text"
                             value={formData.address}
                             onChange={(e) => handleChange('address', e.target.value)}
-                            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100"
                             placeholder="e.g., 123 Main St, Bangkok"
                         />
                     </div>
@@ -206,7 +212,7 @@ const StoreForm: React.FC<StoreFormProps> = ({ store, onSave, onCancel }) => {
                                 type="text"
                                 value={formData.contact}
                                 onChange={(e) => handleChange('contact', e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100"
                                 placeholder="e.g., +66 2 123 4567"
                             />
                         </div>
@@ -218,7 +224,7 @@ const StoreForm: React.FC<StoreFormProps> = ({ store, onSave, onCancel }) => {
                                 type="text"
                                 value={formData.businessHours}
                                 onChange={(e) => handleChange('businessHours', e.target.value)}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100"
                                 placeholder="e.g., Mon-Fri 09:00-22:00"
                             />
                         </div>
@@ -233,7 +239,7 @@ const StoreForm: React.FC<StoreFormProps> = ({ store, onSave, onCancel }) => {
                                 step="any"
                                 value={formData.coordinates.lat || ''}
                                 onChange={(e) => handleChange('coordinates', { ...formData.coordinates, lat: parseFloat(e.target.value) || 0 })}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100"
                                 placeholder="e.g., 13.7563"
                             />
                         </div>
@@ -244,7 +250,7 @@ const StoreForm: React.FC<StoreFormProps> = ({ store, onSave, onCancel }) => {
                                 step="any"
                                 value={formData.coordinates.lng || ''}
                                 onChange={(e) => handleChange('coordinates', { ...formData.coordinates, lng: parseFloat(e.target.value) || 0 })}
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100"
                                 placeholder="e.g., 100.5018"
                             />
                         </div>

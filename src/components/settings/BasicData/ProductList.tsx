@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, Search, Package, Loader2, Upload } from 'lucide-react';
+import { Plus, Pencil, Trash2, Search, Package, Loader2, Upload, ChevronDown } from 'lucide-react';
 import { ProductConfig, ProductStatus, CategoryConfig, BrandConfig } from '../../../types';
 import { basicDataService } from '../../../lib/services/mock/MockBasicDataService';
 import ProductForm from './ProductForm';
@@ -126,33 +126,39 @@ const ProductList: React.FC = () => {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Search products..."
-                            className="pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            className="pl-9 pr-4 py-2 border border-slate-300 rounded-lg text-sm w-64 focus:outline-none focus:ring-2 focus:ring-primary-100"
                         />
                     </div>
 
                     {/* Category Filter */}
-                    <select
-                        value={categoryFilter}
-                        onChange={(e) => setCategoryFilter(e.target.value)}
-                        className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    >
-                        <option value="all">All Categories</option>
-                        {categories.map((cat) => (
-                            <option key={cat.id} value={cat.id}>{cat.name}</option>
-                        ))}
-                    </select>
+                    <div className="relative">
+                        <select
+                            value={categoryFilter}
+                            onChange={(e) => setCategoryFilter(e.target.value)}
+                            className="appearance-none pl-3 pr-10 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
+                        >
+                            <option value="all">All Categories</option>
+                            {categories.map((cat) => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            ))}
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                    </div>
 
                     {/* Brand Filter */}
-                    <select
-                        value={brandFilter}
-                        onChange={(e) => setBrandFilter(e.target.value)}
-                        className="px-3 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-                    >
-                        <option value="all">All Brands</option>
-                        {brands.map((br) => (
-                            <option key={br.id} value={br.id}>{br.name}</option>
-                        ))}
-                    </select>
+                    <div className="relative">
+                        <select
+                            value={brandFilter}
+                            onChange={(e) => setBrandFilter(e.target.value)}
+                            className="appearance-none pl-3 pr-10 py-2 bg-white border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
+                        >
+                            <option value="all">All Brands</option>
+                            {brands.map((br) => (
+                                <option key={br.id} value={br.id}>{br.name}</option>
+                            ))}
+                        </select>
+                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                    </div>
                 </div>
 
                 <div className="flex items-center gap-2">

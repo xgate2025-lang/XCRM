@@ -65,8 +65,8 @@ export function OnboardingHero() {
     // Loading state
     if (isLoading) {
         return (
-            <div className="rounded-2xl bg-gray-50 p-8">
-                <div className="flex items-center justify-center gap-2 text-gray-500">
+            <div className="rounded-2xl bg-slate-50 p-8">
+                <div className="flex items-center justify-center gap-2 text-slate-500">
                     <Loader2 className="h-5 w-5 animate-spin" />
                     <span>Loading your setup guide...</span>
                 </div>
@@ -100,7 +100,7 @@ export function OnboardingHero() {
 
     // Normal carousel view
     return (
-        <div className="rounded-2xl bg-gray-50 p-6">
+        <div className="rounded-2xl bg-slate-50 p-6">
             <ProgressHeader
                 completionPercentage={state.completionPercentage}
                 currentStep={completedMissions}
