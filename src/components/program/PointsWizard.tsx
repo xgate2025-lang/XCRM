@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
     X, ArrowRight, ArrowLeft, CheckCircle2, Circle,
     Trash2, Plus, AlertCircle, Info, ToggleLeft, ToggleRight, Coins, TrendingUp, ShieldAlert, Activity,
-    ChevronUp, ChevronDown
+    ChevronUp, ChevronDown, DollarSign, Percent
 } from 'lucide-react';
 import { PointsConfig, EarnRule, AttributeCondition, ExclusionGroup } from '../../types';
 import SentenceInput from './SentenceInput';
@@ -240,18 +240,21 @@ const PointsWizard: React.FC<PointsWizardProps> = ({
                                 </div>
                                 <div className="ml-3 flex items-center gap-3">
                                     <span className="text-slate-500 font-medium text-sm">Customer shops at</span>
-                                    <select
-                                        className="bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block p-2 font-bold"
-                                        value={rule.storeScope || ''}
-                                        onChange={(e) => {
-                                            const updated = config.earnRules.map(r => r.id === rule.id ? { ...r, storeScope: e.target.value } : r);
-                                            updateConfig({ earnRules: updated });
-                                        }}
-                                    >
-                                        <option value="">Any Store</option>
-                                        <option value="K11">K11 Musea</option>
-                                        <option value="IFC">IFC Mall</option>
-                                    </select>
+                                    <div className="relative">
+                                        <select
+                                            className="appearance-none bg-white border border-slate-300 text-slate-900 text-sm rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-100 pl-3 pr-10 py-2 font-bold cursor-pointer"
+                                            value={rule.storeScope || ''}
+                                            onChange={(e) => {
+                                                const updated = config.earnRules.map(r => r.id === rule.id ? { ...r, storeScope: e.target.value } : r);
+                                                updateConfig({ earnRules: updated });
+                                            }}
+                                        >
+                                            <option value="">Any Store</option>
+                                            <option value="K11">K11 Musea</option>
+                                            <option value="IFC">IFC Mall</option>
+                                        </select>
+                                        <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                                    </div>
                                 </div>
                             </div>
 
@@ -298,7 +301,7 @@ const PointsWizard: React.FC<PointsWizardProps> = ({
                 {config.expirationPolicy === 'dynamic_validity' && (
                     <div className="mt-6 space-y-6 pl-4 border-l-2 border-slate-100">
                         {/* Step 1: Timer */}
-                        <div className="text-lg text-slate-600 font-medium">
+                        <div className="text-lg text-slate-600 font-medium flex items-center flex-wrap gap-1">
                             Points remain valid for
                             <SentenceInput
                                 value={config.dynamicConfig?.durationValue || 12}
@@ -306,30 +309,36 @@ const PointsWizard: React.FC<PointsWizardProps> = ({
                                 width="w-12"
                                 className="mx-2"
                             />
-                            <select
-                                className="bg-transparent border-b-2 border-slate-200 font-bold text-slate-900 focus:outline-none focus:border-primary-500 py-0.5 mx-1"
-                                value={config.dynamicConfig?.durationUnit}
-                                onChange={(e) => updateConfig({ dynamicConfig: { ...config.dynamicConfig!, durationUnit: e.target.value as any } })}
-                            >
-                                <option value="months">Months</option>
-                                <option value="days">Days</option>
-                                <option value="years">Years</option>
-                            </select>
+                            <div className="relative inline-block mx-1">
+                                <select
+                                    className="appearance-none bg-transparent border-b-2 border-slate-200 font-bold text-slate-900 focus:outline-none focus:border-primary-500 py-0.5 pr-6 cursor-pointer"
+                                    value={config.dynamicConfig?.durationUnit}
+                                    onChange={(e) => updateConfig({ dynamicConfig: { ...config.dynamicConfig!, durationUnit: e.target.value as any } })}
+                                >
+                                    <option value="months">Months</option>
+                                    <option value="days">Days</option>
+                                    <option value="years">Years</option>
+                                </select>
+                                <ChevronDown size={14} className="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                            </div>
                             after they are earned.
                         </div>
 
                         {/* Step 3: Cleanup */}
                         <div className="flex items-center gap-3 pt-2">
                             <span className="text-sm font-medium text-slate-500">Unused points are removed on</span>
-                            <select
-                                className="bg-white border border-slate-300 text-slate-700 text-sm rounded-lg p-2 font-medium"
-                                value={config.dynamicConfig?.expirationSchedule}
-                                onChange={(e) => updateConfig({ dynamicConfig: { ...config.dynamicConfig!, expirationSchedule: e.target.value as any } })}
-                            >
-                                <option value="anniversary">The exact anniversary day</option>
-                                <option value="end_of_month">The end of the Month</option>
-                                <option value="end_of_quarter">The end of the Quarter</option>
-                            </select>
+                            <div className="relative">
+                                <select
+                                    className="appearance-none bg-white border border-slate-300 text-slate-700 text-sm rounded-lg pl-3 pr-10 py-2 font-medium focus:outline-none focus:ring-2 focus:ring-primary-100 cursor-pointer"
+                                    value={config.dynamicConfig?.expirationSchedule}
+                                    onChange={(e) => updateConfig({ dynamicConfig: { ...config.dynamicConfig!, expirationSchedule: e.target.value as any } })}
+                                >
+                                    <option value="anniversary">The exact anniversary day</option>
+                                    <option value="end_of_month">The end of the Month</option>
+                                    <option value="end_of_quarter">The end of the Quarter</option>
+                                </select>
+                                <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400" />
+                            </div>
                         </div>
                     </div>
                 )}
@@ -402,6 +411,7 @@ const PointsWizard: React.FC<PointsWizardProps> = ({
                 <div className="max-w-3xl mx-auto">
 
                     {/* TAB 1: EARN RULES */}
+                    {activeTab === 0 && (
                     <div className="space-y-8 animate-in fade-in slide-in-from-right-4">
 
                         {/* L2: Identity */}
@@ -493,6 +503,7 @@ const PointsWizard: React.FC<PointsWizardProps> = ({
                             {renderEarnRules()}
                         </div>
                     </div>
+                    )}
 
                     {/* TAB 2: EXPIRATION RULES */}
                     {activeTab === 1 && (
@@ -599,50 +610,72 @@ const PointsWizard: React.FC<PointsWizardProps> = ({
                                 {/* Ceiling */}
                                 <div className="space-y-3">
                                     <label className="text-xs font-bold text-slate-400 uppercase tracking-wider block">Maximum Cap (Liability Control)</label>
-                                    <div className="space-y-2">
-                                        <label className="flex items-center gap-2">
-                                            <input
-                                                type="radio"
-                                                name="maxCap"
-                                                checked={config.maxRedemptionType === 'fixed'}
-                                                onChange={() => updateConfig({ maxRedemptionType: 'fixed' })}
-                                            />
-                                            <span className="text-sm font-medium text-slate-700">Fixed Amount ($ Limit)</span>
-                                        </label>
-                                        <label className="flex items-center gap-2">
-                                            <input
-                                                type="radio"
-                                                name="maxCap"
-                                                checked={config.maxRedemptionType === 'percentage'}
-                                                onChange={() => updateConfig({ maxRedemptionType: 'percentage' })}
-                                            />
-                                            <span className="text-sm font-medium text-slate-700">Percentage Cap (% of Subtotal)</span>
-                                        </label>
-                                    </div>
-                                    <div className="pl-6">
-                                        {config.maxRedemptionType === 'fixed' ? (
-                                            <div className="text-slate-700 font-medium">
-                                                Max discount of $HK
-                                                <SentenceInput
-                                                    value={config.maxRedemptionValue}
-                                                    onChange={(v) => updateConfig({ maxRedemptionValue: Number(v) })}
-                                                    width="w-16"
-                                                    className="mx-2"
-                                                />
-                                                per order.
+                                    <div className="space-y-3">
+                                        {/* Fixed Amount Option */}
+                                        <div
+                                            onClick={() => updateConfig({ maxRedemptionType: 'fixed' })}
+                                            className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${config.maxRedemptionType === 'fixed' ? 'border-primary-500 bg-white shadow-md' : 'border-slate-200 bg-white hover:border-slate-300'}`}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`p-2.5 rounded-xl ${config.maxRedemptionType === 'fixed' ? 'bg-primary-50 text-primary-600' : 'bg-slate-100 text-slate-400'}`}>
+                                                        <DollarSign size={20} />
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-bold text-slate-900">Fixed Amount ($ Limit)</h4>
+                                                        <p className="text-sm text-slate-500">Set a maximum dollar discount per order.</p>
+                                                    </div>
+                                                </div>
+                                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${config.maxRedemptionType === 'fixed' ? 'border-primary-500' : 'border-slate-300'}`}>
+                                                    {config.maxRedemptionType === 'fixed' && <div className="w-3 h-3 rounded-full bg-primary-500" />}
+                                                </div>
                                             </div>
-                                        ) : (
-                                            <div className="text-slate-700 font-medium">
-                                                Points can cover up to
-                                                <SentenceInput
-                                                    value={config.maxRedemptionValue}
-                                                    onChange={(v) => updateConfig({ maxRedemptionValue: Number(v) })}
-                                                    width="w-12"
-                                                    className="mx-2"
-                                                />
-                                                % of subtotal.
+                                            {config.maxRedemptionType === 'fixed' && (
+                                                <div className="mt-4 pt-4 border-t border-slate-100 text-slate-700 font-medium">
+                                                    Max discount of $HK
+                                                    <SentenceInput
+                                                        value={config.maxRedemptionValue}
+                                                        onChange={(v) => updateConfig({ maxRedemptionValue: Number(v) })}
+                                                        width="w-16"
+                                                        className="mx-2"
+                                                    />
+                                                    per order.
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Percentage Cap Option */}
+                                        <div
+                                            onClick={() => updateConfig({ maxRedemptionType: 'percentage' })}
+                                            className={`p-4 rounded-xl border-2 cursor-pointer transition-all ${config.maxRedemptionType === 'percentage' ? 'border-primary-500 bg-white shadow-md' : 'border-slate-200 bg-white hover:border-slate-300'}`}
+                                        >
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`p-2.5 rounded-xl ${config.maxRedemptionType === 'percentage' ? 'bg-primary-50 text-primary-600' : 'bg-slate-100 text-slate-400'}`}>
+                                                        <Percent size={20} />
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-bold text-slate-900">Percentage Cap (% of Subtotal)</h4>
+                                                        <p className="text-sm text-slate-500">Limit redemption to a percentage of cart value.</p>
+                                                    </div>
+                                                </div>
+                                                <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center shrink-0 ${config.maxRedemptionType === 'percentage' ? 'border-primary-500' : 'border-slate-300'}`}>
+                                                    {config.maxRedemptionType === 'percentage' && <div className="w-3 h-3 rounded-full bg-primary-500" />}
+                                                </div>
                                             </div>
-                                        )}
+                                            {config.maxRedemptionType === 'percentage' && (
+                                                <div className="mt-4 pt-4 border-t border-slate-100 text-slate-700 font-medium">
+                                                    Points can cover up to
+                                                    <SentenceInput
+                                                        value={config.maxRedemptionValue}
+                                                        onChange={(v) => updateConfig({ maxRedemptionValue: Number(v) })}
+                                                        width="w-12"
+                                                        className="mx-2"
+                                                    />
+                                                    % of subtotal.
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
